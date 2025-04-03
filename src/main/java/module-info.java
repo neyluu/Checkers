@@ -1,4 +1,4 @@
-module checkers.checkers {
+module checkers {
     requires javafx.controls;
     requires javafx.fxml;
 
