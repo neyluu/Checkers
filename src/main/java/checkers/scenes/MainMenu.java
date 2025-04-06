@@ -1,7 +1,6 @@
 package checkers.scenes;
 
 import checkers.gui.buttons.MenuButton;
-import com.sun.tools.javac.Main;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,8 +13,7 @@ import javafx.scene.text.Text;
 
 public class MainMenu extends SceneBase
 {
-    private VBox layout = new VBox();
-    private final double centerX = (double) settings.screenWidth / 2;
+    private final VBox layout = new VBox();
 
     public MainMenu()
     {
@@ -43,8 +41,8 @@ public class MainMenu extends SceneBase
             title.setFill(Color.rgb(180,180,180));
             title.setFont(Font.font("Impact", FontWeight.NORMAL, 100));
             double textWidth = title.getLayoutBounds().getWidth();
+            double centerX = (double) settings.screenWidth / 2;
             title.setX(centerX - textWidth / 2);
-            title.setY(0);
         }
         layout.getChildren().add(title);
     }
@@ -52,7 +50,7 @@ public class MainMenu extends SceneBase
     private void initButtons()
     {
         MenuButton coopButton         = new MenuButton("Cooperation", 250);
-        MenuButton singleplayerButton = new MenuButton("Singleplx`ayer", 350);
+        MenuButton singleplayerButton = new MenuButton("Singleplayer", 350);
         MenuButton multiplayerButton  = new MenuButton("Multiplayer", 450);
         MenuButton exitButton         = new MenuButton("Exit", 550);
 
