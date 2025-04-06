@@ -1,12 +1,14 @@
 package checkers.scenes;
 
 import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SceneManager
 {
+    private Stage stage = null;
     private static SceneManager instance = null;
     private List<Scene> scenes = new ArrayList<>();
     private int currentScene = 0;
@@ -16,6 +18,11 @@ public class SceneManager
     {
         if(instance == null) instance = new SceneManager();
         return instance;
+    }
+
+    public void setStage(Stage stage)
+    {
+        this.stage = stage;
     }
 
     public void addScene(SceneBase scene)
@@ -35,5 +42,6 @@ public class SceneManager
             throw new ArrayIndexOutOfBoundsException();
         }
         currentScene = sceneIndex;
+        stage.setScene(getCurrentScene());
     }
 }
