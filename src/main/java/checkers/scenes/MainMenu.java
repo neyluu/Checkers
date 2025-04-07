@@ -47,12 +47,12 @@ public class MainMenu extends SceneBase
         layout.getChildren().add(title);
     }
 
-    private void initButtons()
-    {
-        MenuButton coopButton         = new MenuButton("Cooperation", 250);
-        MenuButton singleplayerButton = new MenuButton("Singleplayer", 350);
-        MenuButton multiplayerButton  = new MenuButton("Multiplayer", 450);
-        MenuButton exitButton         = new MenuButton("Exit", 550);
+        private void initButtons()
+        {
+            MenuButton coopButton         = new MenuButton("Cooperation", 250);
+            MenuButton singleplayerButton = new MenuButton("Singleplayer", 350);
+            MenuButton multiplayerButton  = new MenuButton("Multiplayer", 450);
+            MenuButton exitButton         = new MenuButton("Exit", 550);
 
         coopButton.setEvent(e ->
         {
@@ -67,9 +67,9 @@ public class MainMenu extends SceneBase
         });
         exitButton.setEvent(e -> Platform.exit());
 
-        layout.getChildren().add(coopButton.getButton());
-        layout.getChildren().add(singleplayerButton.getButton());
-        layout.getChildren().add(multiplayerButton.getButton());
-        layout.getChildren().add(exitButton.getButton());
+        layout.getChildren().add(coopButton);
+        layout.getChildren().add(singleplayerButton);
+        layout.getChildren().add(multiplayerButton);
+        layout.getChildren().add(exitButton);
     }
 }

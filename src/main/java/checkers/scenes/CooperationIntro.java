@@ -67,8 +67,8 @@ public class CooperationIntro extends SceneBase
             }
         });
 
-        layout.getChildren().add(playButton.getButton());
-        layout.getChildren().add(backButton.getButton());
+        layout.getChildren().add(playButton);
+        layout.getChildren().add(backButton);
     }
 
     private void initPlayerUsernameInputs()
