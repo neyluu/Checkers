@@ -13,6 +13,7 @@ public class Board extends GridPane
     final int cellSize = width / size;
 
     private Piece[][] pieces = new Piece[size][size];
+    private Cell[][] cells = new Cell[8][8];
 
     public Board()
     {
@@ -29,9 +30,8 @@ public class Board extends GridPane
         {
             for(int j = 0; j < size; j++)
             {
-                VBox cell = new VBox();
-                cell.setMinHeight(cellSize);
-                cell.setMinWidth(cellSize);
+                Cell cell = new Cell(cellSize);
+                cell.setAlignment(Pos.CENTER);
 
                 if((i + j) % 2 == 0)
                 {
@@ -55,15 +55,42 @@ public class Board extends GridPane
                     int posY = j;
                     piece.setOnMouseClicked(e ->
                     {
-                        System.out.println("clicked: " + posX + " " + posY);
+                        piece.setX(posX);
+                        piece.setY(posY);
+                        movePiece(piece);
                     });
-                    cell.setAlignment(Pos.CENTER);
                     cell.getChildren().add(piece);
                 }
+
+                cells[i][j] = cell;
 
                 this.add(cell, i, j);
             }
         }
+    }
+
+    private void movePiece(Piece piece)
+    {
+        Cell newCell = cells[piece.getX()][piece.getY() - 1];
+        try
+        {
+            newCell.getChildren().removeLast();
+        }
+        catch (Exception e) {}
+
+        piece.setY(piece.getY() - 1);
+        piece.setOnMouseClicked(e ->
+        {
+            movePiece(piece);
+        });
+
+        Cell curCell = cells[piece.getX()][piece.getY()];
+        try
+        {
+            curCell.getChildren().removeLast();
+        }
+        catch (Exception e) {}
+        newCell.getChildren().add(piece);
     }
 
     private void initPieces()

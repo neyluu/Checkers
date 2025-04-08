@@ -26,7 +26,7 @@ public class Cooperation extends SceneBase
 
         type = SceneType.COOPERATION;
 
-        layout.setStyle("-fx-background-color: rgb(63,255,0);");
+        layout.setStyle("-fx-background-color: rgb(25,25,25);");
 
         initLayout();
 
@@ -49,7 +49,7 @@ public class Cooperation extends SceneBase
     private void initLeftPanel()
     {
         VBox left = new VBox();
-        left.setStyle("-fx-background-color: rgb(255, 255, 0);");
+        left.setStyle("-fx-background-color: rgb(25,25,25);");
         left.setMinWidth(sizeSidePanel);
 
         layout.getChildren().add(left);
@@ -61,7 +61,7 @@ public class Cooperation extends SceneBase
         StackPane boardContainer = new StackPane(game.getBoard());
         boardContainer.setAlignment(Pos.CENTER);
 
-        middle.setStyle("-fx-background-color: rgb(0, 255, 255);");
+        middle.setStyle("-fx-background-color: rgb(25,25,25);");
         middle.setMinWidth(sizeMiddle);
         middle.setAlignment(Pos.CENTER);
         middle.getChildren().add(boardContainer);
@@ -82,7 +82,7 @@ public class Cooperation extends SceneBase
     {
         VBox right = new VBox();
 
-        right.setStyle("-fx-background-color: rgb(255, 0, 255);");
+        right.setStyle("-fx-background-color: rgb(25,25,25);");
         right.setMinHeight(300);
         right.setMinWidth(sizeSidePanel);
 

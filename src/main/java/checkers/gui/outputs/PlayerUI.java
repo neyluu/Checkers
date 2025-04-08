@@ -19,7 +19,7 @@ public class PlayerUI extends VBox
         this.setMaxWidth(panelWidth - 50);
         this.setMinHeight(150);
         this.setMaxHeight(150);
-        this.setStyle("-fx-background-color: rgb(0,0,0);");
+        this.setStyle("-fx-background-color: rgb(99,99,99);");
         this.setAlignment(Pos.TOP_CENTER);
 
         Text text = new Text(playerName);
