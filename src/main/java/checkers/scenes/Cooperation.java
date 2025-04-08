@@ -5,12 +5,13 @@ import checkers.gui.outputs.PlayerUI;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class Cooperation extends SceneBase
 {
-    private String player1Username = "Player 1";
-    private String player2Username = "Player 2";
+    private String player1Username;
+    private String player2Username;
 
     private HBox layout = new HBox();
     private Game game = new Game();
@@ -56,21 +57,25 @@ public class Cooperation extends SceneBase
     private void initMiddlePanel()
     {
         VBox middle = new VBox();
+
+        StackPane boardContainer = new StackPane(game.getBoard());
+        boardContainer.setAlignment(Pos.CENTER);
+
         middle.setStyle("-fx-background-color: rgb(0, 255, 255);");
         middle.setMinWidth(sizeMiddle);
         middle.setAlignment(Pos.CENTER);
+        middle.getChildren().add(boardContainer);
 
         // TODO TMP
-        VBox board = new VBox();
-        {
-            board.setStyle("-fx-background-color: rgb(230, 20, 50);");
-            board.setMinWidth(650);
-            board.setMaxWidth(650);
-            board.setMinHeight(650);
-            board.setMaxHeight(650);
-        }
+//        VBox board = new VBox();
+//        {
+//            board.setStyle("-fx-background-color: rgb(230, 20, 50);");
+//            board.setMinWidth(650);
+//            board.setMaxWidth(650);
+//            board.setMinHeight(650);
+//            board.setMaxHeight(650);
+//        }
 
-        middle.getChildren().add(board);
         layout.getChildren().add(middle);
     }
     private void initRightPanel()

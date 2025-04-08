@@ -15,7 +15,6 @@ public class PlayerUI extends VBox
 
     public PlayerUI(String playerName)
     {
-        System.out.println("ui: " + panelWidth);
         this.setMinWidth(panelWidth - 50);
         this.setMaxWidth(panelWidth - 50);
         this.setMinHeight(150);
