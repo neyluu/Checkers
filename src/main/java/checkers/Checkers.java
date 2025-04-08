@@ -18,8 +18,8 @@ public class Checkers extends Application
         createScenes();
 
         stage.setTitle("Checkers");
-        stage.setWidth(settings.screenWidth);
-        stage.setHeight(settings.screenHeight);
+        stage.setMinWidth(settings.screenWidth);
+        stage.setMinHeight(settings.screenHeight);
         stage.setResizable(false);
         stage.setScene(sceneManager.getCurrentScene());
         stage.show();

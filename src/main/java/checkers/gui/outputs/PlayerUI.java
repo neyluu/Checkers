@@ -1,6 +1,7 @@
 package checkers.gui.outputs;
 
 import checkers.Settings;
+import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -14,15 +15,17 @@ public class PlayerUI extends VBox
 
     public PlayerUI(String playerName)
     {
-        this.setMinWidth(panelWidth - 25);
-        this.setMaxWidth(panelWidth - 25);
+        System.out.println("ui: " + panelWidth);
+        this.setMinWidth(panelWidth - 50);
+        this.setMaxWidth(panelWidth - 50);
         this.setMinHeight(150);
         this.setMaxHeight(150);
         this.setStyle("-fx-background-color: rgb(0,0,0);");
+        this.setAlignment(Pos.TOP_CENTER);
 
         Text text = new Text(playerName);
         text.setFill(Color.PINK);
-        text.setFont(Font.font("Arial", FontWeight.NORMAL, 32));
+        text.setFont(Font.font("Arial", FontWeight.NORMAL, 24));
         this.getChildren().add(text);
     }
 }

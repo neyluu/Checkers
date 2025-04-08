@@ -32,7 +32,7 @@ public class MainMenu extends SceneBase
     @Override
     protected void setScene()
     {
-        scene = new Scene(layout);
+        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
     }
 
     private void initText()

@@ -35,7 +35,7 @@ public class Cooperation extends SceneBase
     @Override
     protected void setScene()
     {
-        scene = new Scene(layout);
+        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
     }
 
     private void initLayout()
@@ -49,7 +49,6 @@ public class Cooperation extends SceneBase
     {
         VBox left = new VBox();
         left.setStyle("-fx-background-color: rgb(255, 255, 0);");
-        left.setMinHeight(300);
         left.setMinWidth(sizeSidePanel);
 
         layout.getChildren().add(left);
@@ -58,7 +57,6 @@ public class Cooperation extends SceneBase
     {
         VBox middle = new VBox();
         middle.setStyle("-fx-background-color: rgb(0, 255, 255);");
-        middle.setMinHeight(300);
         middle.setMinWidth(sizeMiddle);
         middle.setAlignment(Pos.CENTER);
 
@@ -87,7 +85,7 @@ public class Cooperation extends SceneBase
         PlayerUI player2UI = new PlayerUI(player2Username);
 
         right.setSpacing(350);
-        right.setAlignment(Pos.CENTER_RIGHT);
+        right.setAlignment(Pos.CENTER);
         right.getChildren().addAll(player1UI, player2UI);
 
         layout.getChildren().add(right);
