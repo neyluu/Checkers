@@ -3,6 +3,7 @@ package checkers.scenes;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
@@ -17,6 +18,8 @@ import javafx.scene.text.Text;
 public class CooperationIntro extends SceneBase
 {
     private VBox layout = new VBox();
+    private TextField player1;
+    private TextField player2;
 
     public CooperationIntro()
     {
@@ -47,6 +50,7 @@ public class CooperationIntro extends SceneBase
         {
             try
             {
+                Cooperation.setUsernames(player1.getText(), player2.getText());
                 sceneManager.setScene(2);
             }
             catch(IndexOutOfBoundsException ex)
@@ -80,6 +84,9 @@ public class CooperationIntro extends SceneBase
 
         LabeledTextField left = new LabeledTextField("Enter first player username:", "Player1");
         LabeledTextField right = new LabeledTextField("Enter second player username:", "Player2");
+
+        player1 = left.getTextField();
+        player2 = right.getTextField();
 
         container.getChildren().addAll(left, right);
         layout.getChildren().add(container);
