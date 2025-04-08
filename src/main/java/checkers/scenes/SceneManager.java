@@ -3,15 +3,15 @@ package checkers.scenes;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SceneManager
 {
     private Stage stage = null;
     private static SceneManager instance = null;
-    private List<Scene> scenes = new ArrayList<>();
-    private int currentScene = 0;
+    private Map<SceneType, SceneBase> scenes = new HashMap<>();
+    private SceneType currentScene = SceneType.MAIN_MENU;
 
     private SceneManager() { }
     public static SceneManager getInstance()
@@ -27,21 +27,17 @@ public class SceneManager
 
     public void addScene(SceneBase scene)
     {
-        scenes.add(scene.getScene());
+        scenes.put(scene.getType(), scene);
     }
 
     public Scene getCurrentScene()
     {
-        return scenes.get(currentScene);
+        return scenes.get(currentScene).getScene();
     }
 
-    public void setScene(int sceneIndex)
+    public void setScene(SceneType newScene)
     {
-        if(sceneIndex < 0 || sceneIndex >= scenes.size())
-        {
-            throw new ArrayIndexOutOfBoundsException();
-        }
-        currentScene = sceneIndex;
+        currentScene = newScene;
         stage.setScene(getCurrentScene());
     }
 }

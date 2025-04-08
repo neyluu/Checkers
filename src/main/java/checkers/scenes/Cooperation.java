@@ -9,8 +9,8 @@ import javafx.scene.layout.VBox;
 
 public class Cooperation extends SceneBase
 {
-    private static String player1Username;
-    private static String player2Username;
+    private String player1Username = "Player 1";
+    private String player2Username = "Player 2";
 
     private HBox layout = new HBox();
     private Game game = new Game();
@@ -18,8 +18,13 @@ public class Cooperation extends SceneBase
     private final double sizeMiddle = (settings.screenWidth / 2) + 100;
     private final double sizeSidePanel = (settings.screenWidth - sizeMiddle) / 2;
 
-    public Cooperation()
+    public Cooperation(String username1, String username2)
     {
+        player1Username = username1;
+        player2Username = username2;
+
+        type = SceneType.COOPERATION;
+
         layout.setStyle("-fx-background-color: rgb(63,255,0);");
 
         initLayout();
@@ -31,12 +36,6 @@ public class Cooperation extends SceneBase
     protected void setScene()
     {
         scene = new Scene(layout);
-    }
-
-    public static void setUsernames(String username1, String username2)
-    {
-        player1Username = username1;
-        player2Username = username2;
     }
 
     private void initLayout()

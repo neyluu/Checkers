@@ -1,9 +1,6 @@
 package checkers;
 
-import checkers.scenes.Cooperation;
-import checkers.scenes.CooperationIntro;
-import checkers.scenes.MainMenu;
-import checkers.scenes.SceneManager;
+import checkers.scenes.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -36,10 +33,7 @@ public class Checkers extends Application
         CooperationIntro cooperationIntro = new CooperationIntro();
         sceneManager.addScene(cooperationIntro);
 
-        Cooperation cooperation = new Cooperation();
-        sceneManager.addScene(cooperation);
-
-        sceneManager.setScene(0);
+        sceneManager.setScene(SceneType.MAIN_MENU);
     }
 
     public static void main(String[] args)

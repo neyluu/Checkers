@@ -23,6 +23,8 @@ public class CooperationIntro extends SceneBase
 
     public CooperationIntro()
     {
+        type = SceneType.COOPERATION_INTRO;
+
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setAlignment(Pos.CENTER);
         layout.setSpacing(100);
@@ -50,8 +52,15 @@ public class CooperationIntro extends SceneBase
         {
             try
             {
-                Cooperation.setUsernames(player1.getText(), player2.getText());
-                sceneManager.setScene(2);
+                String player1Username = player1.getText();
+                String player2Username = player2.getText();
+
+                if(player1Username.isEmpty()) player1Username = "Player 1";
+                if(player2Username.isEmpty()) player2Username = "Player 2";
+
+                Cooperation cooperation = new Cooperation(player1Username, player2Username);
+                sceneManager.addScene(cooperation);
+                sceneManager.setScene(SceneType.COOPERATION);
             }
             catch(IndexOutOfBoundsException ex)
             {
@@ -63,7 +72,7 @@ public class CooperationIntro extends SceneBase
         {
             try
             {
-                sceneManager.setScene(0);
+                sceneManager.setScene(SceneType.MAIN_MENU);
             }
             catch(IndexOutOfBoundsException ex)
             {

@@ -23,5 +23,6 @@ public class PlayerUI extends VBox
         Text text = new Text(playerName);
         text.setFill(Color.PINK);
         text.setFont(Font.font("Arial", FontWeight.NORMAL, 32));
+        this.getChildren().add(text);
     }
 }

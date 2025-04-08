@@ -17,6 +17,8 @@ public class MainMenu extends SceneBase
 
     public MainMenu()
     {
+        type = SceneType.MAIN_MENU;
+
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setPadding(new Insets(50, 50, 50, 50));
         layout.setSpacing(30);
@@ -58,7 +60,7 @@ public class MainMenu extends SceneBase
         {
             try
             {
-                sceneManager.setScene(1);
+                sceneManager.setScene(SceneType.COOPERATION_INTRO);
             }
             catch(IndexOutOfBoundsException ex)
             {
