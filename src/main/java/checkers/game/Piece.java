@@ -8,6 +8,7 @@ public abstract class Piece extends Button
     protected boolean isKing;
     protected Player owner;
     protected String color;
+    protected PieceType type = null;
     protected int x;
     protected int y;
 
@@ -27,6 +28,15 @@ public abstract class Piece extends Button
     public void setY(int y)
     {
         this.y = y;
+    }
+
+    public void setType(PieceType type)
+    {
+        this.type = type;
+    }
+    public PieceType getType()
+    {
+        return type;
     }
 
     public String getColor()

@@ -2,9 +2,9 @@ package checkers.game;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Board extends GridPane
 {
@@ -63,7 +63,6 @@ public class Board extends GridPane
                 }
 
                 cells[i][j] = cell;
-
                 this.add(cell, i, j);
             }
         }
@@ -71,26 +70,112 @@ public class Board extends GridPane
 
     private void movePiece(Piece piece)
     {
-        Cell newCell = cells[piece.getX()][piece.getY() - 1];
-        try
-        {
-            newCell.getChildren().removeLast();
-        }
-        catch (Exception e) {}
+        List<Cell> validMoves = getValidMoves(piece);
+        List<String> styles = new ArrayList<>();
 
-        piece.setY(piece.getY() - 1);
-        piece.setOnMouseClicked(e ->
+        for(Cell cell : validMoves)
         {
-            movePiece(piece);
-        });
+            styles.add(cell.getStyle());
+            cell.setStyle("-fx-background-color: rgb(88,41,20);");
 
-        Cell curCell = cells[piece.getX()][piece.getY()];
-        try
-        {
-            curCell.getChildren().removeLast();
+            cell.setOnMouseClicked(e ->
+            {
+                System.out.println("clicked");
+            });
         }
-        catch (Exception e) {}
-        newCell.getChildren().add(piece);
+
+//        Cell newCell1 = cells[piece.getX() - 1][piece.getY() - 1];
+//        Cell newCell2 = cells[piece.getX() + 1][piece.getY() - 1];
+//
+//        String newCell1Style = newCell1.getStyle();
+//        String newCell2Style = newCell2.getStyle();
+//
+//        newCell1.setStyle("-fx-background-color: rgb(88,41,20);");
+//        newCell2.setStyle("-fx-background-color: rgb(88,41,20);");
+//
+//        newCell1.setOnMouseClicked(e ->
+//        {
+//            System.out.println("clicked 1 !");
+//            newCell2.setOnMouseClicked(e2 -> {});
+//
+//            try
+//            {
+//                newCell1.getChildren().removeLast();
+//            }
+//            catch (Exception e3) {}
+//
+//            piece.setY(piece.getY() - 1);
+//            piece.setX(piece.getX() - 1);
+//            piece.setOnMouseClicked(e4 ->
+//            {
+//                movePiece(piece);
+//            });
+//
+//            Cell curCell = cells[piece.getX()][piece.getY()];
+//            try
+//            {
+//                curCell.getChildren().removeLast();
+//            }
+//            catch (Exception e5) {}
+//            newCell1.getChildren().add(piece);
+//            newCell1.setStyle(newCell1Style);
+//            newCell2.setStyle(newCell2Style);
+//        });
+
+//
+//        newCell2.setOnMouseClicked(e ->
+//        {
+//            System.out.println("clicked 2 !");
+//            newCell1.setOnMouseClicked(e2 -> {});
+//
+//
+//            try
+//            {
+//                newCell2.getChildren().removeLast();
+//            }
+//            catch (Exception e3) {}
+//
+//            piece.setY(piece.getY() - 1);
+//            piece.setX(piece.getX() + 1);
+//            piece.setOnMouseClicked(e4 ->
+//            {
+//                movePiece(piece);
+//            });
+//
+//            Cell curCell = cells[piece.getX()][piece.getY()];
+//            try
+//            {
+//                curCell.getChildren().removeLast();
+//            }
+//            catch (Exception e5) {}
+//            newCell2.getChildren().add(piece);
+//            newCell1.setStyle(newCell1Style);
+//            newCell2.setStyle(newCell2Style);
+//        });
+    }
+
+    private List<Cell> getValidMoves(Piece piece)
+    {
+        List<Cell> validMoves = new ArrayList<>();
+
+        Cell currentCell = cells[piece.getX()][piece.getY()];
+
+        if(piece.getType() == PieceType.MAN_WHITE)
+        {
+            Cell newCellLeft, newCellRight;
+            if(piece.getX() - 1 >= 0 && piece.getY() - 1 >= 0)
+            {
+                newCellLeft = cells[piece.getX() - 1][piece.getY() - 1];
+                if(newCellLeft.getChildren().isEmpty()) validMoves.add(newCellLeft);
+            }
+            if(piece.getX() + 1 < size && piece.getY() - 1 >= 0)
+            {
+                newCellRight = cells[piece.getX() + 1][piece.getY() - 1];
+                if(newCellRight.getChildren().isEmpty()) validMoves.add(newCellRight);
+            }
+        }
+
+        return validMoves;
     }
 
     private void initPieces()
@@ -103,6 +188,7 @@ public class Board extends GridPane
                 {
                     Piece piece = new Man();
                     piece.setColor("rgb(0,0,0)");
+                    piece.setType(PieceType.MAN_BLACK);
                     pieces[col][row] = piece;
                 }
             }
@@ -116,6 +202,7 @@ public class Board extends GridPane
                 {
                     Piece piece = new Man();
                     piece.setColor("rgb(255,255,255)");
+                    piece.setType(PieceType.MAN_WHITE);
                     pieces[col][row] = piece;
                 }
             }
