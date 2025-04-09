@@ -69,6 +69,13 @@ public class Board extends GridPane
 
     private void movePiece(Piece piece)
     {
+        // TODO tmp
+        List<Position> beat = canBeat(piece);
+        for(Position pos : beat)
+        {
+            cells[pos.x][pos.y].setStyle("-fx-background-color: rgb(255,0,0)");
+        }
+
         List<Position> validPositions = getValidMoves(piece);
         if(validPositions.isEmpty())
         {
@@ -111,8 +118,10 @@ public class Board extends GridPane
                 }
                 catch (Exception e5) {}
 
+                pieces[piece.getX()][piece.getY()] = null;
                 piece.setX(pos.x);
                 piece.setY(pos.y);
+                pieces[piece.getX()][piece.getY()] = piece;
                 piece.setOnMouseClicked(e4 ->
                 {
                     movePiece(piece);
@@ -131,82 +140,11 @@ public class Board extends GridPane
                 }
             });
         }
-
-//        Cell newCell1 = cells[piece.getX() - 1][piece.getY() - 1];
-//        Cell newCell2 = cells[piece.getX() + 1][piece.getY() - 1];
-//
-//        String newCell1Style = newCell1.getStyle();
-//        String newCell2Style = newCell2.getStyle();
-//
-//        newCell1.setStyle("-fx-background-color: rgb(88,41,20);");
-//        newCell2.setStyle("-fx-background-color: rgb(88,41,20);");
-//
-//        newCell1.setOnMouseClicked(e ->
-//        {
-//            System.out.println("clicked 1 !");
-//            newCell2.setOnMouseClicked(e2 -> {});
-//
-//            try
-//            {
-//                newCell1.getChildren().removeLast();
-//            }
-//            catch (Exception e3) {}
-//
-//            piece.setY(piece.getY() - 1);
-//            piece.setX(piece.getX() - 1);
-//            piece.setOnMouseClicked(e4 ->
-//            {
-//                movePiece(piece);
-//            });
-//
-//            Cell curCell = cells[piece.getX()][piece.getY()];
-//            try
-//            {
-//                curCell.getChildren().removeLast();
-//            }
-//            catch (Exception e5) {}
-//            newCell1.getChildren().add(piece);
-//            newCell1.setStyle(newCell1Style);
-//            newCell2.setStyle(newCell2Style);
-//        });
-
-//
-//        newCell2.setOnMouseClicked(e ->
-//        {
-//            System.out.println("clicked 2 !");
-//            newCell1.setOnMouseClicked(e2 -> {});
-//
-//
-//            try
-//            {
-//                newCell2.getChildren().removeLast();
-//            }
-//            catch (Exception e3) {}
-//
-//            piece.setY(piece.getY() - 1);
-//            piece.setX(piece.getX() + 1);
-//            piece.setOnMouseClicked(e4 ->
-//            {
-//                movePiece(piece);
-//            });
-//
-//            Cell curCell = cells[piece.getX()][piece.getY()];
-//            try
-//            {
-//                curCell.getChildren().removeLast();
-//            }
-//            catch (Exception e5) {}
-//            newCell2.getChildren().add(piece);
-//            newCell1.setStyle(newCell1Style);
-//            newCell2.setStyle(newCell2Style);
-//        });
     }
 
     private List<Position> getValidMoves(Piece piece)
     {
         List<Position> validMoves = new ArrayList<>();
-
-        Cell currentCell = cells[piece.getX()][piece.getY()];
 
         if(piece.getType() == PieceType.MAN_WHITE)
         {
@@ -245,6 +183,35 @@ public class Board extends GridPane
         }
 
         return validMoves;
+    }
+
+    private List<Position> canBeat(Piece piece)
+    {
+        List<Position> canBeat = new ArrayList<>();
+
+        if(piece.getType() == PieceType.MAN_WHITE)
+        {
+            Position posBlackRight = new Position(piece.getX() - 1, piece.getY() - 1);
+            Position posBlackLeft  = new Position(piece.getX() + 1, piece.getY() - 1);
+            Position posFreeRight  = new Position(piece.getX() - 2, piece.getY() - 2);
+            Position posFreeLeft   = new Position(piece.getX() + 2, piece.getY() - 2);
+            Piece blackRight = pieces[posBlackRight.x][posBlackRight.y];
+            Piece blackLeft  = pieces[posBlackLeft.x][posBlackLeft.y];
+            Piece freeRight  = pieces[posFreeRight.x][posFreeRight.y];
+            Piece freeLeft   = pieces[posFreeLeft.x][posFreeLeft.y];
+
+            if(blackRight != null && freeRight == null)
+            {
+                canBeat.add(posFreeRight);
+            }
+            if(blackLeft != null && freeLeft == null)
+            {
+                canBeat.add(posFreeLeft);
+            }
+        }
+
+
+        return canBeat;
     }
 
     private void initPieces()
