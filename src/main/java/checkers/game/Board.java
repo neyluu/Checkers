@@ -3,8 +3,7 @@ package checkers.game;
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Board extends GridPane
 {
@@ -70,17 +69,66 @@ public class Board extends GridPane
 
     private void movePiece(Piece piece)
     {
-        List<Cell> validMoves = getValidMoves(piece);
+        List<Position> validPositions = getValidMoves(piece);
+        if(validPositions.isEmpty())
+        {
+            System.out.println("No valid moves for this piece!");
+            return;
+        }
+
+        Map<Position, Cell> validMoves = new HashMap<>();
+        for(int i = 0; i < validPositions.size(); i++)
+        {
+            Position pos = validPositions.get(i);
+            validMoves.put(pos, cells[pos.x][pos.y]);
+        }
         List<String> styles = new ArrayList<>();
 
-        for(Cell cell : validMoves)
+
+        for(Map.Entry<Position, Cell> entry : validMoves.entrySet())
         {
+            Position pos = entry.getKey();
+            Cell cell = entry.getValue();
+
             styles.add(cell.getStyle());
             cell.setStyle("-fx-background-color: rgb(88,41,20);");
 
             cell.setOnMouseClicked(e ->
             {
                 System.out.println("clicked");
+
+                try
+                {
+                    cell.getChildren().removeLast();
+                }
+                catch (Exception e3) {}
+
+
+                Cell curCell = cells[piece.getX()][piece.getY()];
+                try
+                {
+                    curCell.getChildren().removeLast();
+                }
+                catch (Exception e5) {}
+
+                piece.setX(pos.x);
+                piece.setY(pos.y);
+                piece.setOnMouseClicked(e4 ->
+                {
+                    movePiece(piece);
+                });
+
+                cell.getChildren().add(piece);
+
+                if(!styles.isEmpty())
+                {
+                    for(Cell tmp : validMoves.values())
+                    {
+                        tmp.setStyle(styles.getLast());
+                        styles.removeLast();
+                        tmp.setOnMouseClicked(e2 -> {});
+                    }
+                }
             });
         }
 
@@ -154,24 +202,45 @@ public class Board extends GridPane
 //        });
     }
 
-    private List<Cell> getValidMoves(Piece piece)
+    private List<Position> getValidMoves(Piece piece)
     {
-        List<Cell> validMoves = new ArrayList<>();
+        List<Position> validMoves = new ArrayList<>();
 
         Cell currentCell = cells[piece.getX()][piece.getY()];
 
         if(piece.getType() == PieceType.MAN_WHITE)
         {
             Cell newCellLeft, newCellRight;
+            Position newPosLeft, newPosRight;
             if(piece.getX() - 1 >= 0 && piece.getY() - 1 >= 0)
             {
-                newCellLeft = cells[piece.getX() - 1][piece.getY() - 1];
-                if(newCellLeft.getChildren().isEmpty()) validMoves.add(newCellLeft);
+                newPosLeft = new Position(piece.getX() - 1, piece.getY() - 1);
+                newCellLeft = cells[newPosLeft.x][newPosLeft.y];
+                if(newCellLeft.getChildren().isEmpty()) validMoves.add(newPosLeft);
             }
             if(piece.getX() + 1 < size && piece.getY() - 1 >= 0)
             {
-                newCellRight = cells[piece.getX() + 1][piece.getY() - 1];
-                if(newCellRight.getChildren().isEmpty()) validMoves.add(newCellRight);
+                newPosRight = new Position(piece.getX() + 1, piece.getY() - 1);
+                newCellRight = cells[newPosRight.x][newPosRight.y];
+                if(newCellRight.getChildren().isEmpty()) validMoves.add(newPosRight);
+            }
+        }
+
+        if(piece.getType() == PieceType.MAN_BLACK)
+        {
+            Cell newCellLeft, newCellRight;
+            Position newPosLeft, newPosRight;
+            if(piece.getX() - 1 >= 0 && piece.getY() + 1 < size)
+            {
+                newPosLeft = new Position(piece.getX() - 1, piece.getY() + 1);
+                newCellLeft = cells[newPosLeft.x][newPosLeft.y];
+                if(newCellLeft.getChildren().isEmpty()) validMoves.add(newPosLeft);
+            }
+            if(piece.getX() + 1 < size && piece.getY() + 1 < size)
+            {
+                newPosRight = new Position(piece.getX() + 1, piece.getY() + 1);
+                newCellRight = cells[newPosRight.x][newPosRight.y];
+                if(newCellRight.getChildren().isEmpty()) validMoves.add(newPosRight);
             }
         }
 
