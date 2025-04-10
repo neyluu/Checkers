@@ -31,7 +31,7 @@ public class CooperationGame extends Game
             piece.setStyle("-fx-background-color: rgb(255,0,255);"); //TODO TMP
             piece.setOnMouseClicked(e ->
             {
-                clearNonClickedPieces(piece, data);
+                clearEvents(piece, data, false);
 
                 List<Position> validMoves = entry.getValue();
                 for(Position pos : validMoves)
@@ -41,7 +41,7 @@ public class CooperationGame extends Game
                     cell.setOnMouseClicked(e2 ->
                     {
                         board.movePiece(new Position(piece.getX(), piece.getY()), pos);
-                        clearPiecesEvents(data);
+                        clearEvents(null, data, true);
 
                         if(type == PieceType.WHITE) turn(PieceType.BLACK);
                         if(type == PieceType.BLACK) turn(PieceType.WHITE);
@@ -52,33 +52,17 @@ public class CooperationGame extends Game
         }
     }
 
-    private void clearNonClickedPieces(Piece clickedPiece, Map<Piece, List<Position>> data)
+    private void clearEvents(Piece except, Map<Piece, List<Position>> data, boolean clearPiecesEvents)
     {
         for(Map.Entry<Piece, List<Position>> entry : data.entrySet())
         {
-            if(entry.getKey() == clickedPiece) continue;
+            if(except != null && entry.getKey() == except) continue;
 
             Piece piece = entry.getKey();
             if(piece.isWhite()) piece.setStyle("-fx-background-color: rgb(255,255,255);");
             if(piece.isBlack()) piece.setStyle("-fx-background-color: rgb(0,0,0);");
 
-            List<Position> validMoves = entry.getValue();
-            for(Position pos : validMoves)
-            {
-                board.getCell(pos.x, pos.y).setStyle("-fx-background-color: rgb(128,81,60);");
-            }
-        }
-    }
-
-    private void clearPiecesEvents(Map<Piece, List<Position>> data)
-    {
-        for(Map.Entry<Piece, List<Position>> entry : data.entrySet())
-        {
-            Piece piece = entry.getKey();
-            if(piece.isWhite()) piece.setStyle("-fx-background-color: rgb(255,255,255);");
-            if(piece.isBlack()) piece.setStyle("-fx-background-color: rgb(0,0,0);");
-
-            piece.setOnMouseClicked(e -> { } );
+            if(clearPiecesEvents) piece.setOnMouseClicked(e -> { } );
 
             List<Position> validMoves = entry.getValue();
             for(Position pos : validMoves)
