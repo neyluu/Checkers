@@ -7,10 +7,16 @@ public abstract class Piece extends Button
 {
     protected boolean isKing;
     protected Player owner;
-    protected String color;
     protected PieceType type = null;
     protected int x;
     protected int y;
+
+    public Piece(int size)
+    {
+        this.setMinHeight(size);
+        this.setMinWidth(size);
+        this.setStyle("-fx-background-radius: 50%;");
+    }
 
     public int getX()
     {
@@ -33,20 +39,18 @@ public abstract class Piece extends Button
     public void setType(PieceType type)
     {
         this.type = type;
+        if(type == PieceType.MAN_WHITE || type == PieceType.KING_WHITE)
+        {
+            this.setStyle("-fx-background-color: rgb(255,255,255);" + this.getStyle());
+        }
+        else
+        {
+            this.setStyle("-fx-background-color: rgb(0,0,0);" + this.getStyle());
+        }
     }
     public PieceType getType()
     {
         return type;
-    }
-
-    public String getColor()
-    {
-        return color;
-    }
-
-    public void setColor(String color)
-    {
-        this.color = color;
     }
 
     //    public abstract List<Move> getValidMoves(Position from, Board board);
@@ -57,5 +61,14 @@ public abstract class Piece extends Button
     public boolean isKing()
     {
         return isKing;
+    }
+
+    public boolean isWhite()
+    {
+        return type == PieceType.MAN_WHITE || type == PieceType.KING_WHITE;
+    }
+    public boolean isBlack()
+    {
+        return type == PieceType.MAN_BLACK || type == PieceType.KING_BLACK;
     }
 }
