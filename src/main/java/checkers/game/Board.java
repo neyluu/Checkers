@@ -27,7 +27,12 @@ public class Board extends GridPane
 
     public Cell getCell(int x, int y)
     {
+        if(!isInBounds(x, y)) return null;
         return cells[x][y];
+    }
+    public Cell getCell(Position pos)
+    {
+        return getCell(pos.x, pos.y);
     }
 
     private void clearBoard()
@@ -166,12 +171,97 @@ public class Board extends GridPane
             moves.add(new Position(x, y));
         }
     }
+
     private boolean isInBounds(int x, int y)
     {
         return x >= 0 && x < boardSize && y >= 0 && y < boardSize;
     }
+    private boolean isInBounds(Position pos)
+    {
+        return isInBounds(pos.x, pos.y);
+    }
 
 
+    public Map<Piece, List<Position>> getPiecesThatCanBeat(PieceType type)
+    {
+        Map<Piece, List<Position>> data = new HashMap<>();
+
+        for(Cell[] cellRow : cells)
+        {
+            for(Cell cell : cellRow)
+            {
+                Piece piece = cell.getPiece();
+                if(piece == null ||
+                        type == PieceType.WHITE && piece.isBlack() ||
+                        type == PieceType.BLACK && piece.isWhite())
+                {
+                    continue;
+                }
+                List<Position> beatMoves = getBeatMoves(piece);
+                if(beatMoves.isEmpty()) continue;
+                data.put(piece, beatMoves);
+            }
+        }
+
+        return data;
+    }
+
+    private List<Position> getBeatMoves(Piece piece)
+    {
+        List<Position> beatMoves = new ArrayList<>();
+
+        if(piece.isWhite())
+        {
+            Position posTopLeft1 = new Position(piece.getX() - 1, piece.getY() - 1);
+            Position posTopLeft2 = new Position(piece.getX() - 2, piece.getY() - 2);
+            Cell cellTopLeft1 = getCell(posTopLeft1);
+            Cell cellTopLeft2 = getCell(posTopLeft2);
+            if(isInBounds(posTopLeft1) && cellTopLeft1.havePiece() && cellTopLeft1.getPiece().isBlack() &&
+               isInBounds(posTopLeft2) && !cellTopLeft2.havePiece()
+            )
+            {
+                beatMoves.add(posTopLeft2);
+            }
+
+            Position posTopRight1 = new Position(piece.getX() + 1, piece.getY() - 1);
+            Position posTopRight2 = new Position(piece.getX() + 2, piece.getY() - 2);
+            Cell cellTopRight1 = getCell(posTopRight1);
+            Cell cellTopRight2 = getCell(posTopRight2);
+            if(isInBounds(posTopRight1) && cellTopRight1.havePiece() && cellTopRight1.getPiece().isBlack() &&
+               isInBounds(posTopRight2) && !cellTopRight2.havePiece()
+            )
+            {
+                beatMoves.add(posTopRight2);
+            }
+        }
+
+        if(piece.isBlack())
+        {
+            Position posTopLeft1 = new Position(piece.getX() - 1, piece.getY() + 1);
+            Position posTopLeft2 = new Position(piece.getX() - 2, piece.getY() + 2);
+            Cell cellTopLeft1 = getCell(posTopLeft1);
+            Cell cellTopLeft2 = getCell(posTopLeft2);
+            if(isInBounds(posTopLeft1) && cellTopLeft1.havePiece() && cellTopLeft1.getPiece().isWhite() &&
+                    isInBounds(posTopLeft2) && !cellTopLeft2.havePiece()
+            )
+            {
+                beatMoves.add(posTopLeft2);
+            }
+
+            Position posTopRight1 = new Position(piece.getX() + 1, piece.getY() + 1);
+            Position posTopRight2 = new Position(piece.getX() + 2, piece.getY() + 2);
+            Cell cellTopRight1 = getCell(posTopRight1);
+            Cell cellTopRight2 = getCell(posTopRight2);
+            if(isInBounds(posTopRight1) && cellTopRight1.havePiece() && cellTopRight1.getPiece().isWhite() &&
+                    isInBounds(posTopRight2) && !cellTopRight2.havePiece()
+            )
+            {
+                beatMoves.add(posTopRight2);
+            }
+        }
+
+        return beatMoves;
+    }
 
 
 

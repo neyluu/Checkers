@@ -22,13 +22,28 @@ public class CooperationGame extends Game
     {
         System.out.println("Turn start");
 
+
+        Map<Piece, List<Position>> getBeats = board.getPiecesThatCanBeat(type);
+        for(Map.Entry<Piece, List<Position>> entry : getBeats.entrySet())
+        {
+            List<Position> positions = entry.getValue();
+            for(Position pos : positions)
+            {
+                if(type == PieceType.WHITE)
+                    board.getCell(pos).setStyle("-fx-background-color: rgb(255,0,0)");
+                else
+                    board.getCell(pos).setStyle("-fx-background-color: rgb(255,0,255)");
+            }
+        }
+
+
         Map<Piece, List<Position>> data = board.getPiecesWithValidMoves(type);
         if(data.isEmpty()) System.out.println("Pusto");
 
         for(Map.Entry<Piece, List<Position>> entry : data.entrySet())
         {
             Piece piece = entry.getKey();
-            piece.setStyle("-fx-background-color: rgb(255,0,255);"); //TODO TMP
+//            piece.setStyle("-fx-background-color: rgb(255,0,255);"); //TODO TMP
             piece.setOnMouseClicked(e ->
             {
                 clearEvents(piece, data, false);
@@ -47,7 +62,7 @@ public class CooperationGame extends Game
                         if(type == PieceType.BLACK) turn(PieceType.WHITE);
                     });
                 }
-                piece.setStyle("-fx-background-color: rgb(0,255,255);"); //TODO TMP
+//                piece.setStyle("-fx-background-color: rgb(0,255,255);"); //TODO TMP
             });
         }
     }
