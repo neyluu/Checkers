@@ -2,10 +2,10 @@ package checkers.exceptions;
 
 import checkers.game.Position;
 
-public class CellHavePiece extends RuntimeException
+public class CellHavePieceException extends RuntimeException
 {
     private Position position;
-    public CellHavePiece(String message, Position position) {
+    public CellHavePieceException(String message, Position position) {
         super(message);
     }
 

@@ -1,8 +1,7 @@
 package checkers.game;
 
-import checkers.exceptions.CellHavePiece;
-import checkers.exceptions.PieceNotFound;
-import javafx.geometry.Pos;
+import checkers.exceptions.CellHavePieceException;
+import checkers.exceptions.PieceNotFoundException;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
@@ -105,11 +104,11 @@ public class Board extends GridPane
     {
         if(!cells[from.x][from.y].havePiece())
         {
-            throw new PieceNotFound("Piece not found!", from);
+            throw new PieceNotFoundException("Piece not found!", from);
         }
         if(cells[to.x][to.y].havePiece())
         {
-            throw new CellHavePiece("Cell is taken by another piece!", to);
+            throw new CellHavePieceException("Cell is taken by another piece!", to);
         }
 
         Cell cellFrom = cells[from.x][from.y];
@@ -128,7 +127,7 @@ public class Board extends GridPane
         Cell cell = getCell(x, y);
         if(cell == null || !cell.havePiece())
         {
-            throw new PieceNotFound("Piece not found!", new Position(x, y));
+            throw new PieceNotFoundException("Piece not found!", new Position(x, y));
         }
         cell.clearPiece();
     }
