@@ -122,9 +122,25 @@ public class Board extends GridPane
         cellTo.setPiece(piece);
     }
 
-    public Map<Piece, List<Position>> getPiecesWithValidMoves(PieceType type)
+    public void removePiece(int x, int y)
     {
-        Map<Piece, List<Position>> data = new HashMap<>();
+        System.out.println(x + " " + y);
+        Cell cell = getCell(x, y);
+        if(cell == null || !cell.havePiece())
+        {
+            throw new PieceNotFound("Piece not found!", new Position(x, y));
+        }
+        cell.clearPiece();
+    }
+    public void removePiece(Position pos)
+    {
+        removePiece(pos.x, pos.y);
+    }
+
+
+    public Map<Piece, List<Position[]>> getPiecesWithValidMoves(PieceType type)
+    {
+        Map<Piece, List<Position[]>> data = new HashMap<>();
 
         for(Cell[] cellRow : cells)
         {
@@ -137,7 +153,7 @@ public class Board extends GridPane
                 {
                    continue;
                 }
-                List<Position> validMoves = getValidMoves(piece);
+                List<Position[]> validMoves = getValidMoves(piece);
                 if(validMoves.isEmpty()) continue;
                 data.put(piece, validMoves);
             }
@@ -146,29 +162,31 @@ public class Board extends GridPane
         return data;
     }
 
-    private List<Position> getValidMoves(Piece piece)
+    private List<Position[]> getValidMoves(Piece piece)
     {
-        List<Position> validMoves = new ArrayList<>();
+        List<Position[]> validMoves = new ArrayList<>();
 
         if(piece.isWhite()) validMoves.addAll(getDiagonalMoves(piece, -1));
         if(piece.isBlack()) validMoves.addAll(getDiagonalMoves(piece, 1));
 
         return validMoves;
     }
-    private List<Position> getDiagonalMoves(Piece piece, int directionY)
+    private List<Position[]> getDiagonalMoves(Piece piece, int directionY)
     {
-        List<Position> moves = new ArrayList<>();
+        List<Position[]> moves = new ArrayList<>();
 
         checkAndAddMove(moves, piece.getX() - 1, piece.getY() + directionY);
         checkAndAddMove(moves, piece.getX() + 1, piece.getY() + directionY);
 
         return moves;
     }
-    private void checkAndAddMove(List<Position> moves, int x, int y)
+    private void checkAndAddMove(List<Position[]> moves, int x, int y)
     {
+        Position[] positions = new Position[1];
         if (isInBounds(x, y) && !cells[x][y].havePiece())
         {
-            moves.add(new Position(x, y));
+            positions[0] = new Position(x, y);
+            moves.add(positions);
         }
     }
 
@@ -182,9 +200,9 @@ public class Board extends GridPane
     }
 
 
-    public Map<Piece, List<Position>> getPiecesThatCanBeat(PieceType type)
+    public Map<Piece, List<Position[]>> getPiecesThatCanBeat(PieceType type)
     {
-        Map<Piece, List<Position>> data = new HashMap<>();
+        Map<Piece, List<Position[]>> data = new HashMap<>();
 
         for(Cell[] cellRow : cells)
         {
@@ -197,7 +215,7 @@ public class Board extends GridPane
                 {
                     continue;
                 }
-                List<Position> beatMoves = getBeatMoves(piece);
+                List<Position[]> beatMoves = getBeatMoves(piece);
                 if(beatMoves.isEmpty()) continue;
                 data.put(piece, beatMoves);
             }
@@ -206,9 +224,10 @@ public class Board extends GridPane
         return data;
     }
 
-    private List<Position> getBeatMoves(Piece piece)
+    private List<Position[]> getBeatMoves(Piece piece)
     {
-        List<Position> beatMoves = new ArrayList<>();
+        List<Position[]> beatMoves = new ArrayList<>();
+        Position[] positions = new Position[2];
 
         if(piece.isWhite())
         {
@@ -220,7 +239,9 @@ public class Board extends GridPane
                isInBounds(posTopLeft2) && !cellTopLeft2.havePiece()
             )
             {
-                beatMoves.add(posTopLeft2);
+                positions[0] = posTopLeft2;
+                positions[1] = posTopLeft1;
+                beatMoves.add(positions);
             }
 
             Position posTopRight1 = new Position(piece.getX() + 1, piece.getY() - 1);
@@ -231,7 +252,9 @@ public class Board extends GridPane
                isInBounds(posTopRight2) && !cellTopRight2.havePiece()
             )
             {
-                beatMoves.add(posTopRight2);
+                positions[0] = posTopRight2;
+                positions[1] = posTopRight1;
+                beatMoves.add(positions);
             }
         }
 
@@ -245,7 +268,9 @@ public class Board extends GridPane
                     isInBounds(posTopLeft2) && !cellTopLeft2.havePiece()
             )
             {
-                beatMoves.add(posTopLeft2);
+                positions[0] = posTopLeft2;
+                positions[1] = posTopLeft1;
+                beatMoves.add(positions);
             }
 
             Position posTopRight1 = new Position(piece.getX() + 1, piece.getY() + 1);
@@ -256,7 +281,9 @@ public class Board extends GridPane
                     isInBounds(posTopRight2) && !cellTopRight2.havePiece()
             )
             {
-                beatMoves.add(posTopRight2);
+                positions[0] = posTopRight2;
+                positions[1] = posTopRight1;
+                beatMoves.add(positions);
             }
         }
 

@@ -25,8 +25,8 @@ public class Cell extends VBox
     }
     public void clearPiece()
     {
-        piece = null;
         this.getChildren().remove(piece);
+        piece = null;
     }
 
     public boolean havePiece()
