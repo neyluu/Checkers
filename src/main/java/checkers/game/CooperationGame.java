@@ -30,6 +30,7 @@ public class CooperationGame extends Game
         for(Map.Entry<Piece, List<Position[]>> entry : movesData.entrySet())
         {
             Piece piece = entry.getKey();
+            System.out.println(piece.isKing);
 
             piece.setOnMouseClicked(e ->
             {
@@ -43,17 +44,18 @@ public class CooperationGame extends Game
                     cell.setOnMouseClicked(e2 ->
                     {
                         board.movePiece(new Position(piece.getX(), piece.getY()), pos[0]);
+                        System.out.println(pos[0].x + " " + pos[0].y);
                         if(piece.isOnKingCells())
                         {
                             King king = new King(piece.getSize());
                             king.setType(piece.getType());
                             king.setX(piece.getX());
                             king.setY(piece.getY());
-                            king.setStyle("-fx-background-color: rgb(255,0,255);" +
-                                          "-fx-background-radius: 50%;");
+//                            king.setStyle("-fx-background-color: rgb(255,0,255);" +
+//                                          "-fx-background-radius: 50%;");
 
-                            cell.getChildren().remove(piece);
-                            cell.getChildren().add(king);
+                            cell.clearPiece();
+                            cell.setPiece(king);
                         }
 
                         clearEvents(null, movesData, true);

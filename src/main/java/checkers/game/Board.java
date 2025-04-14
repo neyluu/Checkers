@@ -24,6 +24,11 @@ public class Board extends GridPane
         clearBoard();
     }
 
+    public int getSize()
+    {
+        return boardSize;
+    }
+
     public int getCellSize()
     {
         return cellSize;
@@ -197,4 +202,5 @@ public class Board extends GridPane
 
         return data;
     }
+
 }
