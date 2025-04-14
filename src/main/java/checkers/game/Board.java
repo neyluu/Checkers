@@ -123,7 +123,6 @@ public class Board extends GridPane
 
     public void removePiece(int x, int y)
     {
-        System.out.println(x + " " + y);
         Cell cell = getCell(x, y);
         if(cell == null || !cell.havePiece())
         {
@@ -255,6 +254,32 @@ public class Board extends GridPane
                 positions[1] = posTopRight1;
                 beatMoves.add(positions);
             }
+
+            Position posBottomRight1 = new Position(piece.getX() + 1, piece.getY() + 1);
+            Position posBottomRight2 = new Position(piece.getX() + 2, piece.getY() + 2);
+            Cell cellBottomRight1 = getCell(posBottomRight1);
+            Cell cellBottomRight2 = getCell(posBottomRight2);
+            if(isInBounds(posBottomRight1) && cellBottomRight1.havePiece() && cellBottomRight1.getPiece().isBlack() &&
+                isInBounds(posBottomRight2) && !cellBottomRight2.havePiece()
+            )
+            {
+                positions[0] = posBottomRight2;
+                positions[1] = posBottomRight1;
+                beatMoves.add(positions);
+            }
+
+            Position posBottomLeft1 = new Position(piece.getX() - 1, piece.getY() + 1);
+            Position posBottomLeft2 = new Position(piece.getX() - 2, piece.getY() + 2);
+            Cell cellBottomLeft1 = getCell(posBottomLeft1);
+            Cell cellBottomLeft2 = getCell(posBottomLeft2);
+            if(isInBounds(posBottomLeft1) && cellBottomLeft1.havePiece() && cellBottomLeft1.getPiece().isBlack() &&
+                    isInBounds(posBottomLeft2) && !cellBottomLeft2.havePiece()
+            )
+            {
+                positions[0] = posBottomLeft2;
+                positions[1] = posBottomLeft1;
+                beatMoves.add(positions);
+            }
         }
 
         if(piece.isBlack())
@@ -282,6 +307,32 @@ public class Board extends GridPane
             {
                 positions[0] = posTopRight2;
                 positions[1] = posTopRight1;
+                beatMoves.add(positions);
+            }
+
+            Position posBottomRight1 = new Position(piece.getX() - 1, piece.getY() - 1);
+            Position posBottomRight2 = new Position(piece.getX() - 2, piece.getY() - 2);
+            Cell cellBottomRight1 = getCell(posBottomRight1);
+            Cell cellBottomRight2 = getCell(posBottomRight2);
+            if(isInBounds(posBottomRight1) && cellBottomRight1.havePiece() && cellBottomRight1.getPiece().isWhite() &&
+                    isInBounds(posBottomRight2) && !cellBottomRight2.havePiece()
+            )
+            {
+                positions[0] = posBottomRight2;
+                positions[1] = posBottomRight1;
+                beatMoves.add(positions);
+            }
+
+            Position posBottomLeft1 = new Position(piece.getX() + 1, piece.getY() - 1);
+            Position posBottomLeft2 = new Position(piece.getX() + 2, piece.getY() - 2);
+            Cell cellBottomLeft1 = getCell(posBottomLeft1);
+            Cell cellBottomLeft2 = getCell(posBottomLeft2);
+            if(isInBounds(posBottomLeft1) && cellBottomLeft1.havePiece() && cellBottomLeft1.getPiece().isWhite() &&
+                    isInBounds(posBottomLeft2) && !cellBottomLeft2.havePiece()
+            )
+            {
+                positions[0] = posBottomLeft2;
+                positions[1] = posBottomLeft1;
                 beatMoves.add(positions);
             }
         }

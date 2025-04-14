@@ -65,11 +65,12 @@ public class CooperationGame extends Game
         List<Position[]> pieceBeatMoves;
 
         pieceBeatMoves = board.getBeatMoves(piece);
-        
-        System.out.println("next beats" + pieceBeatMoves.size());
+        if(pieceBeatMoves.isEmpty()) changeTurn();
 
         Map<Piece, List<Position[]>> data = new HashMap<>();
+        data.put(piece, pieceBeatMoves);
 
+        createMoves(data, true);
     }
 
     private void clearEvents(Piece except, Map<Piece, List<Position[]>> data, boolean clearPiecesEvents)
