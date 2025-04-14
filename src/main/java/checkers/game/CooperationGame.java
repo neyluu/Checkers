@@ -46,6 +46,19 @@ public class CooperationGame extends Game
                     cell.setOnMouseClicked(e2 ->
                     {
                         board.movePiece(new Position(piece.getX(), piece.getY()), pos[0]);
+                        if(piece.isOnKingCells())
+                        {
+                            King king = new King(piece.getSize());
+                            king.setType(piece.getType());
+                            king.setX(piece.getX());
+                            king.setY(piece.getY());
+                            king.setStyle("-fx-background-color: rgb(255,0,255);" +
+                                          "-fx-background-radius: 50%;");
+
+                            cell.getChildren().remove(piece);
+                            cell.getChildren().add(king);
+                        }
+
                         clearEvents(null, movesData, true);
 
                         if(isBeatMoves)

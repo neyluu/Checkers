@@ -24,6 +24,11 @@ public class Board extends GridPane
         clearBoard();
     }
 
+    public int getCellSize()
+    {
+        return cellSize;
+    }
+
     public Cell getCell(int x, int y)
     {
         if(!isInBounds(x, y)) return null;
