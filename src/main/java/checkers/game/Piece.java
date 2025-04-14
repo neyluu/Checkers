@@ -83,6 +83,12 @@ public abstract class Piece extends Button
     {
         return type == PieceType.MAN_BLACK || type == PieceType.KING_BLACK;
     }
+    public boolean isOpposite(Piece piece)
+    {
+        if(isBlack() && piece.isWhite()) return true;
+        if(isWhite() && piece.isBlack()) return true;
+        return false;
+    }
     public boolean isOnKingCells()
     {
         if(isWhite() && y == 0) return true;
