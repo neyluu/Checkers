@@ -1,7 +1,8 @@
 package checkers.game;
 
 import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
+
+import java.util.List;
 
 public abstract class Piece extends Button
 {
@@ -29,14 +30,19 @@ public abstract class Piece extends Button
     {
         return x;
     }
-    public void setX(int x)
-    {
-        this.x = x;
-    }
-
     public int getY()
     {
         return y;
+    }
+
+    public PieceType getType()
+    {
+        return type;
+    }
+
+    public void setX(int x)
+    {
+        this.x = x;
     }
     public void setY(int y)
     {
@@ -55,20 +61,19 @@ public abstract class Piece extends Button
             this.setStyle("-fx-background-color: rgb(0,0,0);" + this.getStyle());
         }
     }
-    public PieceType getType()
-    {
-        return type;
-    }
 
-    //    public abstract List<Move> getValidMoves(Position from, Board board);
-    public void promote()
-    {
-        isKing = true;
-    }
-    public boolean isKing()
-    {
-        return isKing;
-    }
+    public abstract List<Position[]> getValidMoves(Board board);
+    public abstract List<Position[]> getBeatMoves(Board board);
+
+
+//    public void promote()
+//    {
+//        isKing = true;
+//    }
+//    public boolean isKing()
+//    {
+//        return isKing;
+//    }
 
     public boolean isWhite()
     {
@@ -78,7 +83,6 @@ public abstract class Piece extends Button
     {
         return type == PieceType.MAN_BLACK || type == PieceType.KING_BLACK;
     }
-
     public boolean isOnKingCells()
     {
         if(isWhite() && y == 0) return true;

@@ -77,7 +77,7 @@ public class CooperationGame extends Game
     {
         List<Position[]> pieceBeatMoves;
 
-        pieceBeatMoves = board.getBeatMoves(piece);
+        pieceBeatMoves = piece.getBeatMoves(board);
         if(pieceBeatMoves.isEmpty()) changeTurn();
 
         Map<Piece, List<Position[]>> data = new HashMap<>();
