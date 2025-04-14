@@ -1,5 +1,7 @@
 package checkers.game;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ public class CooperationGame extends Game
 
         Map<Piece, List<Position[]>> beatMoves = board.getPiecesThatCanBeat(currentTurn);
         createMoves(beatMoves, true);
+
         if(!beatMoves.isEmpty()) return;
 
         Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn);
@@ -42,16 +45,31 @@ public class CooperationGame extends Game
                     cell.setStyle("-fx-background-color: rgb(88,41,20);");
                     cell.setOnMouseClicked(e2 ->
                     {
-                        if(isBeatMoves) board.removePiece(pos[1]);
-
                         board.movePiece(new Position(piece.getX(), piece.getY()), pos[0]);
                         clearEvents(null, movesData, true);
 
-                        changeTurn();
+                        if(isBeatMoves)
+                        {
+                            board.removePiece(pos[1]);
+                            nextBeats(piece);
+                        }
+                        else changeTurn();
                     });
                 }
             });
         }
+    }
+
+    private void nextBeats(Piece piece)
+    {
+        List<Position[]> pieceBeatMoves;
+
+        pieceBeatMoves = board.getBeatMoves(piece);
+        
+        System.out.println("next beats" + pieceBeatMoves.size());
+
+        Map<Piece, List<Position[]>> data = new HashMap<>();
+
     }
 
     private void clearEvents(Piece except, Map<Piece, List<Position[]>> data, boolean clearPiecesEvents)

@@ -1,0 +1,1 @@
+* SceneBase can extend JavaFX Scene, so workflow with Scene as variable and then setting it at the end of constructor can be skipped 
