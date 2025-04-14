@@ -1,6 +1,5 @@
 package checkers.game;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +16,6 @@ public class CooperationGame extends Game
 
     private void turn()
     {
-        System.out.println("Turn start");
-
         Map<Piece, List<Position[]>> beatMoves = board.getPiecesThatCanBeat(currentTurn);
         createMoves(beatMoves, true);
 
@@ -109,8 +106,16 @@ public class CooperationGame extends Game
 
     private void changeTurn()
     {
-        if(currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
-        else if(currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
+        if(currentTurn == PieceType.WHITE)
+        {
+            currentTurn = PieceType.BLACK;
+            System.out.println("Black turn");
+        }
+        else if(currentTurn == PieceType.BLACK)
+        {
+            currentTurn = PieceType.WHITE;
+            System.out.println("White turn");
+        }
         turn();
     }
 }
