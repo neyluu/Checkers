@@ -10,4 +10,3 @@
   * King need to have his own texture
   * Timer
   * Visual information which player`s turn now
-  
