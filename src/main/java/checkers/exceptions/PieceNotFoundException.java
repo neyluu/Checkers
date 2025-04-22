@@ -1,0 +1,18 @@
+package checkers.exceptions;
+
+import checkers.game.Position;
+
+public class PieceNotFoundException extends RuntimeException
+{
+    private Position position;
+    public PieceNotFoundException(String message, Position position)
+    {
+        super(message);
+        this.position = position;
+    }
+
+    public Position getPosition()
+    {
+        return position;
+    }
+}

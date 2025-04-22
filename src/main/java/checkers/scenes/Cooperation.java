@@ -1,6 +1,6 @@
 package checkers.scenes;
 
-import checkers.game.Game;
+import checkers.game.CooperationGame;
 import checkers.gui.outputs.PlayerUI;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -14,7 +14,7 @@ public class Cooperation extends SceneBase
     private String player2Username;
 
     private HBox layout = new HBox();
-    private Game game = new Game();
+    private CooperationGame game = new CooperationGame();
 
     private final double sizeMiddle = (settings.screenWidth / 2) + 100;
     private final double sizeSidePanel = (settings.screenWidth - sizeMiddle) / 2;
