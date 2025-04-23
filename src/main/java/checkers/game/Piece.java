@@ -75,6 +75,12 @@ public abstract class Piece extends Button
 //        return isKing;
 //    }
 
+    public boolean isType(PieceType type)
+    {
+        if(type == PieceType.WHITE) return isWhite();
+        if(type == PieceType.BLACK) return isBlack();
+        return false;
+    }
     public boolean isWhite()
     {
         return type == PieceType.MAN_WHITE || type == PieceType.KING_WHITE;

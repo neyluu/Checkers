@@ -1,9 +1,14 @@
 package checkers.scenes;
 
 import checkers.game.CooperationGame;
+import checkers.game.PieceType;
 import checkers.gui.outputs.PlayerUI;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -14,7 +19,9 @@ public class Cooperation extends SceneBase
     private String player2Username;
 
     private HBox layout = new HBox();
-    private CooperationGame game = new CooperationGame();
+    private CooperationGame game;
+
+    private final Object lock = new Object();
 
     private final double sizeMiddle = (settings.screenWidth / 2) + 100;
     private final double sizeSidePanel = (settings.screenWidth - sizeMiddle) / 2;
@@ -23,6 +30,7 @@ public class Cooperation extends SceneBase
     {
         player1Username = username1;
         player2Username = username2;
+        game = new CooperationGame(lock);
 
         type = SceneType.COOPERATION;
 
@@ -31,12 +39,63 @@ public class Cooperation extends SceneBase
         initLayout();
 
         setScene();
+
+        new Thread(() ->
+        {
+            synchronized (lock)
+            {
+
+                try
+                {
+                    lock.wait();
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            Platform.runLater(this::showWinAlert);
+        }).start();
+
+        new Thread(() -> game.start()).start();
     }
 
     @Override
     protected void setScene()
     {
         scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
+    }
+
+    public void showWinAlert()
+    {
+        ButtonType playAgain = new ButtonType("PlayAgain", ButtonBar.ButtonData.OK_DONE);
+        ButtonType quit = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
+        ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle("");
+        alert.setHeaderText("Game finished!");
+        alert.setContentText((game.getCurrentTurn() == PieceType.WHITE ? player2Username : player1Username) + " win!");
+
+        alert.getButtonTypes().setAll(playAgain, quit, quitMainMenu);
+
+        alert.showAndWait();
+
+        ButtonType alertResult = alert.getResult();
+
+        if(alertResult.equals(quit))
+        {
+            Platform.exit();
+        }
+        if(alertResult.equals(quitMainMenu))
+        {
+            sceneManager.setScene(SceneType.MAIN_MENU);
+        }
+        if(alertResult.equals(playAgain))
+        {
+//            sceneManager.setScene(SceneType.COOPERATION);
+        }
     }
 
     private void initLayout()

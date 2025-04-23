@@ -6,12 +6,23 @@ import java.util.Map;
 
 public class CooperationGame extends Game
 {
+    private final Object lock;
     private PieceType currentTurn = PieceType.WHITE;
 
-    public CooperationGame()
+    public CooperationGame(Object lock)
     {
-        super();
+        this.lock = lock;
+    }
+
+    public void start()
+    {
         turn();
+//        gameOver();
+    }
+
+    public PieceType getCurrentTurn()
+    {
+        return currentTurn;
     }
 
     private void turn()
@@ -30,7 +41,6 @@ public class CooperationGame extends Game
         for(Map.Entry<Piece, List<Position[]>> entry : movesData.entrySet())
         {
             Piece piece = entry.getKey();
-            System.out.println(piece.isKing);
 
             piece.setOnMouseClicked(e ->
             {
@@ -110,14 +120,32 @@ public class CooperationGame extends Game
     {
         if(currentTurn == PieceType.WHITE)
         {
+            if(board.getBlackPiecesCount() == 0)
+            {
+                gameOver();
+                return;
+            }
             currentTurn = PieceType.BLACK;
             System.out.println("Black turn");
         }
         else if(currentTurn == PieceType.BLACK)
         {
+            if(board.getWhitePieceCount() == 0)
+            {
+                gameOver();
+                return;
+            }
             currentTurn = PieceType.WHITE;
             System.out.println("White turn");
         }
         turn();
+    }
+
+    private void gameOver()
+    {
+        synchronized(lock)
+        {
+            lock.notify();
+        }
     }
 }

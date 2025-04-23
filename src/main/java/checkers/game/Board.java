@@ -55,6 +55,30 @@ public class Board extends GridPane
         cell.setStyle("-fx-background-color: rgb(128,81,60);");
     }
 
+    public int getWhitePieceCount()
+    {
+        return countPieces(PieceType.WHITE);
+    }
+    public int getBlackPiecesCount()
+    {
+        return countPieces(PieceType.BLACK);
+    }
+    private int countPieces(PieceType type)
+    {
+        int counter = 0;
+
+        for(int i = 0; i < boardSize; i++)
+        {
+            for(int j = 0; j < boardSize; j++)
+            {
+                Cell cell = getCell(i, j);
+                if(cell.havePiece() && cell.getPiece().isType(type)) counter++;
+            }
+        }
+
+        return counter;
+    }
+
     public boolean isInBounds(int x, int y)
     {
         return x >= 0 && x < boardSize && y >= 0 && y < boardSize;

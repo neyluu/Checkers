@@ -10,3 +10,6 @@
   * King need to have his own texture
   * Timer
   * Visual information which player`s turn now
+
+BUGS:
+  * when Piece is promoted to King and can beat next piece, theres no moves that this piece can do and game is frozen
