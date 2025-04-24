@@ -1,23 +1,50 @@
 package checkers.game;
 
+import checkers.gui.outputs.PlayerUI;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CooperationGame extends Game
 {
     private final Object lock;
     private PieceType currentTurn = PieceType.WHITE;
 
-    public CooperationGame(Object lock)
+    private PlayerUI player1UI;
+    private PlayerUI player2UI;
+
+    public CooperationGame(Object lock, PlayerUI player1UI, PlayerUI player2UI)
     {
         this.lock = lock;
+        this.player1UI = player1UI;
+        this.player2UI = player2UI;
     }
 
     public void start()
     {
+        player2UI.startTimer();
+        player1UI.stopTimer();
+        watchTimers();
         turn();
-//        gameOver();
+    }
+
+    private void watchTimers()
+    {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() ->
+        {
+            if (player1UI.isTimerFinished() || player2UI.isTimerFinished())
+            {
+                if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
+                else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
+                gameOver();
+                scheduler.shutdown();
+            }
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     public PieceType getCurrentTurn()
@@ -98,8 +125,6 @@ public class CooperationGame extends Game
             if(except != null && entry.getKey() == except) continue;
 
             Piece piece = entry.getKey();
-//            if(piece.isWhite()) piece.setStyle("-fx-background-color: rgb(255,255,255);");
-//            if(piece.isBlack()) piece.setStyle("-fx-background-color: rgb(0,0,0);");
 
             if(clearPiecesEvents) piece.setOnMouseClicked(e -> { } );
 
@@ -122,6 +147,8 @@ public class CooperationGame extends Game
                 return;
             }
             currentTurn = PieceType.BLACK;
+            player1UI.startTimer();
+            player2UI.stopTimer();
             System.out.println("Black turn");
         }
         else if(currentTurn == PieceType.BLACK)
@@ -132,6 +159,8 @@ public class CooperationGame extends Game
                 return;
             }
             currentTurn = PieceType.WHITE;
+            player2UI.startTimer();
+            player1UI.stopTimer();
             System.out.println("White turn");
         }
         turn();

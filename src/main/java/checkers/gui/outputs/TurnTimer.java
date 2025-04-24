@@ -1,24 +1,22 @@
 package checkers.gui.outputs;
 
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 public class TurnTimer extends Text
 {
-    private final int seconds;
-    private int currentSeconds;
-    private final int change;
-    private int currentChange;
+    private int seconds = 0;
+    private int currentSeconds = 0;
+    private int change = 0;
+    private int currentChange = 0;
+    private boolean finished = false;
 
     public TurnTimer(int minutes)
     {
-        this.seconds = minutes * 60;
-        this.currentSeconds = (minutes == -1) ? 0 : this.seconds;
-        this.change = (minutes == -1) ? 1 : -1;
-        this.currentChange = 0;
+        setMinutes(minutes);
 
         Timer timer = new Timer();
 
@@ -27,14 +25,25 @@ public class TurnTimer extends Text
             @Override
             public void run()
             {
-                System.out.println(currentSeconds);
+                if (currentChange == 0) return;
+
                 currentSeconds += currentChange;
-                if(currentSeconds < 0) timer.cancel();
+                if(currentSeconds < 0)
+                {
+                    TurnTimer.this.setFill(Color.rgb(200, 30, 30));
+                    finished = true;
+                    timer.cancel();
+                }
                 TurnTimer.this.setText(formatTime());
             }
         };
 
-        timer.scheduleAtFixedRate(task, 0, 1000);
+        timer.scheduleAtFixedRate(task, 1000, 1000);
+    }
+
+    synchronized public boolean isFinished()
+    {
+        return finished;
     }
 
     public void start()
@@ -49,6 +58,8 @@ public class TurnTimer extends Text
     private String formatTime()
     {
         String formatted;
+
+        if(currentSeconds < 0) return "00:00";
 
         int minutes = currentSeconds / 60;
         int seconds = currentSeconds % 60;
@@ -65,5 +76,14 @@ public class TurnTimer extends Text
         formatted = sMinutes + ":" + sSeconds;
 
         return formatted;
+    }
+
+    public void setMinutes(int minutes)
+    {
+        this.seconds = minutes * 60;
+        this.currentSeconds = (minutes == -1) ? 0 : this.seconds;
+        this.change = (minutes == -1) ? 1 : -1;
+        this.currentChange = 0;
+        this.setText(formatTime());
     }
 }

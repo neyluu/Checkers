@@ -22,6 +22,9 @@ public class Cooperation extends SceneBase
     private HBox layout = new HBox();
     private CooperationGame game;
 
+    private PlayerUI player1UI = new PlayerUI();
+    private PlayerUI player2UI = new PlayerUI();
+
     private final Object lock = new Object();
 
     private final double sizeMiddle = (settings.screenWidth / 2) + 100;
@@ -32,18 +35,17 @@ public class Cooperation extends SceneBase
         this.player1Username = username1;
         this.player2Username = username2;
         this.turnTime = turnTime;
-        game = new CooperationGame(lock);
 
         type = SceneType.COOPERATION;
-
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
 
+        game = new CooperationGame(lock, player1UI, player2UI);
+        
         initLayout();
-
         setScene();
 
-        listenForMessage();
         startGame();
+        listenForMessage();
     }
 
     @Override
@@ -146,8 +148,10 @@ public class Cooperation extends SceneBase
         right.setMinHeight(300);
         right.setMinWidth(sizeSidePanel);
 
-        PlayerUI player1UI = new PlayerUI(player1Username, parseTurnTime());
-        PlayerUI player2UI = new PlayerUI(player2Username, parseTurnTime());
+        player1UI.setUsername(player1Username);
+        player1UI.setMinutes(parseTurnTime());
+        player2UI.setUsername(player2Username);
+        player2UI.setMinutes(parseTurnTime());
 
         right.setSpacing(350);
         right.setAlignment(Pos.CENTER);
