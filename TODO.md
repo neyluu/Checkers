@@ -3,7 +3,7 @@
   * Pop-up with information which player win
   * Play again button
 * GUI rework
-  * Visual information which player`s turn now
+  * Gameover windows icon
 
 BUGS:
   * when Piece is promoted to King and can beat next piece, theres no moves that this piece can do and game is frozen

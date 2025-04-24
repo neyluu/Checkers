@@ -69,4 +69,16 @@ public class PlayerUI extends VBox
     {
         return turnTimer.isFinished();
     }
+
+    public void highlight()
+    {
+        this.setStyle("-fx-background-color: rgb(123,123,123);" +
+                      "-fx-border-color: red;" +
+                      "-fx-border-width: 3px");
+    }
+    public void unHighlight()
+    {
+        this.setStyle("-fx-background-color: rgb(123,123,123);" +
+                      "-fx-border-color: none;");
+    }
 }

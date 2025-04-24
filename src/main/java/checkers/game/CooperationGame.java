@@ -28,6 +28,7 @@ public class CooperationGame extends Game
     {
         player2UI.startTimer();
         player1UI.stopTimer();
+        player2UI.highlight();
         watchTimers();
         turn();
     }
@@ -149,6 +150,8 @@ public class CooperationGame extends Game
             currentTurn = PieceType.BLACK;
             player1UI.startTimer();
             player2UI.stopTimer();
+            player1UI.highlight();
+            player2UI.unHighlight();
             System.out.println("Black turn");
         }
         else if(currentTurn == PieceType.BLACK)
@@ -161,6 +164,8 @@ public class CooperationGame extends Game
             currentTurn = PieceType.WHITE;
             player2UI.startTimer();
             player1UI.stopTimer();
+            player2UI.highlight();
+            player1UI.unHighlight();
             System.out.println("White turn");
         }
         turn();
