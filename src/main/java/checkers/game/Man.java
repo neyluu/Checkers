@@ -5,10 +5,14 @@ import java.util.List;
 
 public class Man extends Piece
 {
-    public Man(int size)
+    public Man(int size, PieceType type)
     {
-        super(size);
+        super(size, type);
         isKing = false;
+
+        if(isWhite())   textureName = "whiteMan.png";
+        else            textureName = "blackMan.png";
+        createStyle();
     }
 
     @Override

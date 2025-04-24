@@ -1,7 +1,10 @@
 package checkers.game;
 
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 
+import java.net.URL;
 import java.util.List;
 
 public abstract class Piece extends Button
@@ -9,13 +12,15 @@ public abstract class Piece extends Button
     protected boolean isKing;
     protected Player owner;
     protected PieceType type = null;
+    protected String textureName = "whiteMan.png";
     protected int x;
     protected int y;
     protected int size;
 
-    public Piece(int size)
+    public Piece(int size, PieceType type)
     {
         this.size = size;
+        this.type = type;
         this.setMinHeight(this.size);
         this.setMinWidth(this.size);
         this.setStyle("-fx-background-radius: 50%;");
@@ -49,31 +54,25 @@ public abstract class Piece extends Button
         this.y = y;
     }
 
-    public void setType(PieceType type)
+    protected void createStyle()
     {
-        this.type = type;
-        if(type == PieceType.MAN_WHITE || type == PieceType.KING_WHITE)
+        URL url = getClass().getResource("/assets/" + textureName);
+        if (url != null)
         {
-            this.setStyle("-fx-background-color: rgb(255,255,255);" + this.getStyle());
+        this.setStyle(
+                "-fx-background-color: transparent;" +
+                "-fx-background-image: url('" + url.toExternalForm() + "');" +
+                "-fx-background-repeat: no-repeat;" +
+                "-fx-background-position: center center;" +
+                "-fx-background-size: cover;" +
+                "-fx-background-radius: 50%;"
+            );
         }
-        else
-        {
-            this.setStyle("-fx-background-color: rgb(0,0,0);" + this.getStyle());
-        }
+        else System.out.println("Image dont exist!");
     }
 
     public abstract List<Position[]> getValidMoves(Board board);
     public abstract List<Position[]> getBeatMoves(Board board);
-
-
-//    public void promote()
-//    {
-//        isKing = true;
-//    }
-//    public boolean isKing()
-//    {
-//        return isKing;
-//    }
 
     public boolean isType(PieceType type)
     {

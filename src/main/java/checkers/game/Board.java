@@ -134,8 +134,7 @@ public class Board extends GridPane
         {
             if ((row + col) % 2 == 1)
             {
-                Piece piece = new Man(cellSize - 10);
-                piece.setType(type);
+                Piece piece = new Man(cellSize, type);
                 piece.setX(col);
                 piece.setY(row);
                 cells[col][row].setPiece(piece);

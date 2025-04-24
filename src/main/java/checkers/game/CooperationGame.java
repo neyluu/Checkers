@@ -57,13 +57,9 @@ public class CooperationGame extends Game
                         System.out.println(pos[0].x + " " + pos[0].y);
                         if(piece.isOnKingCells())
                         {
-                            King king = new King(piece.getSize());
-                            king.setType(piece.getType());
+                            King king = new King(piece.getSize(), piece.getType());
                             king.setX(piece.getX());
                             king.setY(piece.getY());
-//                            king.setStyle("-fx-background-color: rgb(255,0,255);" +
-//                                          "-fx-background-radius: 50%;");
-
                             cell.clearPiece();
                             cell.setPiece(king);
                         }
