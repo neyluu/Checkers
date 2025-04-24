@@ -112,7 +112,9 @@ public class Cooperation extends SceneBase
         }
         if(alertResult.equals(playAgain))
         {
-//            sceneManager.setScene(SceneType.COOPERATION);
+            game.reset();
+            startGame();
+            listenForMessage();
         }
     }
 

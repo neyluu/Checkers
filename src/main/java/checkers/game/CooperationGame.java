@@ -33,6 +33,12 @@ public class CooperationGame extends Game
         turn();
     }
 
+    public void reset()
+    {
+        board.clearBoard();
+        currentTurn = PieceType.WHITE;
+    }
+
     private void watchTimers()
     {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r ->

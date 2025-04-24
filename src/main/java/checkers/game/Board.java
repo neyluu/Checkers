@@ -88,7 +88,7 @@ public class Board extends GridPane
         return isInBounds(pos.x, pos.y);
     }
 
-    private void clearBoard()
+    public void clearBoard()
     {
         initCells();
         initPieces();
