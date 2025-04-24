@@ -18,7 +18,7 @@ public class TurnTimer extends Text
     {
         setMinutes(minutes);
 
-        Timer timer = new Timer();
+        Timer timer = new Timer(true);
 
         TimerTask task = new TimerTask()
         {
@@ -38,7 +38,9 @@ public class TurnTimer extends Text
             }
         };
 
-        timer.scheduleAtFixedRate(task, 1000, 1000);
+        Thread thread = new Thread(() -> timer.scheduleAtFixedRate(task, 1000, 1000));
+        thread.setDaemon(true);
+        thread.start();
     }
 
     synchronized public boolean isFinished()

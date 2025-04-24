@@ -35,7 +35,12 @@ public class CooperationGame extends Game
 
     private void watchTimers()
     {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r ->
+        {
+            Thread thread = new Thread(r);
+            thread.setDaemon(true);
+            return thread;
+        });
         scheduler.scheduleAtFixedRate(() ->
         {
             if (player1UI.isTimerFinished() || player2UI.isTimerFinished())

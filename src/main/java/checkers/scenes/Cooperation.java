@@ -56,12 +56,14 @@ public class Cooperation extends SceneBase
 
     private void startGame()
     {
-        new Thread(() -> game.start()).start();
+        Thread thread = new Thread(() -> game.start());
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void listenForMessage()
     {
-        new Thread(() ->
+        Thread thread = new Thread(() ->
         {
             synchronized (lock)
             {
@@ -77,7 +79,10 @@ public class Cooperation extends SceneBase
             }
 
             Platform.runLater(this::showWinAlert);
-        }).start();
+        });
+
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void showWinAlert()
