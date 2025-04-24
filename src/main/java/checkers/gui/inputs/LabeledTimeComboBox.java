@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 
 public class LabeledTimeComboBox extends VBox
 {
-    private final String[] times = {"unlimited", "1min", "2 min", "5 min", "10 min"};
+    private final String[] times = {"unlimited", "1 min", "2 min", "5 min", "10 min"};
     private final ComboBox<String> comboBox = new ComboBox<>();
     private final Text label = new Text("Choose time for turn:");
 
@@ -29,5 +29,10 @@ public class LabeledTimeComboBox extends VBox
         this.getChildren().addAll(label, comboBox);
         this.setAlignment(Pos.CENTER);
         this.setSpacing(10);
+    }
+
+    public ComboBox<String> getComboBox()
+    {
+        return comboBox;
     }
 }

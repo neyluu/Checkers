@@ -4,8 +4,8 @@ import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -15,6 +15,8 @@ public class CooperationIntro extends SceneBase
     private VBox layout = new VBox();
     private TextField player1;
     private TextField player2;
+    ComboBox<String> turnTime;
+
 
     public CooperationIntro()
     {
@@ -44,7 +46,8 @@ public class CooperationIntro extends SceneBase
         MenuButton backButton = new MenuButton("Back");
         addEventsToButtons(playButton, backButton);
 
-        Node comboBox = new LabeledTimeComboBox();
+        LabeledTimeComboBox comboBox = new LabeledTimeComboBox();
+        turnTime = comboBox.getComboBox();
 
         layout.getChildren().add(comboBox);
         layout.getChildren().add(playButton);
@@ -63,7 +66,7 @@ public class CooperationIntro extends SceneBase
                 if(player1Username.isEmpty()) player1Username = "Player 1";
                 if(player2Username.isEmpty()) player2Username = "Player 2";
 
-                Cooperation cooperation = new Cooperation(player1Username, player2Username);
+                Cooperation cooperation = new Cooperation(player1Username, player2Username, turnTime.getValue());
                 sceneManager.addScene(cooperation);
                 sceneManager.setScene(SceneType.COOPERATION);
             }

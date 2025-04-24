@@ -17,6 +17,7 @@ public class Cooperation extends SceneBase
 {
     private String player1Username;
     private String player2Username;
+    private String turnTime;
 
     private HBox layout = new HBox();
     private CooperationGame game;
@@ -26,10 +27,11 @@ public class Cooperation extends SceneBase
     private final double sizeMiddle = (settings.screenWidth / 2) + 100;
     private final double sizeSidePanel = (settings.screenWidth - sizeMiddle) / 2;
 
-    public Cooperation(String username1, String username2)
+    public Cooperation(String username1, String username2, String turnTime)
     {
-        player1Username = username1;
-        player2Username = username2;
+        this.player1Username = username1;
+        this.player2Username = username2;
+        this.turnTime = turnTime;
         game = new CooperationGame(lock);
 
         type = SceneType.COOPERATION;
@@ -40,6 +42,23 @@ public class Cooperation extends SceneBase
 
         setScene();
 
+        listenForMessage();
+        startGame();
+    }
+
+    @Override
+    protected void setScene()
+    {
+        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
+    }
+
+    private void startGame()
+    {
+        new Thread(() -> game.start()).start();
+    }
+
+    private void listenForMessage()
+    {
         new Thread(() ->
         {
             synchronized (lock)
@@ -57,14 +76,6 @@ public class Cooperation extends SceneBase
 
             Platform.runLater(this::showWinAlert);
         }).start();
-
-        new Thread(() -> game.start()).start();
-    }
-
-    @Override
-    protected void setScene()
-    {
-        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
     }
 
     public void showWinAlert()
@@ -125,16 +136,6 @@ public class Cooperation extends SceneBase
         middle.setAlignment(Pos.CENTER);
         middle.getChildren().add(boardContainer);
 
-        // TODO TMP
-//        VBox board = new VBox();
-//        {
-//            board.setStyle("-fx-background-color: rgb(230, 20, 50);");
-//            board.setMinWidth(650);
-//            board.setMaxWidth(650);
-//            board.setMinHeight(650);
-//            board.setMaxHeight(650);
-//        }
-
         layout.getChildren().add(middle);
     }
     private void initRightPanel()
@@ -145,13 +146,28 @@ public class Cooperation extends SceneBase
         right.setMinHeight(300);
         right.setMinWidth(sizeSidePanel);
 
-        PlayerUI player1UI = new PlayerUI(player1Username);
-        PlayerUI player2UI = new PlayerUI(player2Username);
+        PlayerUI player1UI = new PlayerUI(player1Username, parseTurnTime());
+        PlayerUI player2UI = new PlayerUI(player2Username, parseTurnTime());
 
         right.setSpacing(350);
         right.setAlignment(Pos.CENTER);
         right.getChildren().addAll(player1UI, player2UI);
 
         layout.getChildren().add(right);
+    }
+
+    private int parseTurnTime()
+    {
+        String[] tokens = turnTime.split(" ");
+
+        if(tokens[0].equals("unlimited")) return -1;
+        else
+        {
+            try
+            {
+                return Integer.parseInt(tokens[0]);
+            }
+            catch (Exception e) { return 0; }
+        }
     }
 }
