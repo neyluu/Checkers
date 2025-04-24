@@ -10,12 +10,15 @@ public class TurnTimer extends Text
 {
     private final int seconds;
     private int currentSeconds;
+    private final int change;
+    private int currentChange;
 
     public TurnTimer(int minutes)
     {
         this.seconds = minutes * 60;
         this.currentSeconds = (minutes == -1) ? 0 : this.seconds;
-        int change = (minutes == -1) ? 1 : -1;
+        this.change = (minutes == -1) ? 1 : -1;
+        this.currentChange = 0;
 
         Timer timer = new Timer();
 
@@ -25,7 +28,7 @@ public class TurnTimer extends Text
             public void run()
             {
                 System.out.println(currentSeconds);
-                currentSeconds += change;
+                currentSeconds += currentChange;
                 if(currentSeconds < 0) timer.cancel();
                 TurnTimer.this.setText(formatTime());
             }
@@ -36,11 +39,11 @@ public class TurnTimer extends Text
 
     public void start()
     {
-
+        this.currentChange = this.change;
     }
     public void stop()
     {
-
+        this.currentChange = 0;
     }
 
     private String formatTime()
