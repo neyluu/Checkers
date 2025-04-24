@@ -2,6 +2,7 @@ package checkers;
 
 import checkers.scenes.*;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class Checkers extends Application
         stage.setMinHeight(settings.screenHeight);
         stage.setResizable(false);
         stage.setScene(sceneManager.getCurrentScene());
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icon.png")));
         stage.show();
     }
 
