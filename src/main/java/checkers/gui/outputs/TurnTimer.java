@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 public class TurnTimer extends Text
 {
+    private int minutes = 0;
     private int seconds = 0;
     private int currentSeconds = 0;
     private int change = 0;
@@ -83,9 +84,16 @@ public class TurnTimer extends Text
     public void setMinutes(int minutes)
     {
         this.seconds = minutes * 60;
+        this.minutes = minutes;
         this.currentSeconds = (minutes == -1) ? 0 : this.seconds;
         this.change = (minutes == -1) ? 1 : -1;
         this.currentChange = 0;
         this.setText(formatTime());
+    }
+
+    public void reset()
+    {
+        setMinutes(minutes);
+        finished = false;
     }
 }

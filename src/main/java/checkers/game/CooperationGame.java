@@ -36,6 +36,8 @@ public class CooperationGame extends Game
     public void reset()
     {
         board.clearBoard();
+        player1UI.resetTimer();
+        player2UI.resetTimer();
         currentTurn = PieceType.WHITE;
     }
 
@@ -187,6 +189,8 @@ public class CooperationGame extends Game
 
     private void gameOver()
     {
+        player1UI.stopTimer();
+        player2UI.stopTimer();
         synchronized(lock)
         {
             lock.notify();

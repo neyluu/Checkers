@@ -81,4 +81,8 @@ public class PlayerUI extends VBox
         this.setStyle("-fx-background-color: rgb(123,123,123);" +
                       "-fx-border-color: none;");
     }
+    public void resetTimer()
+    {
+        turnTimer.reset();
+    }
 }
