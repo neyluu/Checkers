@@ -5,5 +5,5 @@
   * Gameover windows icon
 
 BUGS:
-  * when Piece is promoted to King and can beat next piece, theres no moves that this piece can do and game is frozen
   * White king is darker than Man
+  * Down player timer dont work, when game is restarted after gameover caused by left time
