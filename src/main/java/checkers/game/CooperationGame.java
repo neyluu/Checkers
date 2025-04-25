@@ -93,14 +93,17 @@ public class CooperationGame extends Game
                     cell.setOnMouseClicked(e2 ->
                     {
                         board.movePiece(new Position(piece.getX(), piece.getY()), pos[0]);
-                        System.out.println(pos[0].x + " " + pos[0].y);
-                        if(piece.isOnKingCells())
+
+                        Piece currentPiece = piece;
+
+                        if(currentPiece.isOnKingCells())
                         {
-                            King king = new King(piece.getSize(), piece.getType());
-                            king.setX(piece.getX());
-                            king.setY(piece.getY());
+                            King king = new King(currentPiece.getSize(), currentPiece.getType());
+                            king.setX(currentPiece.getX());
+                            king.setY(currentPiece.getY());
                             cell.clearPiece();
                             cell.setPiece(king);
+                            currentPiece = king;
                         }
 
                         clearEvents(null, movesData, true);
@@ -108,7 +111,7 @@ public class CooperationGame extends Game
                         if(isBeatMoves)
                         {
                             board.removePiece(pos[1]);
-                            nextBeats(piece);
+                            nextBeats(currentPiece);
                         }
                         else changeTurn();
                     });
