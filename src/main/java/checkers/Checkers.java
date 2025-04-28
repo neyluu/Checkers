@@ -23,7 +23,7 @@ public class Checkers extends Application
         stage.setMinHeight(settings.screenHeight);
         stage.setResizable(false);
         stage.setScene(sceneManager.getCurrentScene());
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icon.png")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(settings.iconPath)));
         stage.show();
     }
 

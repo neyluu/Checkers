@@ -1,9 +1,6 @@
 package checkers.game;
 
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-
 import java.net.URL;
 import java.util.List;
 
@@ -66,7 +63,7 @@ public abstract class Piece extends Button
                 "-fx-background-radius: 50%;"
             );
         }
-        else System.out.println("Image dont exist!");
+        else System.err.println("Image dont exist!");
     }
 
     public abstract List<Position[]> getValidMoves(Board board);
