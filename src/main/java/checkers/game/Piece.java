@@ -1,16 +1,11 @@
 package checkers.game;
 
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-
 import java.net.URL;
 import java.util.List;
 
 public abstract class Piece extends Button
 {
-    protected boolean isKing;
-    protected Player owner;
     protected PieceType type = null;
     protected String textureName = "whiteMan.png";
     protected int x;
@@ -59,7 +54,7 @@ public abstract class Piece extends Button
         URL url = getClass().getResource("/assets/" + textureName);
         if (url != null)
         {
-        this.setStyle(
+            this.setStyle(
                 "-fx-background-color: transparent;" +
                 "-fx-background-image: url('" + url.toExternalForm() + "');" +
                 "-fx-background-repeat: no-repeat;" +
@@ -68,7 +63,7 @@ public abstract class Piece extends Button
                 "-fx-background-radius: 50%;"
             );
         }
-        else System.out.println("Image dont exist!");
+        else System.err.println("Image dont exist!");
     }
 
     public abstract List<Position[]> getValidMoves(Board board);

@@ -67,7 +67,6 @@ public class Cooperation extends SceneBase
         {
             synchronized (lock)
             {
-
                 try
                 {
                     lock.wait();

@@ -49,44 +49,25 @@ public class CooperationIntro extends SceneBase
         LabeledTimeComboBox comboBox = new LabeledTimeComboBox();
         turnTime = comboBox.getComboBox();
 
-        layout.getChildren().add(comboBox);
-        layout.getChildren().add(playButton);
-        layout.getChildren().add(backButton);
+        layout.getChildren().addAll(comboBox, playButton, backButton);
     }
 
     private void addEventsToButtons(MenuButton playButton,  MenuButton backButton)
     {
-        playButton.setEvent(e ->
+        playButton.setOnAction(e ->
         {
-            try
-            {
-                String player1Username = player1.getText();
-                String player2Username = player2.getText();
+            String player1Username = player1.getText();
+            String player2Username = player2.getText();
 
-                if(player1Username.isEmpty()) player1Username = "Player 1";
-                if(player2Username.isEmpty()) player2Username = "Player 2";
+            if(player1Username.isEmpty()) player1Username = "Player 1";
+            if(player2Username.isEmpty()) player2Username = "Player 2";
 
-                Cooperation cooperation = new Cooperation(player1Username, player2Username, turnTime.getValue());
-                sceneManager.addScene(cooperation);
-                sceneManager.setScene(SceneType.COOPERATION);
-            }
-            catch(IndexOutOfBoundsException ex)
-            {
-                System.err.println("Scene index is out of bound!");
-            }
+            Cooperation cooperation = new Cooperation(player1Username, player2Username, turnTime.getValue());
+            sceneManager.addScene(cooperation);
+            sceneManager.setScene(SceneType.COOPERATION);
         });
 
-        backButton.setEvent(e ->
-        {
-            try
-            {
-                sceneManager.setScene(SceneType.MAIN_MENU);
-            }
-            catch(IndexOutOfBoundsException ex)
-            {
-                System.err.println("Scene index is out of bound!");
-            }
-        });
+        backButton.setOnAction(e -> sceneManager.setScene(SceneType.MAIN_MENU));
     }
 
     private void initPlayerUsernameInputs()

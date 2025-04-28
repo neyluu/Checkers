@@ -68,12 +68,12 @@ public class CooperationGame extends Game
 
     private void turn()
     {
-        Map<Piece, List<Position[]>> beatMoves = board.getPiecesThatCanBeat(currentTurn);
+        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
         createMoves(beatMoves, true);
 
         if(!beatMoves.isEmpty()) return;
 
-        Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn);
+        Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn, false);
         createMoves(normalMoves, false);
     }
 
