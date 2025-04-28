@@ -4,7 +4,6 @@ import checkers.exceptions.CellHavePieceException;
 import checkers.exceptions.PieceNotFoundException;
 import javafx.scene.layout.GridPane;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,22 +177,27 @@ public class Board extends GridPane
     }
 
 
-    public Map<Piece, List<Position[]>> getPiecesWithValidMoves(PieceType type)
+    public Map<Piece, List<Position[]>> getPiecesWithValidMoves(PieceType type, boolean isBeatMoves)
     {
         Map<Piece, List<Position[]>> data = new HashMap<>();
 
-        for(Cell[] cellRow : cells)
+        for(Cell[] cellsRow : cells)
         {
-            for(Cell cell : cellRow)
+            for(Cell cell : cellsRow)
             {
                 Piece piece = cell.getPiece();
                 if(piece == null ||
                    type == PieceType.WHITE && piece.isBlack() ||
                    type == PieceType.BLACK && piece.isWhite())
                 {
-                   continue;
+                    continue;
                 }
-                List<Position[]> validMoves = piece.getValidMoves(this);
+
+                List<Position[]> validMoves;
+
+                if(isBeatMoves) validMoves = piece.getBeatMoves(this);
+                else            validMoves = piece.getValidMoves(this);
+
                 if(validMoves.isEmpty()) continue;
                 data.put(piece, validMoves);
             }
@@ -201,29 +205,4 @@ public class Board extends GridPane
 
         return data;
     }
-
-    public Map<Piece, List<Position[]>> getPiecesThatCanBeat(PieceType type)
-    {
-        Map<Piece, List<Position[]>> data = new HashMap<>();
-
-        for(Cell[] cellRow : cells)
-        {
-            for(Cell cell : cellRow)
-            {
-                Piece piece = cell.getPiece();
-                if(piece == null ||
-                        type == PieceType.WHITE && piece.isBlack() ||
-                        type == PieceType.BLACK && piece.isWhite())
-                {
-                    continue;
-                }
-                List<Position[]> beatMoves = piece.getBeatMoves(this);
-                if(beatMoves.isEmpty()) continue;
-                data.put(piece, beatMoves);
-            }
-        }
-
-        return data;
-    }
-
 }

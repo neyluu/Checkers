@@ -49,29 +49,16 @@ public class MainMenu extends SceneBase
         layout.getChildren().add(title);
     }
 
-        private void initButtons()
-        {
-            MenuButton coopButton         = new MenuButton("Cooperation", 250);
-            MenuButton singleplayerButton = new MenuButton("Singleplayer", 350);
-            MenuButton multiplayerButton  = new MenuButton("Multiplayer", 450);
-            MenuButton exitButton         = new MenuButton("Exit", 550);
+    private void initButtons()
+    {
+        MenuButton coopButton         = new MenuButton("Cooperation", 250);
+        MenuButton singleplayerButton = new MenuButton("Singleplayer", 350);
+        MenuButton multiplayerButton  = new MenuButton("Multiplayer", 450);
+        MenuButton exitButton         = new MenuButton("Exit", 550);
 
-        coopButton.setEvent(e ->
-        {
-            try
-            {
-                sceneManager.setScene(SceneType.COOPERATION_INTRO);
-            }
-            catch(IndexOutOfBoundsException ex)
-            {
-                System.err.println("Scene index is out of bound!");
-            }
-        });
-        exitButton.setEvent(e -> Platform.exit());
+        coopButton.setOnAction(e -> sceneManager.setScene(SceneType.COOPERATION_INTRO));
+        exitButton.setOnAction(e -> Platform.exit());
 
-        layout.getChildren().add(coopButton);
-        layout.getChildren().add(singleplayerButton);
-        layout.getChildren().add(multiplayerButton);
-        layout.getChildren().add(exitButton);
+        layout.getChildren().addAll(coopButton, singleplayerButton, multiplayerButton, exitButton);
     }
 }

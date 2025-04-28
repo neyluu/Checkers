@@ -1,8 +1,6 @@
 package checkers.gui.buttons;
 
 import checkers.Settings;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -28,10 +26,5 @@ public class MenuButton extends Button
     {
         this(text);
         this.setLayoutY(posY);
-    }
-
-    public void setEvent(EventHandler<ActionEvent> event)
-    {
-        this.setOnAction(event);
     }
 }

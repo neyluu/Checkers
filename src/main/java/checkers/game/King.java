@@ -8,7 +8,6 @@ public class King extends Piece
     public King(int size, PieceType type)
     {
         super(size, type);
-        isKing = true;
 
         if(isWhite())   textureName = "whiteKing.png";
         else            textureName = "blackKing.png";

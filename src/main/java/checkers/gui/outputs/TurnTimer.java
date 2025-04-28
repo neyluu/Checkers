@@ -27,13 +27,12 @@ public class TurnTimer extends Text
             public void run()
             {
                 if (currentChange == 0) return;
-
+                System.out.println(currentChange);
                 currentSeconds += currentChange;
                 if(currentSeconds < 0)
                 {
                     TurnTimer.this.setFill(Color.rgb(200, 30, 30));
                     finished = true;
-                    timer.cancel();
                 }
                 TurnTimer.this.setText(formatTime());
             }
@@ -94,6 +93,7 @@ public class TurnTimer extends Text
     public void reset()
     {
         setMinutes(minutes);
+        this.setFill(Color.BLACK);
         finished = false;
     }
 }
