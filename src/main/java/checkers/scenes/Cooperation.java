@@ -1,11 +1,12 @@
 package checkers.scenes;
 
+import checkers.Settings;
 import checkers.game.CooperationGame;
 import checkers.game.PieceType;
 import checkers.gui.outputs.PlayerUI;
+import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -19,39 +20,36 @@ public class Cooperation extends SceneBase
     private String player2Username;
     private String turnTime;
 
-    private HBox layout = new HBox();
-    private CooperationGame game;
+    private HBox row = new HBox();
 
+    private CooperationGame game;
     private PlayerUI player1UI = new PlayerUI();
     private PlayerUI player2UI = new PlayerUI();
 
     private final Object lock = new Object();
 
-    private final double sizeMiddle = (settings.screenWidth / 2) + 100;
-    private final double sizeSidePanel = (settings.screenWidth - sizeMiddle) / 2;
+    private final double sizeMiddlePanel = (Settings.screenWidth / 2) + 100;
+    private final double sizeSidePanel = (Settings.screenWidth - sizeMiddlePanel) / 2;
 
-    public Cooperation(String username1, String username2, String turnTime)
+    public Cooperation()
     {
-        this.player1Username = username1;
-        this.player2Username = username2;
-        this.turnTime = turnTime;
+        this.player1Username = Settings.player1Username;
+        this.player2Username = Settings.player2Username;
+        this.turnTime = Settings.turnTime;
 
-        type = SceneType.COOPERATION;
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
+        layout.setAlignment(Pos.CENTER);
+        layout.setPrefHeight(Settings.screenHeight);
+        layout.setPrefWidth(Settings.screenWidth);
 
         game = new CooperationGame(lock, player1UI, player2UI);
         
         initLayout();
-        setScene();
+
+        layout.getChildren().add(row);
 
         startGame();
         listenForMessage();
-    }
-
-    @Override
-    protected void setScene()
-    {
-        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
     }
 
     private void startGame()
@@ -130,7 +128,7 @@ public class Cooperation extends SceneBase
         left.setStyle("-fx-background-color: rgb(25,25,25);");
         left.setMinWidth(sizeSidePanel);
 
-        layout.getChildren().add(left);
+        row.getChildren().add(left);
     }
     private void initMiddlePanel()
     {
@@ -140,11 +138,11 @@ public class Cooperation extends SceneBase
         boardContainer.setAlignment(Pos.CENTER);
 
         middle.setStyle("-fx-background-color: rgb(25,25,25);");
-        middle.setMinWidth(sizeMiddle);
+        middle.setMinWidth(sizeMiddlePanel);
         middle.setAlignment(Pos.CENTER);
         middle.getChildren().add(boardContainer);
 
-        layout.getChildren().add(middle);
+        row.getChildren().add(middle);
     }
     private void initRightPanel()
     {
@@ -163,7 +161,7 @@ public class Cooperation extends SceneBase
         right.setAlignment(Pos.CENTER);
         right.getChildren().addAll(player1UI, player2UI);
 
-        layout.getChildren().add(right);
+        row.getChildren().add(right);
     }
 
     private int parseTurnTime()

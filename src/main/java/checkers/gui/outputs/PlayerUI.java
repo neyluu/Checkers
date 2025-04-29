@@ -11,8 +11,7 @@ import javafx.scene.text.Text;
 
 public class PlayerUI extends VBox
 {
-    private Settings settings = new Settings();
-    private final double panelWidth = (settings.screenWidth - ((settings.screenWidth / 2) + 100)) / 2;
+    private final double panelWidth = (Settings.screenWidth - ((Settings.screenWidth / 2) + 100)) / 2;
 
     private TurnTimer turnTimer;
     private Text text;

@@ -1,21 +1,18 @@
 package checkers.scenes;
 
 import checkers.Settings;
+import checkers.scenes.utils.SceneManager;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 
-abstract public class SceneBase
+abstract public class SceneBase extends Scene
 {
-    protected Settings settings = new Settings();
     protected SceneManager sceneManager = SceneManager.getInstance();
-    protected Scene scene = null;
-    protected SceneType type = null;
+    protected VBox layout = null;
 
-    // Should be called at the end of constructor, after initializing all elements
-    abstract protected void setScene();
-
-    public Scene getScene()
+    protected SceneBase()
     {
-        return scene;
+        super(new VBox(), Settings.screenWidth, Settings.screenHeight);
+        this.layout = (VBox) getRoot();
     }
-    public SceneType getType() { return type; }
 }
