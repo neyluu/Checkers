@@ -35,6 +35,9 @@ public class Checkers extends Application
         CooperationIntro cooperationIntro = new CooperationIntro();
         sceneManager.addScene(cooperationIntro);
 
+        MultiplayerIntro multiplayerIntro = new MultiplayerIntro();
+        sceneManager.addScene(multiplayerIntro);
+
         sceneManager.setScene(SceneType.MAIN_MENU);
     }
 
