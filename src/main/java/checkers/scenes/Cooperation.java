@@ -21,7 +21,8 @@ public class Cooperation extends SceneBase
     private String player2Username;
     private String turnTime;
 
-    private HBox layout = new HBox();
+    private HBox row = new HBox();
+    private VBox layout = new VBox();
     private CooperationGame game;
 
     private PlayerUI player1UI = new PlayerUI();
@@ -43,10 +44,16 @@ public class Cooperation extends SceneBase
         System.out.println(turnTime);
 
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
+        layout.setAlignment(Pos.CENTER);
+        layout.setPrefHeight(Settings.screenHeight);
+        layout.setPrefWidth(Settings.screenWidth);
 
         game = new CooperationGame(lock, player1UI, player2UI);
         
         initLayout();
+
+        layout.getChildren().add(row);
+
         setScene();
 
         startGame();
@@ -56,7 +63,7 @@ public class Cooperation extends SceneBase
     @Override
     protected void setScene()
     {
-        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
+        scene = new Scene(layout, Settings.screenWidth, Settings.screenHeight);
     }
 
     private void startGame()
@@ -135,7 +142,7 @@ public class Cooperation extends SceneBase
         left.setStyle("-fx-background-color: rgb(25,25,25);");
         left.setMinWidth(sizeSidePanel);
 
-        layout.getChildren().add(left);
+        row.getChildren().add(left);
     }
     private void initMiddlePanel()
     {
@@ -149,7 +156,7 @@ public class Cooperation extends SceneBase
         middle.setAlignment(Pos.CENTER);
         middle.getChildren().add(boardContainer);
 
-        layout.getChildren().add(middle);
+        row.getChildren().add(middle);
     }
     private void initRightPanel()
     {
@@ -168,7 +175,7 @@ public class Cooperation extends SceneBase
         right.setAlignment(Pos.CENTER);
         right.getChildren().addAll(player1UI, player2UI);
 
-        layout.getChildren().add(right);
+        row.getChildren().add(right);
     }
 
     private int parseTurnTime()
