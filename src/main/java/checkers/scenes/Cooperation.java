@@ -28,18 +28,14 @@ public class Cooperation extends SceneBase
 
     private final Object lock = new Object();
 
-    private final double sizeMiddle = (Settings.screenWidth / 2) + 100;
-    private final double sizeSidePanel = (Settings.screenWidth - sizeMiddle) / 2;
+    private final double sizeMiddlePanel = (Settings.screenWidth / 2) + 100;
+    private final double sizeSidePanel = (Settings.screenWidth - sizeMiddlePanel) / 2;
 
     public Cooperation()
     {
         this.player1Username = Settings.player1Username;
         this.player2Username = Settings.player2Username;
         this.turnTime = Settings.turnTime;
-
-        System.out.println(player1Username);
-        System.out.println(player2Username);
-        System.out.println(turnTime);
 
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setAlignment(Pos.CENTER);
@@ -142,7 +138,7 @@ public class Cooperation extends SceneBase
         boardContainer.setAlignment(Pos.CENTER);
 
         middle.setStyle("-fx-background-color: rgb(25,25,25);");
-        middle.setMinWidth(sizeMiddle);
+        middle.setMinWidth(sizeMiddlePanel);
         middle.setAlignment(Pos.CENTER);
         middle.getChildren().add(boardContainer);
 

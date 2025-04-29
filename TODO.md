@@ -6,4 +6,3 @@
 
 BUGS:
   * White king is darker than Man
-  * Down player timer dont work, when game is restarted after gameover caused by left time
