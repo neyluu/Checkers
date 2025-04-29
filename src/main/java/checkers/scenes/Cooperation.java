@@ -4,6 +4,7 @@ import checkers.Settings;
 import checkers.game.CooperationGame;
 import checkers.game.PieceType;
 import checkers.gui.outputs.PlayerUI;
+import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

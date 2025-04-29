@@ -1,4 +1,6 @@
-package checkers.scenes;
+package checkers.scenes.utils;
+
+import checkers.scenes.*;
 
 public class SceneFactory
 {

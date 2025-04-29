@@ -2,6 +2,7 @@ package checkers.scenes;
 
 import checkers.Settings;
 import checkers.gui.buttons.MenuButton;
+import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

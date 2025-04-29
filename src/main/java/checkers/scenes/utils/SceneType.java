@@ -1,4 +1,4 @@
-package checkers.scenes;
+package checkers.scenes.utils;
 
 public enum SceneType
 {

@@ -1,5 +1,6 @@
-package checkers.scenes;
+package checkers.scenes.utils;
 
+import checkers.scenes.SceneBase;
 import javafx.stage.Stage;
 
 public class SceneManager

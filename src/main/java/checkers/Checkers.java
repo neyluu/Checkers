@@ -1,6 +1,7 @@
 package checkers;
 
-import checkers.scenes.*;
+import checkers.scenes.utils.SceneManager;
+import checkers.scenes.utils.SceneType;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
