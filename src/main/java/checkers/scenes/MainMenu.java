@@ -6,8 +6,6 @@ import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -15,8 +13,6 @@ import javafx.scene.text.Text;
 
 public class MainMenu extends SceneBase
 {
-    private final VBox layout = new VBox();
-
     public MainMenu()
     {
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
@@ -25,14 +21,6 @@ public class MainMenu extends SceneBase
         layout.setAlignment(Pos.CENTER);
         initText();
         initButtons();
-
-        setScene();
-    }
-
-    @Override
-    protected void setScene()
-    {
-        scene = new Scene(layout, Settings.screenWidth, Settings.screenHeight);
     }
 
     private void initText()

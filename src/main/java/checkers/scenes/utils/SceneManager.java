@@ -25,6 +25,6 @@ public class SceneManager
     public void setScene(SceneType newScene)
     {
         SceneBase scene = sceneFactory.createScene(newScene);
-        stage.setScene(scene.getScene());
+        stage.setScene(scene);
     }
 }

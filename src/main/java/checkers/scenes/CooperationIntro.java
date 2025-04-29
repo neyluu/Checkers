@@ -6,19 +6,15 @@ import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 public class CooperationIntro extends SceneBase
 {
-    private VBox layout = new VBox();
     private TextField player1;
     private TextField player2;
     ComboBox<String> turnTime;
-
 
     public CooperationIntro()
     {
@@ -29,15 +25,6 @@ public class CooperationIntro extends SceneBase
 
         initPlayerUsernameInputs();
         initButtons();
-
-
-        setScene();
-    }
-
-    @Override
-    protected void setScene()
-    {
-        scene = new Scene(layout, Settings.screenWidth, Settings.screenHeight);
     }
 
     private void initButtons()

@@ -7,7 +7,6 @@ import checkers.gui.outputs.PlayerUI;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -22,9 +21,8 @@ public class Cooperation extends SceneBase
     private String turnTime;
 
     private HBox row = new HBox();
-    private VBox layout = new VBox();
-    private CooperationGame game;
 
+    private CooperationGame game;
     private PlayerUI player1UI = new PlayerUI();
     private PlayerUI player2UI = new PlayerUI();
 
@@ -54,16 +52,8 @@ public class Cooperation extends SceneBase
 
         layout.getChildren().add(row);
 
-        setScene();
-
         startGame();
         listenForMessage();
-    }
-
-    @Override
-    protected void setScene()
-    {
-        scene = new Scene(layout, Settings.screenWidth, Settings.screenHeight);
     }
 
     private void startGame()
