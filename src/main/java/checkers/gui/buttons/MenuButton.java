@@ -8,9 +8,8 @@ import javafx.scene.text.FontWeight;
 
 public class MenuButton extends Button
 {
-    private Settings settings = new Settings();
     private final int buttonWidth = 350;
-    private final double centerX = (double) settings.screenWidth / 2;
+    private final double centerX = (double) Settings.screenWidth / 2;
 
     public MenuButton(String text)
     {

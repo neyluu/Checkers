@@ -1,5 +1,6 @@
 package checkers.scenes;
 
+import checkers.Settings;
 import checkers.gui.buttons.MenuButton;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -17,8 +18,6 @@ public class MainMenu extends SceneBase
 
     public MainMenu()
     {
-        type = SceneType.MAIN_MENU;
-
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setPadding(new Insets(50, 50, 50, 50));
         layout.setSpacing(30);
@@ -32,7 +31,7 @@ public class MainMenu extends SceneBase
     @Override
     protected void setScene()
     {
-        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
+        scene = new Scene(layout, Settings.screenWidth, Settings.screenHeight);
     }
 
     private void initText()
@@ -43,7 +42,7 @@ public class MainMenu extends SceneBase
             title.setFill(Color.rgb(180,180,180));
             title.setFont(Font.font("Impact", FontWeight.NORMAL, 100));
             double textWidth = title.getLayoutBounds().getWidth();
-            double centerX = (double) settings.screenWidth / 2;
+            double centerX = (double) Settings.screenWidth / 2;
             title.setX(centerX - textWidth / 2);
         }
         layout.getChildren().add(title);

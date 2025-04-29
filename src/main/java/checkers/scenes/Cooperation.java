@@ -1,5 +1,6 @@
 package checkers.scenes;
 
+import checkers.Settings;
 import checkers.game.CooperationGame;
 import checkers.game.PieceType;
 import checkers.gui.outputs.PlayerUI;
@@ -27,16 +28,19 @@ public class Cooperation extends SceneBase
 
     private final Object lock = new Object();
 
-    private final double sizeMiddle = (settings.screenWidth / 2) + 100;
-    private final double sizeSidePanel = (settings.screenWidth - sizeMiddle) / 2;
+    private final double sizeMiddle = (Settings.screenWidth / 2) + 100;
+    private final double sizeSidePanel = (Settings.screenWidth - sizeMiddle) / 2;
 
-    public Cooperation(String username1, String username2, String turnTime)
+    public Cooperation()
     {
-        this.player1Username = username1;
-        this.player2Username = username2;
-        this.turnTime = turnTime;
+        this.player1Username = Settings.player1Username;
+        this.player2Username = Settings.player2Username;
+        this.turnTime = Settings.turnTime;
 
-        type = SceneType.COOPERATION;
+        System.out.println(player1Username);
+        System.out.println(player2Username);
+        System.out.println(turnTime);
+
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
 
         game = new CooperationGame(lock, player1UI, player2UI);

@@ -1,5 +1,6 @@
 package checkers.scenes;
 
+import checkers.Settings;
 import checkers.gui.buttons.MenuButton;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,8 +12,6 @@ public class MultiplayerCreateGame extends SceneBase
 
     public MultiplayerCreateGame()
     {
-        type = SceneType.MULTIPLAYER_CREATE_GAME;
-
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setAlignment(Pos.CENTER);
 
@@ -27,6 +26,6 @@ public class MultiplayerCreateGame extends SceneBase
     @Override
     protected void setScene()
     {
-        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
+        scene = new Scene(layout, Settings.screenWidth, Settings.screenHeight);
     }
 }

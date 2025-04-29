@@ -1,17 +1,13 @@
 package checkers.scenes;
 
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SceneManager
 {
-    private Stage stage = null;
     private static SceneManager instance = null;
-    private Map<SceneType, SceneBase> scenes = new HashMap<>();
-    private SceneType currentScene = SceneType.MAIN_MENU;
+
+    private Stage stage = null;
+    private final SceneFactory sceneFactory = new SceneFactory();
 
     private SceneManager() { }
     public static SceneManager getInstance()
@@ -25,19 +21,9 @@ public class SceneManager
         this.stage = stage;
     }
 
-    public void addScene(SceneBase scene)
-    {
-        scenes.put(scene.getType(), scene);
-    }
-
-    public Scene getCurrentScene()
-    {
-        return scenes.get(currentScene).getScene();
-    }
-
     public void setScene(SceneType newScene)
     {
-        currentScene = newScene;
-        stage.setScene(getCurrentScene());
+        SceneBase scene = sceneFactory.createScene(newScene);
+        stage.setScene(scene.getScene());
     }
 }

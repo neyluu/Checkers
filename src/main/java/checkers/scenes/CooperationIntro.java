@@ -1,5 +1,6 @@
 package checkers.scenes;
 
+import checkers.Settings;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
@@ -20,8 +21,6 @@ public class CooperationIntro extends SceneBase
 
     public CooperationIntro()
     {
-        type = SceneType.COOPERATION_INTRO;
-
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setAlignment(Pos.CENTER);
         layout.setSpacing(100);
@@ -37,7 +36,7 @@ public class CooperationIntro extends SceneBase
     @Override
     protected void setScene()
     {
-        scene = new Scene(layout, settings.screenWidth, settings.screenHeight);
+        scene = new Scene(layout, Settings.screenWidth, Settings.screenHeight);
     }
 
     private void initButtons()
@@ -59,11 +58,14 @@ public class CooperationIntro extends SceneBase
             String player1Username = player1.getText();
             String player2Username = player2.getText();
 
-            if(player1Username.isEmpty()) player1Username = "Player 1";
-            if(player2Username.isEmpty()) player2Username = "Player 2";
+            Settings.player1Username = player1Username;
+            Settings.player2Username = player2Username;
 
-            Cooperation cooperation = new Cooperation(player1Username, player2Username, turnTime.getValue());
-            sceneManager.addScene(cooperation);
+            if(player1Username.isEmpty()) Settings.player1Username = "Player 1";
+            if(player2Username.isEmpty()) Settings.player2Username = "Player 2";
+
+            Settings.turnTime = turnTime.getValue();
+            
             sceneManager.setScene(SceneType.COOPERATION);
         });
 
