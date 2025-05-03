@@ -2,6 +2,8 @@ package checkers.scenes;
 
 import checkers.Settings;
 import checkers.game.CooperationGame;
+import checkers.game.Game;
+import checkers.game.GameSession;
 import checkers.game.PieceType;
 import checkers.gui.outputs.PlayerUI;
 import checkers.scenes.utils.SceneType;
@@ -33,9 +35,10 @@ public class Cooperation extends SceneBase
 
     public Cooperation()
     {
-        this.player1Username = Settings.player1Username;
-        this.player2Username = Settings.player2Username;
-        this.turnTime = Settings.turnTime;
+        GameSession session = GameSession.getInstance();
+        this.player1Username = session.player1Username;
+        this.player2Username = session.player2Username;
+        this.turnTime = session.turnTime;
 
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setAlignment(Pos.CENTER);

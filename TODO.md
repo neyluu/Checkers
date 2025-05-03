@@ -3,6 +3,8 @@
   * Probably not all cases are catched, for example, when player cant do any move(possible?) game will stuck
 * GUI rework
   * Gameover windows icon
+*Network:
+  * Handling connection errors, all kinds
 
 BUGS:
   * White king is darker than Man

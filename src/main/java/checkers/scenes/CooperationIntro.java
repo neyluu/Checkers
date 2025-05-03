@@ -1,6 +1,7 @@
 package checkers.scenes;
 
 import checkers.Settings;
+import checkers.game.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
@@ -46,13 +47,15 @@ public class CooperationIntro extends SceneBase
             String player1Username = player1.getText();
             String player2Username = player2.getText();
 
-            Settings.player1Username = player1Username;
-            Settings.player2Username = player2Username;
+            GameSession session = GameSession.getInstance();
 
-            if(player1Username.isEmpty()) Settings.player1Username = "Player 1";
-            if(player2Username.isEmpty()) Settings.player2Username = "Player 2";
+            session.player1Username = player1Username;
+            session.player2Username = player2Username;
 
-            Settings.turnTime = turnTime.getValue();
+            if(player1Username.isEmpty()) session.player1Username = "Player 1";
+            if(player2Username.isEmpty()) session.player2Username = "Player 2";
+
+            session.turnTime = turnTime.getValue();
             
             sceneManager.setScene(SceneType.COOPERATION);
         });
