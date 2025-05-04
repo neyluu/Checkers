@@ -14,6 +14,7 @@ public class Client
     private Socket socket = null;
 
     private boolean isConnected = false;
+    private boolean isClosed = false;
 
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
@@ -56,6 +57,11 @@ public class Client
 
     public void close()
     {
+        if(!isClosed) isClosed = true;
+        else return;
+
+        System.out.println("Closing client");
+
         try
         {
             if(objectInputStream != null) objectInputStream.close();

@@ -98,17 +98,22 @@ public class Server
 
     private void closeClient()
     {
+        if(isBusy) return;
+
         System.out.println("Closing client");
         try
         {
             if(objectInputStream != null) objectInputStream.close();
             if(objectOutputStream != null) objectOutputStream.close();
             if(clientSocket != null) clientSocket.close();
-            isBusy = false;
         }
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+        finally
+        {
+            isBusy = false;
         }
     }
 
