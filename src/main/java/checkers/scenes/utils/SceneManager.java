@@ -21,6 +21,10 @@ public class SceneManager
     {
         this.stage = stage;
     }
+    public Stage getStage()
+    {
+        return stage;
+    }
 
     public void setScene(SceneType newScene)
     {

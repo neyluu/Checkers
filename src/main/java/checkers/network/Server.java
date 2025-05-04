@@ -1,6 +1,5 @@
 package checkers.network;
 
-import checkers.game.Game;
 import checkers.game.GameSession;
 
 import java.io.IOException;
@@ -15,6 +14,9 @@ public class Server
     private ServerSocket serverSocket;
     private Socket clientSocket = null;
 
+    private boolean isRunning = false;
+    private boolean isBusy = false;
+
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
@@ -27,16 +29,24 @@ public class Server
     {
         System.out.println("Starting server");
 
+        isRunning = true;
+
         new Thread(() ->
         {
             try
             {
-                while(!serverSocket.isClosed())
+                while(!serverSocket.isClosed() && !isBusy)
                 {
+                    System.out.println("Waiting for client");
                     clientSocket = serverSocket.accept();
-                    objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+                    serverSocket.close();
+                    System.out.println("Client connected");
+
                     objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
                     objectOutputStream.flush();
+                    objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+
+                    isBusy = true;
 
                     synchronizeGameSession();
                     handleClient();
@@ -44,7 +54,7 @@ public class Server
             }
             catch(IOException e)
             {
-
+                close();
             }
         }).start();
     }
@@ -53,22 +63,52 @@ public class Server
     {
         new Thread(() ->
         {
-            System.out.println("Client connected!");
-
+            while(true)
+            {
+                //TODO tmp
+                if(clientSocket.isClosed()) closeClient();
+//                try
+//                {
+//                }
+//                catch (IOException e)
+//                {
+//                    closeClient();
+//                }
+            }
         }).start();
     }
 
-    private void close()
+    public void close()
     {
+        if(isRunning) isRunning = false;
+        else return;
+
         System.out.println("Closing server");
+
         try
         {
+            closeClient();
             if(serverSocket != null) serverSocket.close();
-            if(clientSocket != null) clientSocket.close();
         }
         catch (IOException e)
         {
+            e.printStackTrace();
+        }
+    }
 
+    private void closeClient()
+    {
+        System.out.println("Closing client");
+        try
+        {
+            if(objectInputStream != null) objectInputStream.close();
+            if(objectOutputStream != null) objectOutputStream.close();
+            if(clientSocket != null) clientSocket.close();
+            isBusy = false;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 

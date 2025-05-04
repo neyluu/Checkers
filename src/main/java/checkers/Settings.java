@@ -1,7 +1,5 @@
 package checkers;
 
-import checkers.game.GameSession;
-
 public class Settings
 {
     public static final int screenWidth = 1280;

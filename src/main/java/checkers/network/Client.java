@@ -1,5 +1,6 @@
 package checkers.network;
 
+import checkers.exceptions.ServerConnectionException;
 import checkers.game.GameSession;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ public class Client
     private final int port = 5000;
     private Socket socket = null;
 
+    private boolean isConnected = false;
+
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
@@ -19,37 +22,49 @@ public class Client
     {
         try
         {
+            System.out.println("Creating new socket");
             this.socket = new Socket(ip, port);
+            System.out.println("Socket created");
+
+            isConnected = true;
 
             this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             this.objectOutputStream.flush();
             this.objectInputStream = new ObjectInputStream(socket.getInputStream());
+
+            System.out.println("test");
         }
         catch (IOException e)
         {
-
+            System.out.println("Failed to create socket");
         }
     }
 
-    public void start()
+    public void start() throws ServerConnectionException
     {
+        if(!isConnected) throw new ServerConnectionException("Failed to connect to server");
+
         new Thread(() ->
         {
             System.out.println("Starting client");
 
+
             synchronizeGameSession();
+
         }).start();
     }
 
-    private void close()
+    public void close()
     {
         try
         {
+            if(objectInputStream != null) objectInputStream.close();
+            if(objectOutputStream != null) objectOutputStream.close();
             if(socket != null) socket.close();
         }
         catch (IOException e)
         {
-
+            e.printStackTrace();
         }
     }
 
@@ -63,7 +78,7 @@ public class Client
         }
         catch (IOException  e)
         {
-
+            System.out.println("Server is busy");
         }
 
         try
@@ -76,7 +91,7 @@ public class Client
         }
         catch (IOException | ClassNotFoundException e)
         {
-
+            System.out.println("Server is busy");
         }
     }
 }

@@ -47,11 +47,15 @@ public class MultiplayerCreateGame extends SceneBase
             try
             {
                 GameSession session = GameSession.getInstance();
-                session.player1Username = textField.getText();
+
+                String username = textField.getText();
+                if(username.isEmpty()) username = "Player 1";
+                session.player1Username = username;
                 session.turnTime = comboBox.getValue();
 
                 Server server = new Server();
                 server.start();
+                Runtime.getRuntime().addShutdownHook(new Thread(server::close));
             }
             catch (IOException ex)
             {
