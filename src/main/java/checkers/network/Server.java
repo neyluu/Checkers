@@ -2,6 +2,7 @@ package checkers.network;
 
 import checkers.game.GameSession;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,28 +34,42 @@ public class Server
 
         new Thread(() ->
         {
-            try
+            while(!serverSocket.isClosed())
             {
-                while(!serverSocket.isClosed() && !isBusy)
+                try
                 {
                     System.out.println("Waiting for client");
-                    clientSocket = serverSocket.accept();
-                    serverSocket.close();
-                    System.out.println("Client connected");
+                    Socket incomingSocket = serverSocket.accept();
 
-                    objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+                    ObjectOutputStream tmpOutput = new ObjectOutputStream(incomingSocket.getOutputStream());
+                    tmpOutput.flush();
+                    if(isBusy)
+                    {
+                        tmpOutput.writeObject(ServerState.BUSY);
+                        tmpOutput.close();
+                        continue;
+                    }
+                    tmpOutput.writeObject(ServerState.OK);
+
+                    clientSocket = incomingSocket;
+                    objectOutputStream = tmpOutput;
                     objectOutputStream.flush();
                     objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
                     isBusy = true;
 
+                    System.out.println("Client connected");
                     synchronizeGameSession();
                     handleClient();
                 }
-            }
-            catch(IOException e)
-            {
-                close();
+                catch(IOException e)
+                {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+
+                    System.out.println("close1");
+                    close();
+                }
             }
         }).start();
     }
@@ -63,17 +78,19 @@ public class Server
     {
         new Thread(() ->
         {
-            while(true)
+            while(isBusy)
             {
+//                System.out.println("x");
                 //TODO tmp
                 if(clientSocket.isClosed()) closeClient();
-//                try
-//                {
-//                }
-//                catch (IOException e)
-//                {
-//                    closeClient();
-//                }
+                try
+                {
+                    Object o = objectInputStream.readObject();
+                }
+                catch (IOException  | ClassNotFoundException e)
+                {
+                    closeClient();
+                }
             }
         }).start();
     }
@@ -98,7 +115,7 @@ public class Server
 
     private void closeClient()
     {
-        if(isBusy) return;
+        if(!isBusy) return;
 
         System.out.println("Closing client");
         try

@@ -3,6 +3,7 @@ package checkers.network;
 import checkers.exceptions.ServerConnectionException;
 import checkers.game.GameSession;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,7 +20,7 @@ public class Client
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
-    public Client(String ip)
+    public Client(String ip) throws ServerConnectionException
     {
         try
         {
@@ -27,16 +28,25 @@ public class Client
             this.socket = new Socket(ip, port);
             System.out.println("Socket created");
 
-            isConnected = true;
-
             this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             this.objectOutputStream.flush();
             this.objectInputStream = new ObjectInputStream(socket.getInputStream());
 
-            System.out.println("test");
+            ServerState response = (ServerState) objectInputStream.readObject();
+            System.out.println("Server response: " + response);
+            if(response == ServerState.BUSY)
+            {
+                throw new ServerConnectionException();
+            }
+
+            isConnected = true;
+            System.out.println("Connected to server");
         }
-        catch (IOException e)
+        catch (IOException | ClassNotFoundException e)
         {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+
             System.out.println("Failed to create socket");
         }
     }

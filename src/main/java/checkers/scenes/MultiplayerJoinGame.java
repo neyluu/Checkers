@@ -67,11 +67,9 @@ public class MultiplayerJoinGame extends SceneBase
         {
             Client client = new Client(ip);
             client.start();
-//            SceneManager.getInstance().getStage().setOnCloseRequest(e ->
-//            {
-//                client.close();
-//            });
-//            Runtime.getRuntime().addShutdownHook(new Thread(client::close));
+
+            SceneManager.getInstance().getStage().setOnCloseRequest(e -> client.close());
+            Runtime.getRuntime().addShutdownHook(new Thread(client::close));
         }
         catch (ServerConnectionException ex)
         {

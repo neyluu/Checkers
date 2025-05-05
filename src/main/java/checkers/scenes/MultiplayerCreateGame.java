@@ -55,7 +55,7 @@ public class MultiplayerCreateGame extends SceneBase
 
                 Server server = new Server();
                 server.start();
-                Runtime.getRuntime().addShutdownHook(new Thread(server::close));
+//                Runtime.getRuntime().addShutdownHook(new Thread(server::close));
             }
             catch (IOException ex)
             {
