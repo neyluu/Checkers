@@ -29,7 +29,6 @@ public class MultiplayerJoinGame extends SceneBase
         initButtons();
     }
 
-
     private void initInputs()
     {
         LabeledTextField labeledTextField = new LabeledTextField("Enter username:", "Player 2");
@@ -68,26 +67,26 @@ public class MultiplayerJoinGame extends SceneBase
             Client client = new Client(ip);
             client.start();
 
-            SceneManager.getInstance().getStage().setOnCloseRequest(e -> client.close());
+//            SceneManager.getInstance().getStage().setOnCloseRequest(e -> client.close());
             Runtime.getRuntime().addShutdownHook(new Thread(client::close));
         }
         catch (ServerConnectionException ex)
         {
             System.out.println(ex.getMessage());
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("");
-            alert.setHeaderText("Failed to connect to server");
-
-            ButtonType tryAgainButton = new ButtonType("Try again", ButtonBar.ButtonData.OK_DONE);
-            alert.getButtonTypes().add(tryAgainButton);
-
-            alert.showAndWait();
-
-            if(alert.getResult() == tryAgainButton)
-            {
-                handleJoinGame();
-            }
+            createServerErrorAlert();
         }
+    }
+
+    private void createServerErrorAlert()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("");
+        alert.setHeaderText("Failed to connect to server");
+
+        ButtonType tryAgainButton = new ButtonType("Try again", ButtonBar.ButtonData.OK_DONE);
+        alert.getButtonTypes().add(tryAgainButton);
+        alert.showAndWait();
+
+        if(alert.getResult() == tryAgainButton) handleJoinGame();
     }
 }

@@ -3,7 +3,6 @@ package checkers.network;
 import checkers.exceptions.ServerConnectionException;
 import checkers.game.GameSession;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -59,9 +58,7 @@ public class Client
         {
             System.out.println("Starting client");
 
-
             synchronizeGameSession();
-
         }).start();
     }
 
@@ -74,9 +71,9 @@ public class Client
 
         try
         {
-            if(objectInputStream != null) objectInputStream.close();
-            if(objectOutputStream != null) objectOutputStream.close();
-            if(socket != null) socket.close();
+            if(objectInputStream != null)   objectInputStream.close();
+            if(objectOutputStream != null)  objectOutputStream.close();
+            if(socket != null)              socket.close();
         }
         catch (IOException e)
         {
@@ -90,24 +87,28 @@ public class Client
 
         try
         {
-            objectOutputStream.writeObject(GameSession.getInstance());
-        }
-        catch (IOException  e)
-        {
-            System.out.println("Server is busy");
-        }
-
-        try
-        {
-            GameSession clientData = (GameSession) objectInputStream.readObject();
-            GameSession.getInstance().player1Username = clientData.player1Username;
-            GameSession.getInstance().turnTime = clientData.turnTime;
-
-            System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
-        }
+            sendSynchronizationData();
+            getSynchronizationData();
+            System.out.println("Data synchronized");
+       }
         catch (IOException | ClassNotFoundException e)
         {
-            System.out.println("Server is busy");
+            System.err.println("Failed to synchronize game session");
+            close();
         }
+    }
+
+    private void sendSynchronizationData() throws IOException
+    {
+        objectOutputStream.writeObject(GameSession.getInstance());
+    }
+
+    private void getSynchronizationData() throws IOException, ClassNotFoundException
+    {
+        GameSession clientData = (GameSession) objectInputStream.readObject();
+        GameSession.getInstance().player1Username = clientData.player1Username;
+        GameSession.getInstance().turnTime = clientData.turnTime;
+
+        System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
     }
 }

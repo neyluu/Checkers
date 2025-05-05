@@ -2,7 +2,6 @@ package checkers.network;
 
 import checkers.game.GameSession;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -80,7 +79,6 @@ public class Server
         {
             while(isBusy)
             {
-//                System.out.println("x");
                 //TODO tmp
                 if(clientSocket.isClosed()) closeClient();
                 try
@@ -123,14 +121,11 @@ public class Server
             if(objectInputStream != null) objectInputStream.close();
             if(objectOutputStream != null) objectOutputStream.close();
             if(clientSocket != null) clientSocket.close();
+            isBusy = false;
         }
         catch (IOException e)
         {
             e.printStackTrace();
-        }
-        finally
-        {
-            isBusy = false;
         }
     }
 
@@ -140,23 +135,27 @@ public class Server
 
         try
         {
-            GameSession clientData = (GameSession) objectInputStream.readObject();
-            GameSession.getInstance().player2Username = clientData.player2Username;
-
-            System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
+            getSynchronizationData();
+            sendSynchronizationData();
+            System.out.println("Data synchronized");
         }
         catch (IOException | ClassNotFoundException e)
         {
-
+            System.err.println("Failed to synchronize game session");
+            closeClient();
         }
+    }
 
-        try
-        {
-            objectOutputStream.writeObject(GameSession.getInstance());
-        }
-        catch (IOException  e)
-        {
+    private void getSynchronizationData() throws IOException, ClassNotFoundException
+    {
+        GameSession clientData = (GameSession) objectInputStream.readObject();
+        GameSession.getInstance().player2Username = clientData.player2Username;
 
-        }
+        System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
+    }
+
+    private void sendSynchronizationData() throws IOException
+    {
+        objectOutputStream.writeObject(GameSession.getInstance());
     }
 }

@@ -42,30 +42,32 @@ public class MultiplayerCreateGame extends SceneBase
     private void initButtons()
     {
         MenuButton create = new MenuButton("Create game");
-        create.setOnAction(e ->
-        {
-            try
-            {
-                GameSession session = GameSession.getInstance();
-
-                String username = textField.getText();
-                if(username.isEmpty()) username = "Player 1";
-                session.player1Username = username;
-                session.turnTime = comboBox.getValue();
-
-                Server server = new Server();
-                server.start();
-//                Runtime.getRuntime().addShutdownHook(new Thread(server::close));
-            }
-            catch (IOException ex)
-            {
-
-            }
-        });
+        create.setOnAction(e -> createServer());
 
         MenuButton back = new MenuButton("Back");
         back.setOnAction(e -> sceneManager.setScene(SceneType.MULTIPLAYER_INTRO));
 
         layout.getChildren().addAll(create, back);
+    }
+
+    private void createServer()
+    {
+        try
+        {
+            GameSession session = GameSession.getInstance();
+
+            String username = textField.getText();
+            if(username.isEmpty()) username = "Player 1";
+            session.player1Username = username;
+            session.turnTime = comboBox.getValue();
+
+            Server server = new Server();
+            server.start();
+            Runtime.getRuntime().addShutdownHook(new Thread(server::close));
+        }
+        catch (IOException ex)
+        {
+            System.err.println("Failed to create server");
+        }
     }
 }
