@@ -38,7 +38,7 @@ public class Server
 
         new Thread(() ->
         {
-            while(!serverSocket.isClosed())
+            while(!serverSocket.isClosed() && isRunning)
             {
                 try
                 {
@@ -67,16 +67,14 @@ public class Server
                     System.out.println("Client connected");
 
                     synchronizeGameSession();
+
+                    serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
                     Platform.runLater(serverAlerts::showClientConnectedAlert);
 
                     handleClient();
                 }
                 catch(IOException e)
                 {
-                    System.out.println(e.getMessage());
-                    e.printStackTrace();
-
-                    System.out.println("close1");
                     close();
                 }
             }
@@ -133,9 +131,9 @@ public class Server
         System.out.println("Closing client");
         try
         {
-            if(objectInputStream != null) objectInputStream.close();
-            if(objectOutputStream != null) objectOutputStream.close();
-            if(clientSocket != null) clientSocket.close();
+            if(objectInputStream != null)   objectInputStream.close();
+            if(objectOutputStream != null)  objectOutputStream.close();
+            if(clientSocket != null)        clientSocket.close();
             isBusy = false;
         }
         catch (IOException e)
@@ -152,7 +150,6 @@ public class Server
         {
             getSynchronizationData();
             sendSynchronizationData();
-            serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
             System.out.println("Data synchronized");
         }
         catch (IOException | ClassNotFoundException e)

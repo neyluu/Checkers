@@ -7,8 +7,9 @@ import javafx.scene.control.ButtonType;
 public class ServerAlerts
 {
     private Alert waitAlert = null;
-    private Alert clientConnectedAlert = null;
     private Runnable onCancelAction = null;
+
+    private Alert clientConnectedAlert = null;
 
     private String connectedPlayerUsername = "Player";
 
@@ -47,8 +48,9 @@ public class ServerAlerts
         {
             waitAlert.showAndWait().ifPresent(buttonType ->
             {
-                if(buttonType == ButtonType.CANCEL)
+                if(buttonType.getButtonData() == ButtonType.CANCEL.getButtonData())
                 {
+                    System.out.println("Canceling server");
                     if(onCancelAction != null) onCancelAction.run();
                 }
             });
