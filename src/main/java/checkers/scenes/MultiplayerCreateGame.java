@@ -4,6 +4,7 @@ import checkers.game.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
+import checkers.gui.outputs.ServerAlerts;
 import checkers.network.Server;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;

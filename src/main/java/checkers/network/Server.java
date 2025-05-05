@@ -1,7 +1,8 @@
 package checkers.network;
 
 import checkers.game.GameSession;
-
+import checkers.gui.outputs.ServerAlerts;
+import javafx.application.Platform;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,7 +12,7 @@ import java.net.Socket;
 public class Server
 {
     private final int port = 5000;
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
     private Socket clientSocket = null;
 
     private boolean isRunning = false;
@@ -20,8 +21,12 @@ public class Server
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
+    private final ServerAlerts serverAlerts = new ServerAlerts();
+
     public Server() throws IOException
     {
+        this.serverAlerts.setOnCancelAction(this::close);
+
         this.serverSocket = new ServerSocket(port);
     }
 
@@ -38,8 +43,9 @@ public class Server
                 try
                 {
                     System.out.println("Waiting for client");
-                    Socket incomingSocket = serverSocket.accept();
+                    if(!isBusy) Platform.runLater(serverAlerts::showWaitAlert);
 
+                    Socket incomingSocket = serverSocket.accept();
                     ObjectOutputStream tmpOutput = new ObjectOutputStream(incomingSocket.getOutputStream());
                     tmpOutput.flush();
                     if(isBusy)
@@ -57,8 +63,12 @@ public class Server
 
                     isBusy = true;
 
+                    Platform.runLater(serverAlerts::hideWaitAlert);
                     System.out.println("Client connected");
+
                     synchronizeGameSession();
+                    Platform.runLater(serverAlerts::showClientConnectedAlert);
+
                     handleClient();
                 }
                 catch(IOException e)
@@ -71,6 +81,11 @@ public class Server
                 }
             }
         }).start();
+    }
+
+    public boolean isBusy()
+    {
+        return isBusy;
     }
 
     private void handleClient()
@@ -137,6 +152,7 @@ public class Server
         {
             getSynchronizationData();
             sendSynchronizationData();
+            serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
             System.out.println("Data synchronized");
         }
         catch (IOException | ClassNotFoundException e)
