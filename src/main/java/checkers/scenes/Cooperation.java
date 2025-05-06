@@ -1,55 +1,22 @@
 package checkers.scenes;
 
-import checkers.Settings;
 import checkers.game.CooperationGame;
-import checkers.game.Game;
-import checkers.game.GameSession;
 import checkers.game.PieceType;
-import checkers.gui.outputs.PlayerUI;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
-public class Cooperation extends SceneBase
+public class Cooperation extends GameSceneBase
 {
-    private String player1Username;
-    private String player2Username;
-    private String turnTime;
-
-    private HBox row = new HBox();
-
     private CooperationGame game;
-    private PlayerUI player1UI = new PlayerUI();
-    private PlayerUI player2UI = new PlayerUI();
-
     private final Object lock = new Object();
-
-    private final double sizeMiddlePanel = (Settings.screenWidth / 2) + 100;
-    private final double sizeSidePanel = (Settings.screenWidth - sizeMiddlePanel) / 2;
 
     public Cooperation()
     {
-        GameSession session = GameSession.getInstance();
-        this.player1Username = session.player1Username;
-        this.player2Username = session.player2Username;
-        this.turnTime = session.turnTime;
-
-        layout.setStyle("-fx-background-color: rgb(25,25,25);");
-        layout.setAlignment(Pos.CENTER);
-        layout.setPrefHeight(Settings.screenHeight);
-        layout.setPrefWidth(Settings.screenWidth);
-
         game = new CooperationGame(lock, player1UI, player2UI);
-        
-        initLayout();
-
-        layout.getChildren().add(row);
+        updateBoard(game.getBoard());
 
         startGame();
         listenForMessage();
@@ -115,70 +82,6 @@ public class Cooperation extends SceneBase
             game.reset();
             startGame();
             listenForMessage();
-        }
-    }
-
-    private void initLayout()
-    {
-        initLeftPanel();
-        initMiddlePanel();
-        initRightPanel();
-    }
-
-    private void initLeftPanel()
-    {
-        VBox left = new VBox();
-        left.setStyle("-fx-background-color: rgb(25,25,25);");
-        left.setMinWidth(sizeSidePanel);
-
-        row.getChildren().add(left);
-    }
-    private void initMiddlePanel()
-    {
-        VBox middle = new VBox();
-
-        StackPane boardContainer = new StackPane(game.getBoard());
-        boardContainer.setAlignment(Pos.CENTER);
-
-        middle.setStyle("-fx-background-color: rgb(25,25,25);");
-        middle.setMinWidth(sizeMiddlePanel);
-        middle.setAlignment(Pos.CENTER);
-        middle.getChildren().add(boardContainer);
-
-        row.getChildren().add(middle);
-    }
-    private void initRightPanel()
-    {
-        VBox right = new VBox();
-
-        right.setStyle("-fx-background-color: rgb(25,25,25);");
-        right.setMinHeight(300);
-        right.setMinWidth(sizeSidePanel);
-
-        player1UI.setUsername(player1Username);
-        player1UI.setMinutes(parseTurnTime());
-        player2UI.setUsername(player2Username);
-        player2UI.setMinutes(parseTurnTime());
-
-        right.setSpacing(350);
-        right.setAlignment(Pos.CENTER);
-        right.getChildren().addAll(player1UI, player2UI);
-
-        row.getChildren().add(right);
-    }
-
-    private int parseTurnTime()
-    {
-        String[] tokens = turnTime.split(" ");
-
-        if(tokens[0].equals("unlimited")) return -1;
-        else
-        {
-            try
-            {
-                return Integer.parseInt(tokens[0]);
-            }
-            catch (Exception e) { return 0; }
         }
     }
 }
