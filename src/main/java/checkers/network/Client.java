@@ -53,13 +53,13 @@ public class Client
     {
         if(!isConnected) throw new ServerConnectionException("Failed to connect to server");
 
-        new Thread(() ->
-        {
+//        new Thread(() ->
+//        {
             System.out.println("Starting client");
 
             synchronizeGameSession();
             waitForGameStart();
-        }).start();
+//        }).start();
     }
 
     public void close()
@@ -130,6 +130,7 @@ public class Client
     private void startGame()
     {
         System.out.println("Starting game");
-//        SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CLIENT);
+        SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CLIENT);
+        SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer client");
     }
 }
