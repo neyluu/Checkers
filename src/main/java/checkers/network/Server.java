@@ -2,6 +2,8 @@ package checkers.network;
 
 import checkers.game.GameSession;
 import checkers.gui.outputs.ServerAlerts;
+import checkers.scenes.utils.SceneManager;
+import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,7 +27,8 @@ public class Server
 
     public Server() throws IOException
     {
-        this.serverAlerts.setOnCancelAction(this::close);
+        this.serverAlerts.setOnWaitAction(this::close);
+//        this.serverAlerts.setOnStartAction(this::startGame);
 
         this.serverSocket = new ServerSocket(port);
     }
@@ -68,7 +71,7 @@ public class Server
 
                     synchronizeGameSession();
 
-                    serverAlerts.setOnCancelAction(null);
+                    serverAlerts.setOnWaitAction(null);
                     serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
                     Platform.runLater(serverAlerts::showClientConnectedAlert);
 
@@ -156,6 +159,7 @@ public class Server
         catch (IOException | ClassNotFoundException e)
         {
             System.err.println("Failed to synchronize game session");
+            e.printStackTrace();
             closeClient();
         }
     }
@@ -171,5 +175,10 @@ public class Server
     private void sendSynchronizationData() throws IOException
     {
         objectOutputStream.writeObject(GameSession.getInstance());
+    }
+
+    public void startGame()
+    {
+        SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_SERVER);
     }
 }

@@ -7,9 +7,10 @@ import javafx.scene.control.ButtonType;
 public class ServerAlerts
 {
     private Alert waitAlert = null;
-    private Runnable onCancelAction = null;
+    private Runnable onWaitAction = null;
 
     private Alert clientConnectedAlert = null;
+    private Runnable onStartAction = null;
 
     private String connectedPlayerUsername = "Player";
 
@@ -35,9 +36,13 @@ public class ServerAlerts
         clientConnectedAlert.setHeaderText(connectedPlayerUsername + " connected!");
     }
 
-    public void setOnCancelAction(Runnable onCancelAction)
+    public void setOnWaitAction(Runnable onWaitAction)
     {
-        this.onCancelAction = onCancelAction;
+        this.onWaitAction = onWaitAction;
+    }
+    public void setOnStartAction(Runnable onStartAction)
+    {
+        this.onStartAction = onStartAction;
     }
 
     public void showWaitAlert()
@@ -50,10 +55,10 @@ public class ServerAlerts
             {
                 if(buttonType.getButtonData() == ButtonType.CANCEL.getButtonData())
                 {
-                    if(onCancelAction != null)
+                    if(onWaitAction != null)
                     {
                         System.out.println("Canceling server");
-                        onCancelAction.run();
+                        onWaitAction.run();
                     }
                 }
             });
@@ -65,7 +70,17 @@ public class ServerAlerts
 
         if(!clientConnectedAlert.isShowing())
         {
-            clientConnectedAlert.showAndWait();
+            clientConnectedAlert.showAndWait().ifPresent(buttonType ->
+            {
+                if(buttonType.getButtonData() == ButtonType.OK.getButtonData())
+                {
+                    if(onStartAction != null)
+                    {
+                        System.out.println("Starting game");
+                        onStartAction.run();
+                    }
+                }
+            });
         }
     }
 
