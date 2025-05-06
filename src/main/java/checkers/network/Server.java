@@ -190,5 +190,6 @@ public class Server
         }
 
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_SERVER);
+        SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer server");
     }
 }
