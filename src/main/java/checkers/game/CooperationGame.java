@@ -35,7 +35,7 @@ public class CooperationGame extends Game
 
     public void reset()
     {
-        board.clearBoard();
+        board.clearBoard(false);
         player1UI.resetTimer();
         player2UI.resetTimer();
         currentTurn = PieceType.WHITE;

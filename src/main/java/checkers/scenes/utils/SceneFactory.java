@@ -20,6 +20,10 @@ public class SceneFactory
                 return new MultiplayerCreateGame();
             case MULTIPLAYER_JOIN_GAME:
                 return new MultiplayerJoinGame();
+            case MULTIPLAYER_SERVER:
+                return new MultiplayerServer();
+            case MULTIPLAYER_CLIENT:
+                return new MultiplayerClient();
             default:
                 throw new IllegalArgumentException("Unknown scene type: " + type);
         }
