@@ -68,6 +68,7 @@ public class Server
 
                     synchronizeGameSession();
 
+                    serverAlerts.setOnCancelAction(null);
                     serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
                     Platform.runLater(serverAlerts::showClientConnectedAlert);
 

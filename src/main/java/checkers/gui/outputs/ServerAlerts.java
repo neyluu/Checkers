@@ -50,8 +50,11 @@ public class ServerAlerts
             {
                 if(buttonType.getButtonData() == ButtonType.CANCEL.getButtonData())
                 {
-                    System.out.println("Canceling server");
-                    if(onCancelAction != null) onCancelAction.run();
+                    if(onCancelAction != null)
+                    {
+                        System.out.println("Canceling server");
+                        onCancelAction.run();
+                    }
                 }
             });
         }
