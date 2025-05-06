@@ -20,7 +20,7 @@ public class Board extends GridPane
     {
         this.setMaxWidth(width);
 
-        clearBoard();
+        clearBoard(false);
     }
 
     public int getSize()
@@ -87,10 +87,10 @@ public class Board extends GridPane
         return isInBounds(pos.x, pos.y);
     }
 
-    public void clearBoard()
+    public void clearBoard(boolean inverted)
     {
         initCells();
-        initPieces();
+        initPieces(inverted);
     }
 
     private void initCells()
@@ -107,24 +107,24 @@ public class Board extends GridPane
         }
     }
 
-    private void initPieces()
+    private void initPieces(boolean inverted)
     {
-        initWhitePieces();
-        initBlackPieces();
+        initBottomPieces(inverted);
+        initTopPieces(inverted);
     }
 
-    private void initWhitePieces()
+    private void initBottomPieces(boolean inverted)
     {
         for (int row = 5; row < 8; row++)
         {
-            placePieceInCols(row, PieceType.MAN_WHITE);
+            placePieceInCols(row, inverted ? PieceType.MAN_BLACK : PieceType.MAN_WHITE);
         }
     }
-    private void initBlackPieces()
+    private void initTopPieces(boolean inverted)
     {
         for (int row = 0; row < 3; row++)
         {
-            placePieceInCols(row, PieceType.MAN_BLACK);
+            placePieceInCols(row, inverted ? PieceType.MAN_WHITE : PieceType.MAN_BLACK);
         }
     }
     private void placePieceInCols(int row, PieceType type)
