@@ -28,7 +28,7 @@ public class Server
     public Server() throws IOException
     {
         this.serverAlerts.setOnWaitAction(this::close);
-//        this.serverAlerts.setOnStartAction(this::startGame);
+        this.serverAlerts.setOnStartAction(this::startGame);
 
         this.serverSocket = new ServerSocket(port);
     }
@@ -179,6 +179,16 @@ public class Server
 
     public void startGame()
     {
+        try
+        {
+            objectOutputStream.writeObject(ServerState.GAME_START);
+        }
+        catch (IOException e)
+        {
+            System.err.println("Failed to send game start information to client");
+            close();
+        }
+
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_SERVER);
     }
 }

@@ -2,6 +2,8 @@ package checkers.network;
 
 import checkers.exceptions.ServerConnectionException;
 import checkers.game.GameSession;
+import checkers.scenes.utils.SceneManager;
+import checkers.scenes.utils.SceneType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -56,6 +58,7 @@ public class Client
             System.out.println("Starting client");
 
             synchronizeGameSession();
+            waitForGameStart();
         }).start();
     }
 
@@ -107,5 +110,26 @@ public class Client
         GameSession.getInstance().turnTime = clientData.turnTime;
 
         System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
+    }
+
+    private void waitForGameStart()
+    {
+        try
+        {
+            ServerState gameStart = (ServerState) objectInputStream.readObject();
+            System.out.println("Start game: " + gameStart);
+            if(gameStart == ServerState.GAME_START) startGame();
+        }
+        catch (IOException | ClassNotFoundException e)
+        {
+            System.err.println("Failed to get game start information");
+            close();
+        }
+    }
+
+    private void startGame()
+    {
+        System.out.println("Starting game");
+//        SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CLIENT);
     }
 }

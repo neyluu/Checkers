@@ -3,5 +3,6 @@ package checkers.network;
 public enum ServerState
 {
     OK,
-    BUSY
+    BUSY,
+    GAME_START
 }
