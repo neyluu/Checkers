@@ -5,15 +5,14 @@ import checkers.gui.outputs.ServerAlerts;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server
 {
-    private final int port = 5000;
+    private final int port = 5555;
     private final ServerSocket serverSocket;
     private Socket clientSocket = null;
 
@@ -49,12 +48,16 @@ public class Server
                     if(!isBusy) Platform.runLater(serverAlerts::showWaitAlert);
 
                     Socket incomingSocket = serverSocket.accept();
+                    serverAlerts.setOnWaitAction(null);
+
                     ObjectOutputStream tmpOutput = new ObjectOutputStream(incomingSocket.getOutputStream());
                     tmpOutput.flush();
                     if(isBusy)
                     {
                         tmpOutput.writeObject(ServerState.BUSY);
+                        tmpOutput.flush();
                         tmpOutput.close();
+                        incomingSocket.close();
                         continue;
                     }
                     tmpOutput.writeObject(ServerState.OK);
@@ -71,7 +74,6 @@ public class Server
 
                     synchronizeGameSession();
 
-                    serverAlerts.setOnWaitAction(null);
                     serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
                     Platform.runLater(serverAlerts::showClientConnectedAlert);
 
@@ -174,7 +176,9 @@ public class Server
 
     private void sendSynchronizationData() throws IOException
     {
+        objectOutputStream.reset();
         objectOutputStream.writeObject(GameSession.getInstance());
+        objectOutputStream.flush();
     }
 
     public void startGame()

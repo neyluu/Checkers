@@ -12,7 +12,7 @@ import java.net.Socket;
 
 public class Client
 {
-    private final int port = 5000;
+    private final int port = 5555;
     private Socket socket = null;
 
     private boolean isConnected = false;
@@ -100,7 +100,9 @@ public class Client
 
     private void sendSynchronizationData() throws IOException
     {
+        objectOutputStream.reset();
         objectOutputStream.writeObject(GameSession.getInstance());
+        objectOutputStream.flush();
     }
 
     private void getSynchronizationData() throws IOException, ClassNotFoundException

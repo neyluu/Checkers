@@ -1,6 +1,8 @@
 package checkers.network;
 
-public enum ServerState
+import java.io.Serializable;
+
+public enum ServerState implements Serializable
 {
     OK,
     BUSY,
