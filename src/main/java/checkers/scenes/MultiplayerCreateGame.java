@@ -4,6 +4,7 @@ import checkers.game.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
+import checkers.network.GlobalCommunication;
 import checkers.network.Server;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
@@ -63,6 +64,7 @@ public class MultiplayerCreateGame extends SceneBase
 
             Server server = new Server();
             server.start();
+            GlobalCommunication.communicator = server;
             Runtime.getRuntime().addShutdownHook(new Thread(server::close));
         }
         catch (IOException ex)

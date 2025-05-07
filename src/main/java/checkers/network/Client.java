@@ -12,7 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Client
+public class Client implements Communicator
 {
     private final int port = 5555;
     private Socket socket = null;
@@ -155,5 +155,15 @@ public class Client
         System.out.println("Starting game");
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CLIENT);
         SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer client");
+    }
+
+    @Override
+    public void sendMove() {
+
+    }
+
+    @Override
+    public void getMove() {
+
     }
 }

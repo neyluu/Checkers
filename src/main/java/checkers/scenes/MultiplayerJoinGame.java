@@ -6,7 +6,7 @@ import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledIPAddres;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.network.Client;
-import checkers.scenes.utils.SceneManager;
+import checkers.network.GlobalCommunication;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -66,8 +66,8 @@ public class MultiplayerJoinGame extends SceneBase
         {
             Client client = new Client(ip);
             client.start();
+            GlobalCommunication.communicator = client;
 
-//            SceneManager.getInstance().getStage().setOnCloseRequest(e -> client.close());
             Runtime.getRuntime().addShutdownHook(new Thread(client::close));
         }
         catch (ServerConnectionException ex)

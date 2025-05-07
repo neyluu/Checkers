@@ -11,7 +11,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server
+public class Server implements Communicator
 {
     private final int port = 5555;
     private final ServerSocket serverSocket;
@@ -203,5 +203,15 @@ public class Server
 
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_SERVER);
         SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer server");
+    }
+
+    @Override
+    public void sendMove() {
+
+    }
+
+    @Override
+    public void getMove() {
+
     }
 }
