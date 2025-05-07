@@ -2,6 +2,7 @@ package checkers.scenes;
 
 import checkers.Settings;
 import checkers.game.Board;
+import checkers.game.Game;
 import checkers.game.GameSession;
 import checkers.gui.outputs.PlayerUI;
 import javafx.geometry.Pos;
@@ -19,7 +20,6 @@ public class GameSceneBase extends SceneBase
     protected StackPane boardContainer;
 
     // TODO GAME INSTANCE
-
     protected PlayerUI player1UI = new PlayerUI();
     protected PlayerUI player2UI = new PlayerUI();
 

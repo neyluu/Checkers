@@ -141,6 +141,11 @@ public class Board extends GridPane
         }
     }
 
+    public void movePiece(int fromX, int fromY, int toX, int toY)
+    {
+        movePiece(new Position(fromX, fromY), new Position(toX, toY));
+    }
+
     public void movePiece(Position from, Position to)
     {
         if(!cells[from.x][from.y].havePiece())

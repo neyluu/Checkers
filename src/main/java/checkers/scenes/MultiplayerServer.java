@@ -9,9 +9,11 @@ public class MultiplayerServer extends GameSceneBase
 
     public MultiplayerServer()
     {
-        game = new MultiplayerServerGame();
+        game = new MultiplayerServerGame(player1UI, player2UI);
         updateBoard(game.getBoard());
         swapUsernames();
+
+        startGame();
     }
 
     private void swapUsernames()
@@ -23,5 +25,12 @@ public class MultiplayerServer extends GameSceneBase
 
         player1UI.setUsername(session.player1Username);
         player2UI.setUsername(session.player2Username);
+    }
+
+    private void startGame()
+    {
+        Thread thread = new Thread(() -> game.start());
+        thread.setDaemon(true);
+        thread.start();
     }
 }

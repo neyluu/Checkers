@@ -187,6 +187,7 @@ public class Server implements Communicator
         try
         {
             objectOutputStream.writeObject(ServerState.GAME_START);
+            objectOutputStream.flush();
         }
         catch (IOException e)
         {
@@ -206,12 +207,23 @@ public class Server implements Communicator
     }
 
     @Override
-    public void sendMove() {
-
+    public void sendMove(MovePacket move)
+    {
+        try
+        {
+            objectOutputStream.writeObject(move);
+            System.out.println("Packet sent");
+        }
+        catch (IOException e)
+        {
+            System.err.println("Failed to send move packet!");
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void getMove() {
-
+    public MovePacket getMove()
+    {
+        return null;
     }
 }

@@ -158,12 +158,23 @@ public class Client implements Communicator
     }
 
     @Override
-    public void sendMove() {
+    public void sendMove(MovePacket move)
+    {
 
     }
 
     @Override
-    public void getMove() {
-
+    public MovePacket getMove()
+    {
+        try
+        {
+            MovePacket move = (MovePacket) objectInputStream.readObject();
+            return move;
+        }
+        catch(IOException | ClassNotFoundException e)
+        {
+            System.err.println("Failed to get move packet!");
+        }
+        return null;
     }
 }
