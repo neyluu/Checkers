@@ -2,8 +2,10 @@ package checkers.network;
 
 import checkers.exceptions.ServerConnectionException;
 import checkers.game.GameSession;
+import checkers.gui.outputs.ClientAlerts;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,8 +23,12 @@ public class Client
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
+    private ClientAlerts clientAlerts = new ClientAlerts();
+
     public Client(String ip) throws ServerConnectionException
     {
+        clientAlerts.setOnWaitAction(this::close);
+
         try
         {
             System.out.println("Creating new socket");
@@ -116,17 +122,32 @@ public class Client
 
     private void waitForGameStart()
     {
-        try
+        Platform.runLater(clientAlerts::showWaitAlert);
+
+        new Thread(() ->
         {
-            ServerState gameStart = (ServerState) objectInputStream.readObject();
-            System.out.println("Start game: " + gameStart);
-            if(gameStart == ServerState.GAME_START) startGame();
-        }
-        catch (IOException | ClassNotFoundException e)
-        {
-            System.err.println("Failed to get game start information");
-            close();
-        }
+            try
+            {
+                System.out.println("Waiting for game start");
+                ServerState gameStart = (ServerState) objectInputStream.readObject();
+                System.out.println("Start game state: " + gameStart);
+                if(gameStart == ServerState.GAME_START)
+                {
+                    clientAlerts.setOnWaitAction(null);
+                    Platform.runLater(clientAlerts::hideWaitAlert);
+                    Platform.runLater(() ->
+                    {
+                        clientAlerts.hideWaitAlert();
+                        startGame();
+                    });
+                }
+            }
+            catch (IOException | ClassNotFoundException e)
+            {
+                System.err.println("Failed to get game start information");
+                close();
+            }
+        }).start();
     }
 
     private void startGame()

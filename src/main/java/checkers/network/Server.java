@@ -5,6 +5,7 @@ import checkers.gui.outputs.ServerAlerts;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -191,6 +192,13 @@ public class Server
         {
             System.err.println("Failed to send game start information to client");
             close();
+            SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CREATE_GAME);
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("");
+            alert.setHeaderText("Client disconnected");
+            alert.show();
+            return;
         }
 
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_SERVER);
