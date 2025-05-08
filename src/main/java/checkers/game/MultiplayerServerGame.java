@@ -60,7 +60,7 @@ public class MultiplayerServerGame extends Game
                         GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
                         // ====
 
-//                        Piece currentPiece = piece;
+                        Piece currentPiece = piece;
 //
 //                        if(currentPiece.isOnKingCells())
 //                        {
@@ -72,7 +72,7 @@ public class MultiplayerServerGame extends Game
 //                            currentPiece = king;
 //                        }
 //
-//                        clearEvents(null, movesData, true);
+                        clearEvents(null, movesData, true);
 //
 //                        if(isBeatMoves)
 //                        {

@@ -26,10 +26,23 @@ public class MultiplayerClientGame extends Game
         System.out.println("Waiting for move from server");
         MovePacket move = GlobalCommunication.communicator.getMove();
         System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
+
+        MovePacket translatedMove = translateMove(move);
         Platform.runLater(() ->
         {
-            board.movePiece(move.fromX, move.fromY, move.toX, move.toY);
+            board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
         });
 
+    }
+
+    private MovePacket translateMove(MovePacket move)
+    {
+        int boardSize = board.getSize() - 1;
+        return new MovePacket(
+            boardSize - move.fromX,
+            boardSize - move.fromY,
+            boardSize - move.toX,
+            boardSize - move.toY
+        );
     }
 }
