@@ -199,9 +199,11 @@ public class Board extends GridPane
                 }
 
                 List<Position[]> validMoves;
-
+                System.out.println(piece.isBlack() + " " + piece.getX() + " " + piece.getY());
                 if(isBeatMoves) validMoves = piece.getBeatMoves(this);
                 else            validMoves = piece.getValidMoves(this);
+
+                System.out.println(validMoves.size());
 
                 if(validMoves.isEmpty()) continue;
                 data.put(piece, validMoves);

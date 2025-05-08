@@ -224,6 +224,16 @@ public class Server implements Communicator
     @Override
     public MovePacket getMove()
     {
+
+        try
+        {
+            MovePacket move = (MovePacket) objectInputStream.readObject();
+            return move;
+        }
+        catch(IOException | ClassNotFoundException e)
+        {
+            System.err.println("Failed to get move packet!");
+        }
         return null;
     }
 }

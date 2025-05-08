@@ -3,6 +3,7 @@ package checkers.game;
 import checkers.gui.outputs.PlayerUI;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
+import javafx.application.Platform;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,10 +30,13 @@ public class MultiplayerServerGame extends Game
 
     private void turn()
     {
-
-//        TODO CHANGE MOVES TO NOT BEATS
-        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, false);
+        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
         createMoves(beatMoves, true);
+
+        if(!beatMoves.isEmpty()) return;
+
+        Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn, false);
+        createMoves(normalMoves, false);
     }
 
     private void createMoves(Map<Piece, List<Position[]>> movesData, boolean isBeatMoves)
@@ -73,13 +77,13 @@ public class MultiplayerServerGame extends Game
 //                        }
 //
                         clearEvents(null, movesData, true);
-//
-//                        if(isBeatMoves)
-//                        {
-//                            board.removePiece(pos[1]);
-//                            nextBeats(currentPiece);
-//                        }
-//                        else changeTurn();
+
+                        if(isBeatMoves)
+                        {
+                            board.removePiece(pos[1]);
+                            nextBeats(currentPiece);
+                        }
+                        else changeTurn();
                     });
                 }
             });
@@ -118,9 +122,35 @@ public class MultiplayerServerGame extends Game
         }
     }
 
+
+
     private void changeTurn()
     {
+        System.out.println("Waiting for move from client");
+        new Thread(() ->
+        {
+            MovePacket move = GlobalCommunication.communicator.getMove();
+            System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
+            MovePacket translatedMove = translateMove(move);
+            Platform.runLater(() ->
+            {
+                board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
+            });
 
+        }).start();
+
+        turn();
     }
 
+
+    private MovePacket translateMove(MovePacket move)
+    {
+        int boardSize = board.getSize() - 1;
+        return new MovePacket(
+                boardSize - move.fromX,
+                boardSize - move.fromY,
+                boardSize - move.toX,
+                boardSize - move.toY
+        );
+    }
 }

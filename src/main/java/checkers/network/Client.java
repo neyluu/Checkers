@@ -160,7 +160,16 @@ public class Client implements Communicator
     @Override
     public void sendMove(MovePacket move)
     {
-
+        try
+        {
+            objectOutputStream.writeObject(move);
+            System.out.println("Packet sent");
+        }
+        catch (IOException e)
+        {
+            System.err.println("Failed to send move packet!");
+            e.printStackTrace();
+        }
     }
 
     @Override
