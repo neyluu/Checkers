@@ -12,16 +12,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Client implements Communicator
+public class Client extends Communicator
 {
-    private final int port = 5555;
     private Socket socket = null;
 
     private boolean isConnected = false;
     private boolean isClosed = false;
-
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
 
     private ClientAlerts clientAlerts = new ClientAlerts();
 
@@ -59,13 +55,10 @@ public class Client implements Communicator
     {
         if(!isConnected) throw new ServerConnectionException("Failed to connect to server");
 
-//        new Thread(() ->
-//        {
-            System.out.println("Starting client");
+        System.out.println("Starting client");
 
-            synchronizeGameSession();
-            waitForGameStart();
-//        }).start();
+        synchronizeGameSession();
+        waitForGameStart();
     }
 
     public void close()
@@ -102,13 +95,6 @@ public class Client implements Communicator
             System.err.println("Failed to synchronize game session");
             close();
         }
-    }
-
-    private void sendSynchronizationData() throws IOException
-    {
-        objectOutputStream.reset();
-        objectOutputStream.writeObject(GameSession.getInstance());
-        objectOutputStream.flush();
     }
 
     private void getSynchronizationData() throws IOException, ClassNotFoundException
@@ -155,40 +141,5 @@ public class Client implements Communicator
         System.out.println("Starting game");
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CLIENT);
         SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer client");
-    }
-
-    @Override
-    public void sendMove(MovePacket move)
-    {
-        System.out.println("CLIENT SENDING");
-        System.out.println("Move sended: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
-        try
-        {
-            objectOutputStream.writeObject(move);
-            objectOutputStream.flush();
-
-            System.out.println("Packet sent");
-        }
-        catch (IOException e)
-        {
-            System.err.println("Failed to send move packet!");
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public MovePacket getMove()
-    {
-        System.out.println("CLIENT GETTING");
-        try
-        {
-            MovePacket move = (MovePacket) objectInputStream.readObject();
-            return move;
-        }
-        catch(IOException | ClassNotFoundException e)
-        {
-            System.err.println("Failed to get move packet!");
-        }
-        return null;
     }
 }

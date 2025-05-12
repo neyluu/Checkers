@@ -11,17 +11,13 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server implements Communicator
+public class Server extends Communicator
 {
-    private final int port = 5555;
     private final ServerSocket serverSocket;
     private Socket clientSocket = null;
 
     private boolean isRunning = false;
     private boolean isBusy = false;
-
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
 
     private final ServerAlerts serverAlerts = new ServerAlerts();
 
@@ -148,13 +144,6 @@ public class Server implements Communicator
         System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
     }
 
-    private void sendSynchronizationData() throws IOException
-    {
-        objectOutputStream.reset();
-        objectOutputStream.writeObject(GameSession.getInstance());
-        objectOutputStream.flush();
-    }
-
     public void startGame()
     {
         try
@@ -177,37 +166,5 @@ public class Server implements Communicator
 
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_SERVER);
         SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer server");
-    }
-
-    @Override
-    public void sendMove(MovePacket move)
-    {
-        try
-        {
-            objectOutputStream.writeObject(move);
-            objectOutputStream.flush();
-
-            System.out.println("Packet sent");
-        }
-        catch (IOException e)
-        {
-            System.err.println("Failed to send move packet!");
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public MovePacket getMove()
-    {
-        try
-        {
-            MovePacket move = (MovePacket) objectInputStream.readObject();
-            return move;
-        }
-        catch(IOException | ClassNotFoundException e)
-        {
-            System.err.println("Failed to get move packet!");
-        }
-        return null;
     }
 }
