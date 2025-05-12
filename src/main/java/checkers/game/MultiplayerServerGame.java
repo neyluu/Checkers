@@ -30,6 +30,7 @@ public class MultiplayerServerGame extends Game
 
     private void turn()
     {
+        System.out.println("Next turn");
         Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
         createMoves(beatMoves, true);
 
@@ -59,17 +60,9 @@ public class MultiplayerServerGame extends Game
                         Position from = new Position(piece.getX(), piece.getY());
                         board.movePiece(from, pos[0]);
 
-                        // TODO SEND INFO TO CLIENT
                         System.out.println("sending packet");
-                        if(isBeatMoves)
-                        {
-                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
-                        }
-                        else
-                        {
-                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
-                        }
-                        // ====
+                        if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
+                        else                GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
 
                         Piece currentPiece = piece;
 
@@ -133,26 +126,47 @@ public class MultiplayerServerGame extends Game
 
     private void changeTurn()
     {
-        System.out.println("Waiting for move from client");
+        System.out.println("Waiting for move from server");
         new Thread(() ->
         {
             MovePacket move = GlobalCommunication.communicator.getMove();
             System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
             MovePacket translatedMove = translateMove(move);
+
             Platform.runLater(() ->
             {
                 board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
-                if(translatedMove.isBeatMove)
+
+                Cell cell = board.getCell(translatedMove.toX, translatedMove.toY);
+                Piece currentPiece = cell.getPiece();
+
+                if(currentPiece.isOnKingCells())
+                {
+                    King king = new King(currentPiece.getSize(), currentPiece.getType());
+                    king.setX(currentPiece.getX());
+                    king.setY(currentPiece.getY());
+                    cell.clearPiece();
+                    cell.setPiece(king);
+                }
+
+                if (translatedMove.isBeatMove)
                 {
                     board.removePiece(translatedMove.beatX, translatedMove.beatY);
+
+                    Piece movedPiece = board.getCell(translatedMove.toX, translatedMove.toY).getPiece();
+                    List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
+
+                    if (!pieceBeatMoves.isEmpty())
+                    {
+                        changeTurn();
+                        return;
+                    }
                 }
+
                 turn();
             });
-
         }).start();
-
     }
-
 
     private MovePacket translateMove(MovePacket move)
     {

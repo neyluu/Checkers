@@ -1,7 +1,6 @@
 package checkers.game;
 
 import checkers.gui.outputs.PlayerUI;
-import checkers.network.Communicator;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import javafx.application.Platform;
@@ -60,14 +59,12 @@ public class MultiplayerClientGame extends Game
 
     private void createMoves(Map<Piece, List<Position[]>> movesData, boolean isBeatMoves)
     {
-        System.out.println("moves isbeat: " + isBeatMoves);
         for(Map.Entry<Piece, List<Position[]>> entry : movesData.entrySet())
         {
             Piece piece = entry.getKey();
 
             piece.setOnMouseClicked(e ->
             {
-                System.out.println("event");
                 clearEvents(piece, movesData, false);
 
                 List<Position[]> validMoves = entry.getValue();
@@ -80,8 +77,6 @@ public class MultiplayerClientGame extends Game
                         Position from = new Position(piece.getX(), piece.getY());
                         board.movePiece(from, pos[0]);
 
-                        // TODO SEND INFO TO CLIENT
-                        System.out.println("packet is null: " + (from == null));
                         System.out.println("sending packet");
 
                         if(isBeatMoves)
@@ -92,7 +87,6 @@ public class MultiplayerClientGame extends Game
                         {
                             GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
                         }
-                        // ====
 
                         Piece currentPiece = piece;
 
@@ -122,6 +116,7 @@ public class MultiplayerClientGame extends Game
 
     private void nextBeats(Piece piece)
     {
+        System.out.println("Searching for next beats");
         List<Position[]> pieceBeatMoves;
 
         pieceBeatMoves = piece.getBeatMoves(board);
@@ -160,19 +155,43 @@ public class MultiplayerClientGame extends Game
             MovePacket move = GlobalCommunication.communicator.getMove();
             System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
             MovePacket translatedMove = translateMove(move);
+
             Platform.runLater(() ->
             {
                 board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
-                if(translatedMove.isBeatMove)
+
+                Cell cell = board.getCell(translatedMove.toX, translatedMove.toY);
+                Piece currentPiece = cell.getPiece();
+
+                if(currentPiece.isOnKingCells())
+                {
+                    King king = new King(currentPiece.getSize(), currentPiece.getType());
+                    king.setX(currentPiece.getX());
+                    king.setY(currentPiece.getY());
+                    cell.clearPiece();
+                    cell.setPiece(king);
+                }
+
+
+                if (translatedMove.isBeatMove)
                 {
                     board.removePiece(translatedMove.beatX, translatedMove.beatY);
+
+                    Piece movedPiece = board.getCell(translatedMove.toX, translatedMove.toY).getPiece();
+                    List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
+
+                    if (!pieceBeatMoves.isEmpty())
+                    {
+                        changeTurn();
+                        return;
+                    }
                 }
+
                 turn();
             });
-
         }).start();
-
     }
+
 
     private MovePacket translateMove(MovePacket move)
     {
