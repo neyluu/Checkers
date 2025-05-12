@@ -27,28 +27,48 @@ public class MultiplayerGame extends Game
 
     public void start()
     {
-        if(isServer) startServerGame();
-        else         startClientGame();
+        if(isServer)
+        {
+            player2UI.startTimer();
+            player2UI.highlight();
+
+            player1UI.stopTimer();
+            player1UI.unHighlight();
+
+            startServerGame();
+        }
+        else
+        {
+            player1UI.startTimer();
+            player1UI.highlight();
+
+            player2UI.stopTimer();
+            player2UI.unHighlight();
+
+            startClientGame();
+        }
     }
 
     private void startServerGame()
     {
-        System.out.println("Game started!");
+        System.out.println("Starting server game");
         turn();
     }
     private void startClientGame()
     {
-        System.out.println("Waiting for move from server");
-        MovePacket move = GlobalCommunication.communicator.getMove();
-        System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
-
-        MovePacket translatedMove = translateMove(move);
-        Platform.runLater(() ->
-        {
-            board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
-        });
-
-        turn();
+        System.out.println("Starting client game");
+        changeTurn();
+//        System.out.println("Waiting for move from server");
+//        MovePacket move = GlobalCommunication.communicator.getMove();
+//        System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
+//
+//        MovePacket translatedMove = translateMove(move);
+//        Platform.runLater(() ->
+//        {
+//            board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
+//        });
+//
+//        turn();
     }
 
     private void turn()
@@ -148,6 +168,19 @@ public class MultiplayerGame extends Game
         System.out.println("Waiting for move from server");
         new Thread(() ->
         {
+//            if(isServer)
+//            {
+                player2UI.stopTimer();
+                player2UI.unHighlight();
+
+                player1UI.startTimer();
+                player1UI.highlight();
+//            }
+//            else
+//            {
+//
+//            }
+
             MovePacket move = GlobalCommunication.communicator.getMove();
             System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
             MovePacket translatedMove = translateMove(move);
@@ -181,6 +214,12 @@ public class MultiplayerGame extends Game
                         return;
                     }
                 }
+
+                player1UI.stopTimer();
+                player1UI.unHighlight();
+
+                player2UI.startTimer();
+                player2UI.highlight();
 
                 turn();
             });
