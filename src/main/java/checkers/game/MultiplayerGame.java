@@ -9,20 +9,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MultiplayerClientGame extends Game
+public class MultiplayerGame extends Game
 {
     private PlayerUI player1UI;
     private PlayerUI player2UI;
 
-    private PieceType currentTurn = PieceType.BLACK ;
+    private PieceType currentTurn;
+    private boolean isServer;
 
-    public MultiplayerClientGame(PlayerUI player1UI, PlayerUI player2UI)
+    public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
     {
         this.player1UI = player1UI;
         this.player2UI = player2UI;
+        this.isServer = isServer;
+        currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
     }
 
     public void start()
+    {
+        if(isServer) startServerGame();
+        else         startClientGame();
+    }
+
+    private void startServerGame()
+    {
+        System.out.println("Game started!");
+        turn();
+    }
+    private void startClientGame()
     {
         System.out.println("Waiting for move from server");
         MovePacket move = GlobalCommunication.communicator.getMove();
@@ -39,21 +53,11 @@ public class MultiplayerClientGame extends Game
 
     private void turn()
     {
-        System.out.println("Starting turn");
-        System.out.println("black count: " + board.getBlackPiecesCount());
-
-        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
-
-        System.out.println("beat moves" + beatMoves.size());
-
-        createMoves(beatMoves, true);
+        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);        createMoves(beatMoves, true);
 
         if(!beatMoves.isEmpty()) return;
 
         Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn, false);
-
-        System.out.println("moves" + normalMoves.size());
-
         createMoves(normalMoves, false);
     }
 
@@ -78,15 +82,8 @@ public class MultiplayerClientGame extends Game
                         board.movePiece(from, pos[0]);
 
                         System.out.println("sending packet");
-
-                        if(isBeatMoves)
-                        {
-                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
-                        }
-                        else
-                        {
-                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
-                        }
+                        if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
+                        else                GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
 
                         Piece currentPiece = piece;
 
@@ -116,7 +113,6 @@ public class MultiplayerClientGame extends Game
 
     private void nextBeats(Piece piece)
     {
-        System.out.println("Searching for next beats");
         List<Position[]> pieceBeatMoves;
 
         pieceBeatMoves = piece.getBeatMoves(board);
@@ -172,7 +168,6 @@ public class MultiplayerClientGame extends Game
                     cell.setPiece(king);
                 }
 
-
                 if (translatedMove.isBeatMove)
                 {
                     board.removePiece(translatedMove.beatX, translatedMove.beatY);
@@ -192,18 +187,17 @@ public class MultiplayerClientGame extends Game
         }).start();
     }
 
-
     private MovePacket translateMove(MovePacket move)
     {
         int boardSize = board.getSize() - 1;
         return new MovePacket(
-            boardSize - move.fromX,
-            boardSize - move.fromY,
-            boardSize - move.toX,
-            boardSize - move.toY,
-            move.isBeatMove,
-            boardSize - move.beatX,
-            boardSize - move.beatY
+                boardSize - move.fromX,
+                boardSize - move.fromY,
+                boardSize - move.toX,
+                boardSize - move.toY,
+                move.isBeatMove,
+                boardSize - move.beatX,
+                boardSize - move.beatY
         );
     }
 }

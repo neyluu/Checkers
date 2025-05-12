@@ -1,15 +1,15 @@
 package checkers.scenes;
 
 import checkers.game.GameSession;
-import checkers.game.MultiplayerServerGame;
+import checkers.game.MultiplayerGame;
 
 public class MultiplayerServer extends GameSceneBase
 {
-    private MultiplayerServerGame game;
+    private MultiplayerGame game;
 
     public MultiplayerServer()
     {
-        game = new MultiplayerServerGame(player1UI, player2UI);
+        game = new MultiplayerGame(player1UI, player2UI, true);
         updateBoard(game.getBoard());
         swapUsernames();
 
