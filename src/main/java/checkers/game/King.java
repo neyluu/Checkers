@@ -15,6 +15,14 @@ public class King extends Piece
     }
 
     @Override
+    public boolean isOnKingCells()
+    {
+        if(isWhite() && y == 0) return true;
+        if(isBlack() && y == 7) return true;
+        return false;
+    }
+
+    @Override
     public List<Position[]> getValidMoves(Board board)
     {
         List<Position[]> validMoves = new ArrayList<>();

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Man extends Piece
 {
-    private boolean isTop = true;
+    private boolean isTop;
 
     public Man(int size, PieceType type, boolean isTop)
     {
@@ -17,17 +17,18 @@ public class Man extends Piece
         createStyle();
     }
 
-    public void setTop(boolean isTop)
+    @Override
+    public boolean isOnKingCells()
     {
-        this.isTop = isTop;
+        if(!isTop && y == 0) return true;
+        if(isTop && y == 7) return true;
+        return false;
     }
 
     @Override
     public List<Position[]> getValidMoves(Board board)
     {
         List<Position[]> validMoves = new ArrayList<>();
-
-        System.out.println("moves " + isTop);
 
         if(isTop) validMoves.addAll(getDiagonalMoves(board, 1));
         if(!isTop) validMoves.addAll(getDiagonalMoves(board, -1));
@@ -53,7 +54,6 @@ public class Man extends Piece
 
         return beatMoves;
     }
-
 
     private List<Position[]> getDiagonalMoves(Board board, int directionY)
     {

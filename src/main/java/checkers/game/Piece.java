@@ -66,6 +66,7 @@ public abstract class Piece extends Button
         else System.err.println("Image dont exist!");
     }
 
+    public abstract boolean isOnKingCells();
     public abstract List<Position[]> getValidMoves(Board board);
     public abstract List<Position[]> getBeatMoves(Board board);
 
@@ -87,12 +88,6 @@ public abstract class Piece extends Button
     {
         if(isBlack() && piece.isWhite()) return true;
         if(isWhite() && piece.isBlack()) return true;
-        return false;
-    }
-    public boolean isOnKingCells()
-    {
-        if(isWhite() && y == 0) return true;
-        if(isBlack() && y == 7) return true;
         return false;
     }
 }
