@@ -160,9 +160,13 @@ public class Client implements Communicator
     @Override
     public void sendMove(MovePacket move)
     {
+        System.out.println("CLIENT SENDING");
+        System.out.println("Move sended: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
         try
         {
             objectOutputStream.writeObject(move);
+            objectOutputStream.flush();
+
             System.out.println("Packet sent");
         }
         catch (IOException e)
@@ -175,6 +179,7 @@ public class Client implements Communicator
     @Override
     public MovePacket getMove()
     {
+        System.out.println("CLIENT GETTING");
         try
         {
             MovePacket move = (MovePacket) objectInputStream.readObject();

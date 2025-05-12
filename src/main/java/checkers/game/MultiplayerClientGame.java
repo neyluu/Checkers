@@ -1,6 +1,7 @@
 package checkers.game;
 
 import checkers.gui.outputs.PlayerUI;
+import checkers.network.Communicator;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import javafx.application.Platform;
@@ -14,7 +15,7 @@ public class MultiplayerClientGame extends Game
     private PlayerUI player1UI;
     private PlayerUI player2UI;
 
-    private PieceType currentTurn = PieceType.WHITE;
+    private PieceType currentTurn = PieceType.BLACK ;
 
     public MultiplayerClientGame(PlayerUI player1UI, PlayerUI player2UI)
     {
@@ -40,20 +41,26 @@ public class MultiplayerClientGame extends Game
     private void turn()
     {
         System.out.println("Starting turn");
-        System.out.println(board.getBlackPiecesCount());
+        System.out.println("black count: " + board.getBlackPiecesCount());
+
         Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
-        System.out.println(beatMoves.size());
+
+        System.out.println("beat moves" + beatMoves.size());
+
         createMoves(beatMoves, true);
 
         if(!beatMoves.isEmpty()) return;
 
         Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn, false);
+
+        System.out.println("moves" + normalMoves.size());
+
         createMoves(normalMoves, false);
     }
 
     private void createMoves(Map<Piece, List<Position[]>> movesData, boolean isBeatMoves)
     {
-        System.out.println("moves" + isBeatMoves);
+        System.out.println("moves isbeat: " + isBeatMoves);
         for(Map.Entry<Piece, List<Position[]>> entry : movesData.entrySet())
         {
             Piece piece = entry.getKey();
@@ -74,22 +81,31 @@ public class MultiplayerClientGame extends Game
                         board.movePiece(from, pos[0]);
 
                         // TODO SEND INFO TO CLIENT
+                        System.out.println("packet is null: " + (from == null));
                         System.out.println("sending packet");
-                        GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
+
+                        if(isBeatMoves)
+                        {
+                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
+                        }
+                        else
+                        {
+                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
+                        }
                         // ====
 
                         Piece currentPiece = piece;
-//
-//                        if(currentPiece.isOnKingCells())
-//                        {
-//                            King king = new King(currentPiece.getSize(), currentPiece.getType());
-//                            king.setX(currentPiece.getX());
-//                            king.setY(currentPiece.getY());
-//                            cell.clearPiece();
-//                            cell.setPiece(king);
-//                            currentPiece = king;
-//                        }
-//
+
+                        if(currentPiece.isOnKingCells())
+                        {
+                            King king = new King(currentPiece.getSize(), currentPiece.getType());
+                            king.setX(currentPiece.getX());
+                            king.setY(currentPiece.getY());
+                            cell.clearPiece();
+                            cell.setPiece(king);
+                            currentPiece = king;
+                        }
+
                         clearEvents(null, movesData, true);
 
                         if(isBeatMoves)
@@ -139,16 +155,23 @@ public class MultiplayerClientGame extends Game
     private void changeTurn()
     {
         System.out.println("Waiting for move from server");
-        MovePacket move = GlobalCommunication.communicator.getMove();
-        System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
-
-        MovePacket translatedMove = translateMove(move);
-        Platform.runLater(() ->
+        new Thread(() ->
         {
-            board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
-        });
+            MovePacket move = GlobalCommunication.communicator.getMove();
+            System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
+            MovePacket translatedMove = translateMove(move);
+            Platform.runLater(() ->
+            {
+                board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
+                if(translatedMove.isBeatMove)
+                {
+                    board.removePiece(translatedMove.beatX, translatedMove.beatY);
+                }
+                turn();
+            });
 
-        turn();
+        }).start();
+
     }
 
     private MovePacket translateMove(MovePacket move)
@@ -158,7 +181,10 @@ public class MultiplayerClientGame extends Game
             boardSize - move.fromX,
             boardSize - move.fromY,
             boardSize - move.toX,
-            boardSize - move.toY
+            boardSize - move.toY,
+            move.isBeatMove,
+            boardSize - move.beatX,
+            boardSize - move.beatY
         );
     }
 }

@@ -77,37 +77,10 @@ public class Server implements Communicator
 
                     serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
                     Platform.runLater(serverAlerts::showClientConnectedAlert);
-
-                    handleClient();
                 }
                 catch(IOException e)
                 {
                     close();
-                }
-            }
-        }).start();
-    }
-
-    public boolean isBusy()
-    {
-        return isBusy;
-    }
-
-    private void handleClient()
-    {
-        new Thread(() ->
-        {
-            while(isBusy)
-            {
-                //TODO tmp
-                if(clientSocket.isClosed()) closeClient();
-                try
-                {
-                    Object o = objectInputStream.readObject();
-                }
-                catch (IOException  | ClassNotFoundException e)
-                {
-                    closeClient();
                 }
             }
         }).start();
@@ -212,6 +185,8 @@ public class Server implements Communicator
         try
         {
             objectOutputStream.writeObject(move);
+            objectOutputStream.flush();
+
             System.out.println("Packet sent");
         }
         catch (IOException e)
@@ -224,7 +199,6 @@ public class Server implements Communicator
     @Override
     public MovePacket getMove()
     {
-
         try
         {
             MovePacket move = (MovePacket) objectInputStream.readObject();

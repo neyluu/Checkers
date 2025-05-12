@@ -5,13 +5,21 @@ import java.util.List;
 
 public class Man extends Piece
 {
-    public Man(int size, PieceType type)
+    private boolean isTop = true;
+
+    public Man(int size, PieceType type, boolean isTop)
     {
         super(size, type);
+        this.isTop = isTop;
 
         if(isWhite())   textureName = "whiteMan.png";
         else            textureName = "blackMan.png";
         createStyle();
+    }
+
+    public void setTop(boolean isTop)
+    {
+        this.isTop = isTop;
     }
 
     @Override
@@ -19,8 +27,10 @@ public class Man extends Piece
     {
         List<Position[]> validMoves = new ArrayList<>();
 
-        if(isWhite()) validMoves.addAll(getDiagonalMoves(board, -1));
-        if(isBlack()) validMoves.addAll(getDiagonalMoves(board, 1));
+        System.out.println("moves " + isTop);
+
+        if(isTop) validMoves.addAll(getDiagonalMoves(board, 1));
+        if(!isTop) validMoves.addAll(getDiagonalMoves(board, -1));
 
         return validMoves;
     }

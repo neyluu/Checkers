@@ -61,21 +61,28 @@ public class MultiplayerServerGame extends Game
 
                         // TODO SEND INFO TO CLIENT
                         System.out.println("sending packet");
-                        GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
+                        if(isBeatMoves)
+                        {
+                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
+                        }
+                        else
+                        {
+                            GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
+                        }
                         // ====
 
                         Piece currentPiece = piece;
-//
-//                        if(currentPiece.isOnKingCells())
-//                        {
-//                            King king = new King(currentPiece.getSize(), currentPiece.getType());
-//                            king.setX(currentPiece.getX());
-//                            king.setY(currentPiece.getY());
-//                            cell.clearPiece();
-//                            cell.setPiece(king);
-//                            currentPiece = king;
-//                        }
-//
+
+                        if(currentPiece.isOnKingCells())
+                        {
+                            King king = new King(currentPiece.getSize(), currentPiece.getType());
+                            king.setX(currentPiece.getX());
+                            king.setY(currentPiece.getY());
+                            cell.clearPiece();
+                            cell.setPiece(king);
+                            currentPiece = king;
+                        }
+
                         clearEvents(null, movesData, true);
 
                         if(isBeatMoves)
@@ -135,11 +142,15 @@ public class MultiplayerServerGame extends Game
             Platform.runLater(() ->
             {
                 board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
+                if(translatedMove.isBeatMove)
+                {
+                    board.removePiece(translatedMove.beatX, translatedMove.beatY);
+                }
+                turn();
             });
 
         }).start();
 
-        turn();
     }
 
 
@@ -150,7 +161,10 @@ public class MultiplayerServerGame extends Game
                 boardSize - move.fromX,
                 boardSize - move.fromY,
                 boardSize - move.toX,
-                boardSize - move.toY
+                boardSize - move.toY,
+                move.isBeatMove,
+                boardSize - move.beatX,
+                boardSize - move.beatY
         );
     }
 }
