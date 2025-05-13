@@ -67,6 +67,20 @@ public class Communicator
         return null;
     }
 
+    public Object getObject()
+    {
+        try
+        {
+            return objectInputStream.readObject();
+        }
+        catch (IOException | ClassNotFoundException e)
+        {
+            System.err.println("Failed to get object!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected void sendSynchronizationData() throws IOException
     {
         objectOutputStream.reset();

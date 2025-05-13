@@ -27,8 +27,16 @@ public class MultiplayerGame extends Game
     private PieceType currentTurn;
     private boolean isServer;
 
+    private volatile boolean isRunning;
+
+    private volatile boolean isWaitingForMove = false;
+
     private Alert gameOverAlert;
-    
+
+    private ScheduledExecutorService scheduler;
+
+    private final Object communicationMutex = new Object();
+
     public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
     {
         this.player1UI = player1UI;
@@ -37,34 +45,10 @@ public class MultiplayerGame extends Game
         currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
     }
 
-    private void watchTimers()
-    {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r ->
-        {
-            Thread thread = new Thread(r);
-            thread.setDaemon(true);
-            return thread;
-        });
-
-        scheduler.scheduleAtFixedRate(() ->
-        {
-            boolean isTimerPlayer1Finished = player1UI.isTimerFinished();
-            boolean isTimerPlayer2Finished = player2UI.isTimerFinished();
-
-            if(isTimerPlayer1Finished || isTimerPlayer2Finished)
-            {
-                winner = isServer ?
-                        (isTimerPlayer1Finished ? PieceType.WHITE : PieceType.BLACK) :
-                        (isTimerPlayer1Finished ? PieceType.BLACK : PieceType.WHITE) ;
-                gameOver();
-                scheduler.shutdown();
-            }
-
-        }, 0, 1000, TimeUnit.MILLISECONDS);
-    }
-
     public void start()
     {
+        isRunning = true;
+
         if(isServer)
         {
             player2UI.startTimer();
@@ -90,8 +74,38 @@ public class MultiplayerGame extends Game
         watchTimers();
     }
 
+    private void watchTimers()
+    {
+        if(scheduler != null && !scheduler.isTerminated()) scheduler.shutdownNow();
+
+        scheduler = Executors.newSingleThreadScheduledExecutor(r ->
+        {
+            Thread thread = new Thread(r);
+            thread.setDaemon(true);
+            return thread;
+        });
+
+        scheduler.scheduleAtFixedRate(() ->
+        {
+            boolean isTimerPlayer1Finished = player1UI.isTimerFinished();
+            boolean isTimerPlayer2Finished = player2UI.isTimerFinished();
+
+            if(isTimerPlayer1Finished || isTimerPlayer2Finished)
+            {
+                winner = isServer ?
+                        (isTimerPlayer1Finished ? PieceType.WHITE : PieceType.BLACK) :
+                        (isTimerPlayer1Finished ? PieceType.BLACK : PieceType.WHITE);
+                gameOver();
+                scheduler.shutdown();
+            }
+
+        }, 0, 1000, TimeUnit.MILLISECONDS);
+    }
+
     public void reset()
     {
+//        GlobalCommunication.communicator.reset();
+
         board.clearBoard( ! isServer);
         player1UI.resetTimer();
         player2UI.resetTimer();
@@ -206,6 +220,8 @@ public class MultiplayerGame extends Game
 
     private void changeTurn()
     {
+        if(isWaitingForMove) return;
+        isWaitingForMove = true;
         System.out.println("Waiting for move");
 
         checkGameOverAtNoPieces();
@@ -218,7 +234,33 @@ public class MultiplayerGame extends Game
             player1UI.startTimer();
             player1UI.highlight();
 
-            MovePacket move = GlobalCommunication.communicator.getMove();
+            if(!isRunning) return;
+
+            Object receivedObject;
+            synchronized (communicationMutex)
+            {
+                receivedObject  = GlobalCommunication.communicator.getObject();
+            }
+            isWaitingForMove = false;
+
+            if(receivedObject instanceof ServerState)
+            {
+                System.out.println("change turn object is serverstate");
+                Platform.runLater(() ->
+                {
+                    System.out.println("Resetting game");
+                    gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                    gameOverAlert.close();
+                    reset();
+                    start();
+                });
+                return;
+            }
+
+            MovePacket move = (MovePacket) receivedObject ;
+
+//            MovePacket move = GlobalCommunication.communicator.getMove();
+
             System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
             MovePacket translatedMove = translateMove(move);
 
@@ -295,6 +337,9 @@ public class MultiplayerGame extends Game
 
     private void gameOver()
     {
+        scheduler.shutdownNow();
+        isRunning = false;
+
         Platform.runLater(() ->
         {
 
@@ -328,7 +373,70 @@ public class MultiplayerGame extends Game
                 new Thread(() ->
                 {
                     System.out.println("Getting game reset info");
-                    ServerState state = GlobalCommunication.communicator.getState();
+
+                    Object recievedObject;
+
+                    synchronized (communicationMutex)
+                    {
+                        recievedObject = GlobalCommunication.communicator.getObject();
+                    }
+
+                    if(recievedObject instanceof MovePacket)
+                    {
+                        System.out.println("gameover object is movepacket");
+
+
+                        MovePacket translatedMove = translateMove((MovePacket) recievedObject);
+
+                        Platform.runLater(() ->
+                        {
+                            board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
+
+                            Cell cell = board.getCell(translatedMove.toX, translatedMove.toY);
+                            Piece currentPiece = cell.getPiece();
+
+                            if(currentPiece.isOnKingCells())
+                            {
+                                King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
+                                king.setX(currentPiece.getX());
+                                king.setY(currentPiece.getY());
+                                cell.clearPiece();
+                                cell.setPiece(king);
+                            }
+
+                            if (translatedMove.isBeatMove)
+                            {
+                                board.removePiece(translatedMove.beatX, translatedMove.beatY);
+
+                                Piece movedPiece = board.getCell(translatedMove.toX, translatedMove.toY).getPiece();
+                                List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
+
+                                checkGameOverAtNoPieces();
+
+                                if (!pieceBeatMoves.isEmpty())
+                                {
+                                    changeTurn();
+                                    return;
+                                }
+                            }
+
+                            player1UI.stopTimer();
+                            player1UI.unHighlight();
+
+                            player2UI.startTimer();
+                            player2UI.highlight();
+
+                            turn();
+                        });
+
+
+
+
+                        return;
+                    }
+
+                    ServerState state = (ServerState) recievedObject;
+//                    ServerState state = GlobalCommunication.communicator.getState();
                     System.out.println("State: " + String.valueOf(state));
                     if(state == ServerState.GAME_START)
                     {
