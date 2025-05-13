@@ -98,6 +98,9 @@ public class MultiplayerGame extends Game
         if(!beatMoves.isEmpty()) return;
 
         Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn, false);
+
+//        if(beatMoves.isEmpty() && normalMoves.isEmpty()) gameOver();
+
         createMoves(normalMoves, false);
     }
 
@@ -299,13 +302,14 @@ public class MultiplayerGame extends Game
 
         alert.setContentText(
                 (winner == PieceType.WHITE
-                        ? (isServer ? player1UI.getUsername() : player2UI.getUsername())
-                        : (isServer ? player2UI.getUsername() : player1UI.getUsername())
+                        ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
+                        : (isServer ? player1UI.getUsername() : player2UI.getUsername())
                 ) + " wins!"
         );
 
 
-        alert.getButtonTypes().setAll(playAgain, quit, quitMainMenu);
+        if(isServer)    alert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
+        else            alert.getButtonTypes().setAll(quit, quitMainMenu);
 
         alert.showAndWait();
 

@@ -8,3 +8,4 @@
 
 BUGS:
   * White king is darker than Man
+  * Multiplayer, white king cant beat multiple times after promote, piece > king > should can beat
