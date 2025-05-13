@@ -3,6 +3,7 @@ package checkers.game;
 import checkers.gui.outputs.PlayerUI;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
+import checkers.network.ServerState;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
@@ -26,6 +27,8 @@ public class MultiplayerGame extends Game
     private PieceType currentTurn;
     private boolean isServer;
 
+    private Alert gameOverAlert;
+    
     public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
     {
         this.player1UI = player1UI;
@@ -80,6 +83,14 @@ public class MultiplayerGame extends Game
         }
     }
 
+    public void reset()
+    {
+        board.clearBoard( ! isServer);
+        player1UI.resetTimer();
+        player2UI.resetTimer();
+        currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
+    }
+
     private void startServerGame()
     {
         System.out.println("Starting server game");
@@ -124,7 +135,7 @@ public class MultiplayerGame extends Game
                         Position from = new Position(piece.getX(), piece.getY());
                         board.movePiece(from, pos[0]);
 
-                        System.out.println("sending packet");
+                        System.out.println("Sending move packet");
                         if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
                         else                GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
 
@@ -188,21 +199,9 @@ public class MultiplayerGame extends Game
 
     private void changeTurn()
     {
-        System.out.println("Waiting for move from server");
+        System.out.println("Waiting for move");
 
-        System.out.println("black: " + board.getBlackPiecesCount());
-        System.out.println("white: " + board.getWhitePieceCount());
-
-        if(board.getBlackPiecesCount() == 0)
-        {
-            winner = PieceType.WHITE;
-            gameOver();
-        }
-        if(board.getWhitePieceCount() == 0)
-        {
-            winner = PieceType.BLACK;
-            gameOver();
-        }
+        checkGameOverAtNoPieces();
 
         new Thread(() ->
         {
@@ -232,7 +231,6 @@ public class MultiplayerGame extends Game
                     cell.setPiece(king);
                 }
 
-
                 if (translatedMove.isBeatMove)
                 {
                     board.removePiece(translatedMove.beatX, translatedMove.beatY);
@@ -240,17 +238,7 @@ public class MultiplayerGame extends Game
                     Piece movedPiece = board.getCell(translatedMove.toX, translatedMove.toY).getPiece();
                     List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
 
-                    if(board.getBlackPiecesCount() == 0)
-                    {
-                        winner = PieceType.WHITE;
-                        gameOver();
-                    }
-                    if(board.getWhitePieceCount() == 0)
-                    {
-                        winner = PieceType.BLACK;
-                        gameOver();
-                    }
-
+                    checkGameOverAtNoPieces();
 
                     if (!pieceBeatMoves.isEmpty())
                     {
@@ -268,6 +256,20 @@ public class MultiplayerGame extends Game
                 turn();
             });
         }).start();
+    }
+
+    private void checkGameOverAtNoPieces()
+    {
+        if(board.getBlackPiecesCount() == 0)
+        {
+            winner = PieceType.WHITE;
+            gameOver();
+        }
+        if(board.getWhitePieceCount() == 0)
+        {
+            winner = PieceType.BLACK;
+            gameOver();
+        }
     }
 
     private MovePacket translateMove(MovePacket move)
@@ -296,11 +298,11 @@ public class MultiplayerGame extends Game
         ButtonType quit = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
         ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
 
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.setTitle("");
-        alert.setHeaderText("Game finished!");
+        gameOverAlert = new Alert(Alert.AlertType.NONE);
+        gameOverAlert.setTitle("");
+        gameOverAlert.setHeaderText("Game finished!");
 
-        alert.setContentText(
+        gameOverAlert.setContentText(
                 (winner == PieceType.WHITE
                         ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
                         : (isServer ? player1UI.getUsername() : player2UI.getUsername())
@@ -308,26 +310,55 @@ public class MultiplayerGame extends Game
         );
 
 
-        if(isServer)    alert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
-        else            alert.getButtonTypes().setAll(quit, quitMainMenu);
+        if(isServer)    gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
+        else            gameOverAlert.getButtonTypes().setAll(quit, quitMainMenu);
 
-        alert.showAndWait();
+        if(!isServer)
+        {
+            new Thread(() ->
+            {
+                System.out.println("Getting game reset info");
+                ServerState state = GlobalCommunication.communicator.getState();
+                System.out.println("State: " + String.valueOf(state));
+                if(state == ServerState.GAME_START)
+                {
+                    Platform.runLater(() ->
+                    {
+                        System.out.println("Resetting game");
+                        gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                        gameOverAlert.close();
+                        reset();
+                        start();
+                    });
+                }
+            }).start();
+        }
 
-        ButtonType alertResult = alert.getResult();
+        gameOverAlert.show();
 
-        if(alertResult.equals(quit))
+        gameOverAlert.setOnHidden(e ->
         {
-            Platform.exit();
-        }
-        if(alertResult.equals(quitMainMenu))
-        {
-            SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-        }
-        if(alertResult.equals(playAgain))
-        {
-//            reset();
-//            startGame();
-//            listenForMessage();
-        }
+            ButtonType gameOverAlertResult = gameOverAlert.getResult();
+
+            if(gameOverAlertResult.equals(quit))
+            {
+                Platform.exit();
+            }
+            if(gameOverAlertResult.equals(quitMainMenu))
+            {
+                SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
+            }
+            if(gameOverAlertResult.equals(playAgain))
+            {
+                if(isServer)
+                {
+                    System.out.println("Sending game reset info");
+                    GlobalCommunication.communicator.sendState(ServerState.GAME_START);
+                    System.out.println("Sent");
+                    reset();
+                    start();
+                }
+            }
+        });
     }
 }

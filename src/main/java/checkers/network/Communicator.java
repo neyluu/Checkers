@@ -39,6 +39,34 @@ public class Communicator
         return null;
     }
 
+    public void sendState(ServerState state)
+    {
+        try
+        {
+            objectOutputStream.writeObject(state);
+            objectOutputStream.flush();
+        }
+        catch(IOException e)
+        {
+            System.err.println("Failed to send state!");
+            e.printStackTrace();
+        }
+    }
+
+    public ServerState getState()
+    {
+        try
+        {
+            return (ServerState) objectInputStream.readObject();
+        }
+        catch (IOException | ClassNotFoundException e)
+        {
+            System.err.println("Failed to get state!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected void sendSynchronizationData() throws IOException
     {
         objectOutputStream.reset();
