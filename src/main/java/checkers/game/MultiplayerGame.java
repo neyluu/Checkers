@@ -45,17 +45,21 @@ public class MultiplayerGame extends Game
             thread.setDaemon(true);
             return thread;
         });
+
         scheduler.scheduleAtFixedRate(() ->
         {
-            if (player1UI.isTimerFinished() || player2UI.isTimerFinished())
-            {
+            boolean isTimerPlayer1Finished = player1UI.isTimerFinished();
+            boolean isTimerPlayer2Finished = player2UI.isTimerFinished();
 
-                // TODO FIX
-//                if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
-//                else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
-//                gameOver();
-//                scheduler.shutdown();
+            if(isTimerPlayer1Finished || isTimerPlayer2Finished)
+            {
+                winner = isServer ?
+                        (isTimerPlayer1Finished ? PieceType.WHITE : PieceType.BLACK) :
+                        (isTimerPlayer1Finished ? PieceType.BLACK : PieceType.WHITE) ;
+                gameOver();
+                scheduler.shutdown();
             }
+
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
@@ -78,9 +82,12 @@ public class MultiplayerGame extends Game
 
             player2UI.stopTimer();
             player2UI.unHighlight();
+            player2UI.unHighlight();
 
             startClientGame();
         }
+
+        watchTimers();
     }
 
     public void reset()
@@ -288,77 +295,81 @@ public class MultiplayerGame extends Game
 
     private void gameOver()
     {
-        System.out.println("Game over");
-        player1UI.stopTimer();
-        player2UI.stopTimer();
-
-        System.out.println("winner:" + winner);
-
-        ButtonType playAgain = new ButtonType("PlayAgain", ButtonBar.ButtonData.OK_DONE);
-        ButtonType quit = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
-        ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
-
-        gameOverAlert = new Alert(Alert.AlertType.NONE);
-        gameOverAlert.setTitle("");
-        gameOverAlert.setHeaderText("Game finished!");
-
-        gameOverAlert.setContentText(
-                (winner == PieceType.WHITE
-                        ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
-                        : (isServer ? player1UI.getUsername() : player2UI.getUsername())
-                ) + " wins!"
-        );
-
-
-        if(isServer)    gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
-        else            gameOverAlert.getButtonTypes().setAll(quit, quitMainMenu);
-
-        if(!isServer)
+        Platform.runLater(() ->
         {
-            new Thread(() ->
+
+            System.out.println("Game over");
+            player1UI.stopTimer();
+            player2UI.stopTimer();
+
+            System.out.println("winner:" + winner);
+
+            ButtonType playAgain = new ButtonType("PlayAgain", ButtonBar.ButtonData.OK_DONE);
+            ButtonType quit = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
+            ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+
+            gameOverAlert = new Alert(Alert.AlertType.NONE);
+            gameOverAlert.setTitle("");
+            gameOverAlert.setHeaderText("Game finished!");
+
+            gameOverAlert.setContentText(
+                    (winner == PieceType.WHITE
+                            ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
+                            : (isServer ? player1UI.getUsername() : player2UI.getUsername())
+                    ) + " wins!"
+            );
+
+
+            if(isServer)    gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
+            else            gameOverAlert.getButtonTypes().setAll(quit, quitMainMenu);
+
+            if(!isServer)
             {
-                System.out.println("Getting game reset info");
-                ServerState state = GlobalCommunication.communicator.getState();
-                System.out.println("State: " + String.valueOf(state));
-                if(state == ServerState.GAME_START)
+                new Thread(() ->
                 {
-                    Platform.runLater(() ->
+                    System.out.println("Getting game reset info");
+                    ServerState state = GlobalCommunication.communicator.getState();
+                    System.out.println("State: " + String.valueOf(state));
+                    if(state == ServerState.GAME_START)
                     {
-                        System.out.println("Resetting game");
-                        gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-                        gameOverAlert.close();
+                        Platform.runLater(() ->
+                        {
+                            System.out.println("Resetting game");
+                            gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+                            gameOverAlert.close();
+                            reset();
+                            start();
+                        });
+                    }
+                }).start();
+            }
+
+            gameOverAlert.show();
+
+            gameOverAlert.setOnHidden(e ->
+            {
+                ButtonType gameOverAlertResult = gameOverAlert.getResult();
+
+                if(gameOverAlertResult.equals(quit))
+                {
+                    Platform.exit();
+                }
+                if(gameOverAlertResult.equals(quitMainMenu))
+                {
+                    SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
+                }
+                if(gameOverAlertResult.equals(playAgain))
+                {
+                    if(isServer)
+                    {
+                        System.out.println("Sending game reset info");
+                        GlobalCommunication.communicator.sendState(ServerState.GAME_START);
+                        System.out.println("Sent");
                         reset();
                         start();
-                    });
+                    }
                 }
-            }).start();
-        }
-
-        gameOverAlert.show();
-
-        gameOverAlert.setOnHidden(e ->
-        {
-            ButtonType gameOverAlertResult = gameOverAlert.getResult();
-
-            if(gameOverAlertResult.equals(quit))
-            {
-                Platform.exit();
-            }
-            if(gameOverAlertResult.equals(quitMainMenu))
-            {
-                SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-            }
-            if(gameOverAlertResult.equals(playAgain))
-            {
-                if(isServer)
-                {
-                    System.out.println("Sending game reset info");
-                    GlobalCommunication.communicator.sendState(ServerState.GAME_START);
-                    System.out.println("Sent");
-                    reset();
-                    start();
-                }
-            }
+            });
         });
     }
 }
