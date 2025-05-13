@@ -3,8 +3,12 @@ package checkers.game;
 import checkers.gui.outputs.PlayerUI;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
+import checkers.scenes.utils.SceneManager;
+import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +22,7 @@ public class MultiplayerGame extends Game
     private PlayerUI player1UI;
     private PlayerUI player2UI;
 
+    private PieceType winner;
     private PieceType currentTurn;
     private boolean isServer;
 
@@ -41,10 +46,12 @@ public class MultiplayerGame extends Game
         {
             if (player1UI.isTimerFinished() || player2UI.isTimerFinished())
             {
-                if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
-                else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
-                gameOver();
-                scheduler.shutdown();
+
+                // TODO FIX
+//                if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
+//                else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
+//                gameOver();
+//                scheduler.shutdown();
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
@@ -119,7 +126,6 @@ public class MultiplayerGame extends Game
                         else                GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
 
                         Piece currentPiece = piece;
-                        System.out.println("create moves top " + currentPiece.isTop);
 
                         if(currentPiece.isOnKingCells())
                         {
@@ -184,11 +190,16 @@ public class MultiplayerGame extends Game
         System.out.println("black: " + board.getBlackPiecesCount());
         System.out.println("white: " + board.getWhitePieceCount());
 
-        if(board.getBlackPiecesCount() == 0 || board.getWhitePieceCount() == 0)
+        if(board.getBlackPiecesCount() == 0)
         {
+            winner = PieceType.WHITE;
             gameOver();
         }
-
+        if(board.getWhitePieceCount() == 0)
+        {
+            winner = PieceType.BLACK;
+            gameOver();
+        }
 
         new Thread(() ->
         {
@@ -209,7 +220,6 @@ public class MultiplayerGame extends Game
                 Cell cell = board.getCell(translatedMove.toX, translatedMove.toY);
                 Piece currentPiece = cell.getPiece();
 
-                System.out.println("change turn top " + currentPiece.isTop);
                 if(currentPiece.isOnKingCells())
                 {
                     King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
@@ -219,12 +229,25 @@ public class MultiplayerGame extends Game
                     cell.setPiece(king);
                 }
 
+
                 if (translatedMove.isBeatMove)
                 {
                     board.removePiece(translatedMove.beatX, translatedMove.beatY);
 
                     Piece movedPiece = board.getCell(translatedMove.toX, translatedMove.toY).getPiece();
                     List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
+
+                    if(board.getBlackPiecesCount() == 0)
+                    {
+                        winner = PieceType.WHITE;
+                        gameOver();
+                    }
+                    if(board.getWhitePieceCount() == 0)
+                    {
+                        winner = PieceType.BLACK;
+                        gameOver();
+                    }
+
 
                     if (!pieceBeatMoves.isEmpty())
                     {
@@ -260,11 +283,47 @@ public class MultiplayerGame extends Game
 
     private void gameOver()
     {
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.show();
-
         System.out.println("Game over");
         player1UI.stopTimer();
         player2UI.stopTimer();
+
+        System.out.println("winner:" + winner);
+
+        ButtonType playAgain = new ButtonType("PlayAgain", ButtonBar.ButtonData.OK_DONE);
+        ButtonType quit = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
+        ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle("");
+        alert.setHeaderText("Game finished!");
+
+        alert.setContentText(
+                (winner == PieceType.WHITE
+                        ? (isServer ? player1UI.getUsername() : player2UI.getUsername())
+                        : (isServer ? player2UI.getUsername() : player1UI.getUsername())
+                ) + " wins!"
+        );
+
+
+        alert.getButtonTypes().setAll(playAgain, quit, quitMainMenu);
+
+        alert.showAndWait();
+
+        ButtonType alertResult = alert.getResult();
+
+        if(alertResult.equals(quit))
+        {
+            Platform.exit();
+        }
+        if(alertResult.equals(quitMainMenu))
+        {
+            SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
+        }
+        if(alertResult.equals(playAgain))
+        {
+//            reset();
+//            startGame();
+//            listenForMessage();
+        }
     }
 }
