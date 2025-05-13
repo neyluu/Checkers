@@ -124,7 +124,7 @@ public class Board extends GridPane
     {
         for (int row = 0; row < 3; row++)
         {
-            placePieceInCols(row, inverted ? PieceType.MAN_WHITE : PieceType.MAN_BLACK, inverted ? false : true);
+            placePieceInCols(row, inverted ? PieceType.MAN_WHITE : PieceType.MAN_BLACK, true);
         }
     }
     private void placePieceInCols(int row, PieceType type, boolean isTop)

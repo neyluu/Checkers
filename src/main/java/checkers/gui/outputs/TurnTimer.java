@@ -27,7 +27,6 @@ public class TurnTimer extends Text
             public void run()
             {
                 if (currentChange == 0) return;
-                System.out.println(currentChange);
                 currentSeconds += currentChange;
                 if(currentSeconds < 0)
                 {

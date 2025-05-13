@@ -4,10 +4,14 @@ import checkers.gui.outputs.PlayerUI;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MultiplayerGame extends Game
 {
@@ -23,6 +27,26 @@ public class MultiplayerGame extends Game
         this.player2UI = player2UI;
         this.isServer = isServer;
         currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
+    }
+
+    private void watchTimers()
+    {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r ->
+        {
+            Thread thread = new Thread(r);
+            thread.setDaemon(true);
+            return thread;
+        });
+        scheduler.scheduleAtFixedRate(() ->
+        {
+            if (player1UI.isTimerFinished() || player2UI.isTimerFinished())
+            {
+                if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
+                else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
+                gameOver();
+                scheduler.shutdown();
+            }
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     public void start()
@@ -58,17 +82,6 @@ public class MultiplayerGame extends Game
     {
         System.out.println("Starting client game");
         changeTurn();
-//        System.out.println("Waiting for move from server");
-//        MovePacket move = GlobalCommunication.communicator.getMove();
-//        System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
-//
-//        MovePacket translatedMove = translateMove(move);
-//        Platform.runLater(() ->
-//        {
-//            board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
-//        });
-//
-//        turn();
     }
 
     private void turn()
@@ -106,10 +119,11 @@ public class MultiplayerGame extends Game
                         else                GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
 
                         Piece currentPiece = piece;
+                        System.out.println("create moves top " + currentPiece.isTop);
 
                         if(currentPiece.isOnKingCells())
                         {
-                            King king = new King(currentPiece.getSize(), currentPiece.getType());
+                            King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
                             king.setX(currentPiece.getX());
                             king.setY(currentPiece.getY());
                             cell.clearPiece();
@@ -166,20 +180,23 @@ public class MultiplayerGame extends Game
     private void changeTurn()
     {
         System.out.println("Waiting for move from server");
+
+        System.out.println("black: " + board.getBlackPiecesCount());
+        System.out.println("white: " + board.getWhitePieceCount());
+
+        if(board.getBlackPiecesCount() == 0 || board.getWhitePieceCount() == 0)
+        {
+            gameOver();
+        }
+
+
         new Thread(() ->
         {
-//            if(isServer)
-//            {
-                player2UI.stopTimer();
-                player2UI.unHighlight();
+            player2UI.stopTimer();
+            player2UI.unHighlight();
 
-                player1UI.startTimer();
-                player1UI.highlight();
-//            }
-//            else
-//            {
-//
-//            }
+            player1UI.startTimer();
+            player1UI.highlight();
 
             MovePacket move = GlobalCommunication.communicator.getMove();
             System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
@@ -192,9 +209,10 @@ public class MultiplayerGame extends Game
                 Cell cell = board.getCell(translatedMove.toX, translatedMove.toY);
                 Piece currentPiece = cell.getPiece();
 
+                System.out.println("change turn top " + currentPiece.isTop);
                 if(currentPiece.isOnKingCells())
                 {
-                    King king = new King(currentPiece.getSize(), currentPiece.getType());
+                    King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
                     king.setX(currentPiece.getX());
                     king.setY(currentPiece.getY());
                     cell.clearPiece();
@@ -238,5 +256,15 @@ public class MultiplayerGame extends Game
                 boardSize - move.beatX,
                 boardSize - move.beatY
         );
+    }
+
+    private void gameOver()
+    {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.show();
+
+        System.out.println("Game over");
+        player1UI.stopTimer();
+        player2UI.stopTimer();
     }
 }

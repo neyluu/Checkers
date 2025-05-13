@@ -11,11 +11,13 @@ public abstract class Piece extends Button
     protected int x;
     protected int y;
     protected int size;
+    protected boolean isTop;
 
-    public Piece(int size, PieceType type)
+    public Piece(int size, PieceType type, boolean isTop)
     {
         this.size = size;
         this.type = type;
+        this.isTop = isTop;
         this.setMinHeight(this.size);
         this.setMinWidth(this.size);
         this.setStyle("-fx-background-radius: 50%;");
@@ -25,7 +27,10 @@ public abstract class Piece extends Button
     {
         return size;
     }
-
+    public boolean isTop()
+    {
+        return isTop;
+    }
     public int getX()
     {
         return x;
@@ -66,7 +71,6 @@ public abstract class Piece extends Button
         else System.err.println("Image dont exist!");
     }
 
-    public abstract boolean isOnKingCells();
     public abstract List<Position[]> getValidMoves(Board board);
     public abstract List<Position[]> getBeatMoves(Board board);
 
@@ -88,6 +92,12 @@ public abstract class Piece extends Button
     {
         if(isBlack() && piece.isWhite()) return true;
         if(isWhite() && piece.isBlack()) return true;
+        return false;
+    }
+    public boolean isOnKingCells()
+    {
+        if(!isTop && y == 0) return true;
+        if(isTop && y == 7) return true;
         return false;
     }
 }

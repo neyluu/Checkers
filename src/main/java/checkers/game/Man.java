@@ -5,24 +5,13 @@ import java.util.List;
 
 public class Man extends Piece
 {
-    private boolean isTop;
-
     public Man(int size, PieceType type, boolean isTop)
     {
-        super(size, type);
-        this.isTop = isTop;
+        super(size, type, isTop);
 
         if(isWhite())   textureName = "whiteMan.png";
         else            textureName = "blackMan.png";
         createStyle();
-    }
-
-    @Override
-    public boolean isOnKingCells()
-    {
-        if(!isTop && y == 0) return true;
-        if(isTop && y == 7) return true;
-        return false;
     }
 
     @Override

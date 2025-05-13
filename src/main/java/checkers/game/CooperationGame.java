@@ -100,7 +100,7 @@ public class CooperationGame extends Game
 
                         if(currentPiece.isOnKingCells())
                         {
-                            King king = new King(currentPiece.getSize(), currentPiece.getType());
+                            King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
                             king.setX(currentPiece.getX());
                             king.setY(currentPiece.getY());
                             cell.clearPiece();
