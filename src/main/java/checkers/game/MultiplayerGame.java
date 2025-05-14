@@ -11,33 +11,30 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class MultiplayerGame extends Game
 {
     private Alert gameOverAlert;
-    private PlayerUI player1UI;
-    private PlayerUI player2UI;
-
     private PieceType winner;
-    private PieceType currentTurn;
     private boolean isServer;
 
     private volatile boolean isRunning;
-    private ScheduledExecutorService scheduler;
     private final Object communicationMutex = new Object();
 
     public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
     {
-        this.player1UI = player1UI;
-        this.player2UI = player2UI;
+        super(player1UI, player2UI);
         this.isServer = isServer;
         currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
+    }
+
+    @Override
+    protected void onMove(Position from, Position to, Position beat, boolean isBeatMoves)
+    {
+        System.out.println("Sending move packet");
+        if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, to, isBeatMoves, beat));
+        else                GlobalCommunication.communicator.sendMove(new MovePacket(from, to));
     }
 
     public void start()
@@ -46,62 +43,16 @@ public class MultiplayerGame extends Game
 
         if(isServer)
         {
-            player2UI.startTimer();
-            player2UI.highlight();
-
-            player1UI.stopTimer();
-            player1UI.unHighlight();
-
+            uiPlayer2Turn();
             startServerGame();
         }
         else
         {
-            player1UI.startTimer();
-            player1UI.highlight();
-
-            player2UI.stopTimer();
-            player2UI.unHighlight();
-
+            uiPlayer1Turn();
             startClientGame();
         }
 
         watchTimers();
-    }
-
-    private void watchTimers()
-    {
-        if(scheduler != null && !scheduler.isTerminated()) scheduler.shutdownNow();
-
-        scheduler = Executors.newSingleThreadScheduledExecutor(r ->
-        {
-            Thread thread = new Thread(r);
-            thread.setDaemon(true);
-            return thread;
-        });
-
-        scheduler.scheduleAtFixedRate(() ->
-        {
-            boolean isTimerPlayer1Finished = player1UI.isTimerFinished();
-            boolean isTimerPlayer2Finished = player2UI.isTimerFinished();
-
-            if(isTimerPlayer1Finished || isTimerPlayer2Finished)
-            {
-                winner = isServer ?
-                        (isTimerPlayer1Finished ? PieceType.WHITE : PieceType.BLACK) :
-                        (isTimerPlayer1Finished ? PieceType.BLACK : PieceType.WHITE);
-                gameOver();
-                scheduler.shutdown();
-            }
-
-        }, 0, 1000, TimeUnit.MILLISECONDS);
-    }
-
-    public void reset()
-    {
-        board.clearBoard( ! isServer);
-        player1UI.resetTimer();
-        player2UI.resetTimer();
-        currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
     }
 
     private void startServerGame()
@@ -115,114 +66,44 @@ public class MultiplayerGame extends Game
         changeTurn();
     }
 
-    private void turn()
+    public void reset()
     {
-        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);        createMoves(beatMoves, true);
-
-        if(!beatMoves.isEmpty()) return;
-
-        Map<Piece, List<Position[]>> normalMoves = board.getPiecesWithValidMoves(currentTurn, false);
-
-//        if(beatMoves.isEmpty() && normalMoves.isEmpty()) gameOver();
-
-        createMoves(normalMoves, false);
+        board.clearBoard( ! isServer);
+        player1UI.resetTimer();
+        player2UI.resetTimer();
+        currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
     }
 
-    private void createMoves(Map<Piece, List<Position[]>> movesData, boolean isBeatMoves)
+    private void watchTimers()
     {
-        for(Map.Entry<Piece, List<Position[]>> entry : movesData.entrySet())
+        if(timersScheduler == null)
         {
-            Piece piece = entry.getKey();
-
-            piece.setOnMouseClicked(e ->
+            createTimersScheduler(() ->
             {
-                clearEvents(piece, movesData, false);
+                boolean isTimerPlayer1Finished = player1UI.isTimerFinished();
+                boolean isTimerPlayer2Finished = player2UI.isTimerFinished();
 
-                List<Position[]> validMoves = entry.getValue();
-                for(Position[] pos : validMoves)
+                if(isTimerPlayer1Finished || isTimerPlayer2Finished)
                 {
-                    Cell cell = board.getCell(pos[0].x, pos[0].y);
-                    cell.setStyle("-fx-background-color: rgb(88,41,20);");
-                    cell.setOnMouseClicked(e2 ->
-                    {
-                        Position from = new Position(piece.getX(), piece.getY());
-                        board.movePiece(from, pos[0]);
-
-                        System.out.println("Sending move packet");
-                        if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0], isBeatMoves, pos[1]));
-                        else                GlobalCommunication.communicator.sendMove(new MovePacket(from, pos[0]));
-
-                        Piece currentPiece = piece;
-
-                        if(currentPiece.isOnKingCells())
-                        {
-                            King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
-                            king.setX(currentPiece.getX());
-                            king.setY(currentPiece.getY());
-                            cell.clearPiece();
-                            cell.setPiece(king);
-                            currentPiece = king;
-                        }
-
-                        clearEvents(null, movesData, true);
-
-                        if(isBeatMoves)
-                        {
-                            board.removePiece(pos[1]);
-                            nextBeats(currentPiece);
-                        }
-                        else changeTurn();
-                    });
+                    winner = isServer ?
+                            (isTimerPlayer1Finished ? PieceType.WHITE : PieceType.BLACK) :
+                            (isTimerPlayer1Finished ? PieceType.BLACK : PieceType.WHITE);
+                    gameOver();
+                    timersScheduler.shutdown();
                 }
             });
         }
     }
 
-    private void nextBeats(Piece piece)
-    {
-        List<Position[]> pieceBeatMoves;
-
-        pieceBeatMoves = piece.getBeatMoves(board);
-        if(pieceBeatMoves.isEmpty()) changeTurn();
-
-        Map<Piece, List<Position[]>> data = new HashMap<>();
-        data.put(piece, pieceBeatMoves);
-
-        createMoves(data, true);
-    }
-
-    private void clearEvents(Piece except, Map<Piece, List<Position[]>> data, boolean clearPiecesEvents)
-    {
-        for(Map.Entry<Piece, List<Position[]>> entry : data.entrySet())
-        {
-            if(except != null && entry.getKey() == except) continue;
-
-            Piece piece = entry.getKey();
-
-            if(clearPiecesEvents) piece.setOnMouseClicked(e -> { } );
-
-            List<Position[]> validMoves = entry.getValue();
-            for(Position[] pos : validMoves)
-            {
-                board.getCell(pos[0].x, pos[0].y).setStyle("-fx-background-color: rgb(128,81,60);");
-                board.getCell(pos[0].x, pos[0].y).setOnMouseClicked(e2 -> { } );
-            }
-        }
-    }
-
-    private void changeTurn()
+    public void changeTurn()
     {
         System.out.println("Waiting for move");
 
         checkGameOverAtNoPieces();
 
-        new Thread(() ->
+        Thread changeTurnThread = new Thread(() ->
         {
-            player2UI.stopTimer();
-            player2UI.unHighlight();
-
-            player1UI.startTimer();
-            player1UI.highlight();
+            uiPlayer1Turn();
 
             if(!isRunning) return;
 
@@ -283,15 +164,13 @@ public class MultiplayerGame extends Game
                     }
                 }
 
-                player1UI.stopTimer();
-                player1UI.unHighlight();
-
-                player2UI.startTimer();
-                player2UI.highlight();
-
+                uiPlayer2Turn();
                 turn();
             });
-        }).start();
+        });
+
+        changeTurnThread.setDaemon(true);
+        changeTurnThread.start();
     }
 
     private void checkGameOverAtNoPieces()
@@ -324,7 +203,7 @@ public class MultiplayerGame extends Game
 
     private void gameOver()
     {
-        scheduler.shutdownNow();
+        timersScheduler.shutdownNow();
         isRunning = false;
 
         Platform.runLater(() ->
@@ -407,12 +286,7 @@ public class MultiplayerGame extends Game
                                 }
                             }
 
-                            player1UI.stopTimer();
-                            player1UI.unHighlight();
-
-                            player2UI.startTimer();
-                            player2UI.highlight();
-
+                            uiPlayer2Turn();
                             turn();
                         });
 
