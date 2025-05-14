@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MultiplayerGame extends Game
 {
+    private Alert gameOverAlert;
     private PlayerUI player1UI;
     private PlayerUI player2UI;
 
@@ -28,13 +29,7 @@ public class MultiplayerGame extends Game
     private boolean isServer;
 
     private volatile boolean isRunning;
-
-    private volatile boolean isWaitingForMove = false;
-
-    private Alert gameOverAlert;
-
     private ScheduledExecutorService scheduler;
-
     private final Object communicationMutex = new Object();
 
     public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
@@ -65,7 +60,6 @@ public class MultiplayerGame extends Game
             player1UI.highlight();
 
             player2UI.stopTimer();
-            player2UI.unHighlight();
             player2UI.unHighlight();
 
             startClientGame();
@@ -104,8 +98,6 @@ public class MultiplayerGame extends Game
 
     public void reset()
     {
-//        GlobalCommunication.communicator.reset();
-
         board.clearBoard( ! isServer);
         player1UI.resetTimer();
         player2UI.resetTimer();
@@ -220,8 +212,6 @@ public class MultiplayerGame extends Game
 
     private void changeTurn()
     {
-        if(isWaitingForMove) return;
-        isWaitingForMove = true;
         System.out.println("Waiting for move");
 
         checkGameOverAtNoPieces();
@@ -241,7 +231,6 @@ public class MultiplayerGame extends Game
             {
                 receivedObject  = GlobalCommunication.communicator.getObject();
             }
-            isWaitingForMove = false;
 
             if(receivedObject instanceof ServerState)
             {
@@ -258,8 +247,6 @@ public class MultiplayerGame extends Game
             }
 
             MovePacket move = (MovePacket) receivedObject ;
-
-//            MovePacket move = GlobalCommunication.communicator.getMove();
 
             System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
             MovePacket translatedMove = translateMove(move);
