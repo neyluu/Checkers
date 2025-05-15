@@ -13,6 +13,8 @@ public abstract class Game
 {
     final protected Board board = new Board();
 
+    protected boolean promoted = false;
+
     protected PlayerUI player1UI;
     protected PlayerUI player2UI;
     protected PieceType currentTurn;
@@ -101,9 +103,9 @@ public abstract class Game
                         currentPiece = tryPromoteToKing(currentPiece, cell);
                         clearEvents(null, movesData, true);
 
-                        if(isBeatMoves)
+                        if(isBeatMoves || promoted)
                         {
-                            board.removePiece(pos[1]);
+                            if(isBeatMoves) board.removePiece(pos[1]);
                             nextBeats(currentPiece);
                         }
                         else changeTurn();
@@ -151,6 +153,8 @@ public abstract class Game
     {
         if(piece.isOnKingCells())
         {
+            promoted = true;
+
             King king = new King(piece.getSize(), piece.getType(), piece.isTop());
             king.setX(piece.getX());
             king.setY(piece.getY());
@@ -158,6 +162,8 @@ public abstract class Game
             cell.setPiece(king);
             return king;
         }
+
+        promoted = false;
         return piece;
     }
 

@@ -270,15 +270,14 @@ public class MultiplayerGame extends Game
 
             Cell cell = board.getCell(move.toX, move.toY);
             Piece currentPiece = cell.getPiece();
-            tryPromoteToKing(currentPiece, cell);
+            currentPiece = tryPromoteToKing(currentPiece, cell);
 
-            if(move.isBeatMove)
+            if(move.isBeatMove || promoted)
             {
-                board.removePiece(move.beatX, move.beatY);
+                if(move.isBeatMove) board.removePiece(move.beatX, move.beatY);
                 checkGameOverAtNoPieces();
 
-                Piece movedPiece = board.getCell(move.toX, move.toY).getPiece();
-                List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
+                List<Position[]> pieceBeatMoves = currentPiece.getBeatMoves(board);
 
                 if(!pieceBeatMoves.isEmpty())
                 {
