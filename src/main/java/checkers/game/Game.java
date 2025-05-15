@@ -98,7 +98,7 @@ public abstract class Game
 
                         Piece currentPiece = piece;
 
-                        tryPromoteToKing(currentPiece, cell);
+                        currentPiece = tryPromoteToKing(currentPiece, cell);
                         clearEvents(null, movesData, true);
 
                         if(isBeatMoves)
@@ -147,7 +147,7 @@ public abstract class Game
         createMoves(data, true);
     }
 
-    protected void tryPromoteToKing(Piece piece, Cell cell)
+    protected Piece tryPromoteToKing(Piece piece, Cell cell)
     {
         if(piece.isOnKingCells())
         {
@@ -156,8 +156,9 @@ public abstract class Game
             king.setY(piece.getY());
             cell.clearPiece();
             cell.setPiece(king);
-            piece = king;
+            return king;
         }
+        return piece;
     }
 
     abstract protected void changeTurn();
