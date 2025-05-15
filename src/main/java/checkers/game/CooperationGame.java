@@ -28,8 +28,7 @@ public class CooperationGame extends Game
 
     public void reset()
     {
-        timersScheduler.shutdown();
-        timersScheduler = null;
+        resetScheduler();
         board.clearBoard(false);
         player1UI.resetTimer();
         player2UI.resetTimer();

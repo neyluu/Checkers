@@ -72,6 +72,7 @@ public class MultiplayerGame extends Game
 
     public void reset()
     {
+        resetScheduler();
         board.clearBoard( ! isServer);
         player1UI.resetTimer();
         player2UI.resetTimer();

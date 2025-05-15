@@ -62,6 +62,12 @@ public abstract class Game
         timersScheduler.scheduleAtFixedRate(event, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
+    protected void resetScheduler()
+    {
+        timersScheduler.shutdown();
+        timersScheduler = null;
+    }
+
     protected void turn()
     {
         Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
