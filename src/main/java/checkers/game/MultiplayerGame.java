@@ -22,6 +22,10 @@ public class MultiplayerGame extends Game
     private volatile boolean isRunning;
     private final Object communicationMutex = new Object();
 
+    private ButtonType playAgain;
+    private ButtonType quit;
+    private ButtonType quitMainMenu;
+
     public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
     {
         super(player1UI, player2UI);
@@ -103,9 +107,9 @@ public class MultiplayerGame extends Game
 
         Thread changeTurnThread = new Thread(() ->
         {
-            uiPlayer1Turn();
-
             if(!isRunning) return;
+
+            uiPlayer1Turn();
 
             Object receivedObject;
             synchronized (communicationMutex)
@@ -115,58 +119,14 @@ public class MultiplayerGame extends Game
 
             if(receivedObject instanceof ServerState)
             {
-                System.out.println("change turn object is serverstate");
-                Platform.runLater(() ->
-                {
-                    System.out.println("Resetting game");
-                    gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-                    gameOverAlert.close();
-                    reset();
-                    start();
-                });
+                playAgainClient();
                 return;
             }
 
             MovePacket move = (MovePacket) receivedObject ;
-
             System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
             MovePacket translatedMove = translateMove(move);
-
-            Platform.runLater(() ->
-            {
-                board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
-
-                Cell cell = board.getCell(translatedMove.toX, translatedMove.toY);
-                Piece currentPiece = cell.getPiece();
-
-                if(currentPiece.isOnKingCells())
-                {
-                    King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
-                    king.setX(currentPiece.getX());
-                    king.setY(currentPiece.getY());
-                    cell.clearPiece();
-                    cell.setPiece(king);
-                }
-
-                if (translatedMove.isBeatMove)
-                {
-                    board.removePiece(translatedMove.beatX, translatedMove.beatY);
-
-                    Piece movedPiece = board.getCell(translatedMove.toX, translatedMove.toY).getPiece();
-                    List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
-
-                    checkGameOverAtNoPieces();
-
-                    if (!pieceBeatMoves.isEmpty())
-                    {
-                        changeTurn();
-                        return;
-                    }
-                }
-
-                uiPlayer2Turn();
-                turn();
-            });
+            handleReceivedMove(translatedMove);
         });
 
         changeTurnThread.setDaemon(true);
@@ -208,40 +168,22 @@ public class MultiplayerGame extends Game
 
         Platform.runLater(() ->
         {
-
             System.out.println("Game over");
+
             player1UI.stopTimer();
             player2UI.stopTimer();
 
-            System.out.println("winner:" + winner);
+            System.out.println("Winner:" + winner);
 
-            ButtonType playAgain = new ButtonType("PlayAgain", ButtonBar.ButtonData.OK_DONE);
-            ButtonType quit = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
-            ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
-
-            gameOverAlert = new Alert(Alert.AlertType.NONE);
-            gameOverAlert.setTitle("");
-            gameOverAlert.setHeaderText("Game finished!");
-
-            gameOverAlert.setContentText(
-                    (winner == PieceType.WHITE
-                            ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
-                            : (isServer ? player1UI.getUsername() : player2UI.getUsername())
-                    ) + " wins!"
-            );
-
-
-            if(isServer)    gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
-            else            gameOverAlert.getButtonTypes().setAll(quit, quitMainMenu);
+            createGameOverAlert();
 
             if(!isServer)
             {
-                new Thread(() ->
+                Thread clientPlayAgainThread = new Thread(() ->
                 {
-                    System.out.println("Getting game reset info");
+                    System.out.println("Waiting for game resetting info");
 
                     Object recievedObject;
-
                     synchronized (communicationMutex)
                     {
                         recievedObject = GlobalCommunication.communicator.getObject();
@@ -249,96 +191,104 @@ public class MultiplayerGame extends Game
 
                     if(recievedObject instanceof MovePacket)
                     {
-                        System.out.println("gameover object is movepacket");
-
-
                         MovePacket translatedMove = translateMove((MovePacket) recievedObject);
-
-                        Platform.runLater(() ->
-                        {
-                            board.movePiece(translatedMove.fromX, translatedMove.fromY, translatedMove.toX, translatedMove.toY);
-
-                            Cell cell = board.getCell(translatedMove.toX, translatedMove.toY);
-                            Piece currentPiece = cell.getPiece();
-
-                            if(currentPiece.isOnKingCells())
-                            {
-                                King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
-                                king.setX(currentPiece.getX());
-                                king.setY(currentPiece.getY());
-                                cell.clearPiece();
-                                cell.setPiece(king);
-                            }
-
-                            if (translatedMove.isBeatMove)
-                            {
-                                board.removePiece(translatedMove.beatX, translatedMove.beatY);
-
-                                Piece movedPiece = board.getCell(translatedMove.toX, translatedMove.toY).getPiece();
-                                List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
-
-                                checkGameOverAtNoPieces();
-
-                                if (!pieceBeatMoves.isEmpty())
-                                {
-                                    changeTurn();
-                                    return;
-                                }
-                            }
-
-                            uiPlayer2Turn();
-                            turn();
-                        });
-
-
-
-
+                        handleReceivedMove(translatedMove);
                         return;
                     }
 
                     ServerState state = (ServerState) recievedObject;
-//                    ServerState state = GlobalCommunication.communicator.getState();
                     System.out.println("State: " + String.valueOf(state));
-                    if(state == ServerState.GAME_START)
-                    {
-                        Platform.runLater(() ->
-                        {
-                            System.out.println("Resetting game");
-                            gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-                            gameOverAlert.close();
-                            reset();
-                            start();
-                        });
-                    }
-                }).start();
+
+                    if(state == ServerState.GAME_START) playAgainClient();
+                });
+
+                clientPlayAgainThread.setDaemon(true);
+                clientPlayAgainThread.start();
             }
 
             gameOverAlert.show();
+            gameOverAlert.setOnHidden(e -> handleAlertButtons());
+        });
+    }
 
-            gameOverAlert.setOnHidden(e ->
+    private void playAgainClient()
+    {
+        Platform.runLater(() ->
+        {
+            System.out.println("Resetting game");
+            gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+            gameOverAlert.close();
+            reset();
+            start();
+        });
+    }
+
+    private void playAgainServer()
+    {
+        System.out.println("Sending game reset info");
+        GlobalCommunication.communicator.sendState(ServerState.GAME_START);
+        System.out.println("Sent");
+        reset();
+        start();
+    }
+
+    private void createGameOverAlert()
+    {
+        playAgain    = new ButtonType("PlayAgain", ButtonBar.ButtonData.OK_DONE);
+        quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
+        quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+
+        gameOverAlert = new Alert(Alert.AlertType.NONE);
+        gameOverAlert.setTitle("");
+        gameOverAlert.setHeaderText("Game finished!");
+
+        gameOverAlert.setContentText(
+                (winner == PieceType.WHITE
+                        ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
+                        : (isServer ? player1UI.getUsername() : player2UI.getUsername())
+                ) + " wins!"
+        );
+
+        if(isServer)    gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
+        else            gameOverAlert.getButtonTypes().setAll(quit, quitMainMenu);
+    }
+
+    private void handleAlertButtons()
+    {
+        ButtonType gameOverAlertResult = gameOverAlert.getResult();
+
+        if(gameOverAlertResult.equals(quit))            Platform.exit();
+        if(gameOverAlertResult.equals(quitMainMenu))    SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
+        if(gameOverAlertResult.equals(playAgain))       playAgainServer();
+    }
+
+    private void handleReceivedMove(MovePacket move)
+    {
+        Platform.runLater(() ->
+        {
+            board.movePiece(move.fromX, move.fromY, move.toX, move.toY);
+
+            Cell cell = board.getCell(move.toX, move.toY);
+            Piece currentPiece = cell.getPiece();
+            tryPromoteToKing(currentPiece, cell);
+
+            if(move.isBeatMove)
             {
-                ButtonType gameOverAlertResult = gameOverAlert.getResult();
+                board.removePiece(move.beatX, move.beatY);
+                checkGameOverAtNoPieces();
 
-                if(gameOverAlertResult.equals(quit))
+                Piece movedPiece = board.getCell(move.toX, move.toY).getPiece();
+                List<Position[]> pieceBeatMoves = movedPiece.getBeatMoves(board);
+
+                if(!pieceBeatMoves.isEmpty())
                 {
-                    Platform.exit();
+                    changeTurn();
+                    return;
                 }
-                if(gameOverAlertResult.equals(quitMainMenu))
-                {
-                    SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-                }
-                if(gameOverAlertResult.equals(playAgain))
-                {
-                    if(isServer)
-                    {
-                        System.out.println("Sending game reset info");
-                        GlobalCommunication.communicator.sendState(ServerState.GAME_START);
-                        System.out.println("Sent");
-                        reset();
-                        start();
-                    }
-                }
-            });
+            }
+
+            uiPlayer2Turn();
+            turn();
         });
     }
 }

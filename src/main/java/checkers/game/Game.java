@@ -98,16 +98,7 @@ public abstract class Game
 
                         Piece currentPiece = piece;
 
-                        if(currentPiece.isOnKingCells())
-                        {
-                            King king = new King(currentPiece.getSize(), currentPiece.getType(), currentPiece.isTop());
-                            king.setX(currentPiece.getX());
-                            king.setY(currentPiece.getY());
-                            cell.clearPiece();
-                            cell.setPiece(king);
-                            currentPiece = king;
-                        }
-
+                        tryPromoteToKing(currentPiece, cell);
                         clearEvents(null, movesData, true);
 
                         if(isBeatMoves)
@@ -154,6 +145,19 @@ public abstract class Game
         data.put(piece, pieceBeatMoves);
 
         createMoves(data, true);
+    }
+
+    protected void tryPromoteToKing(Piece piece, Cell cell)
+    {
+        if(piece.isOnKingCells())
+        {
+            King king = new King(piece.getSize(), piece.getType(), piece.isTop());
+            king.setX(piece.getX());
+            king.setY(piece.getY());
+            cell.clearPiece();
+            cell.setPiece(king);
+            piece = king;
+        }
     }
 
     abstract protected void changeTurn();
