@@ -11,6 +11,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.List;
 
 public class MultiplayerGame extends Game
@@ -18,6 +20,7 @@ public class MultiplayerGame extends Game
     private Alert gameOverAlert;
     private PieceType winner;
     private boolean isServer;
+    private boolean isClosed = false;
 
     private volatile boolean isRunning;
     private final Object communicationMutex = new Object();
@@ -37,13 +40,29 @@ public class MultiplayerGame extends Game
     protected void onMove(Position from, Position to, Position beat, boolean isBeatMoves)
     {
         System.out.println("Sending move packet");
-        if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, to, isBeatMoves, beat));
-        else                GlobalCommunication.communicator.sendMove(new MovePacket(from, to));
+
+        try
+        {
+            if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, to, isBeatMoves, beat));
+            else                GlobalCommunication.communicator.sendMove(new MovePacket(from, to));
+        }
+        catch(SocketException e)
+        {
+            System.err.println("Connection lost!");
+            close();
+            return;
+        }
+        catch(IOException e)
+        {
+            System.err.println("Failed to send data!");
+//            e.printStackTrace();
+        }
     }
 
     public void start()
     {
         isRunning = true;
+        isClosed = false;
 
         if(isServer)
         {
@@ -79,6 +98,39 @@ public class MultiplayerGame extends Game
         currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
     }
 
+    private void close()
+    {
+        if(isClosed) return;
+        isClosed = true;
+
+        System.out.println("Closing...");
+
+        Platform.runLater(() ->
+        {
+            Alert closeAlert = new Alert(Alert.AlertType.NONE);
+            closeAlert.setTitle("");
+            closeAlert.setHeaderText("Connection lost!");
+
+            ButtonType quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
+            ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+
+            closeAlert.getButtonTypes().addAll(quit, quitMainMenu);
+            closeAlert.showAndWait();
+
+            ButtonType closeAlertResult = closeAlert.getResult();
+
+            if(closeAlertResult.equals(quit))
+            {
+                Platform.exit();
+            }
+            if(closeAlertResult.equals(quitMainMenu))
+            {
+                GlobalCommunication.communicator.close();
+                SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
+            }
+        });
+    }
+
     private void watchTimers()
     {
         if(timersScheduler == null)
@@ -112,10 +164,30 @@ public class MultiplayerGame extends Game
 
             uiPlayer1Turn();
 
-            Object receivedObject;
+            Object receivedObject = null;
             synchronized (communicationMutex)
             {
-                receivedObject  = GlobalCommunication.communicator.getObject();
+                try
+                {
+                    receivedObject  = GlobalCommunication.communicator.getObject();
+                    if(receivedObject == null)
+                    {
+                        System.err.println("Connection lost!");
+                        close();
+                        return;
+                    }
+                }
+                catch(SocketException e)
+                {
+                    System.err.println("Connection lost!");
+                    close();
+                    return;
+                }
+                catch(IOException | ClassNotFoundException e)
+                {
+                    System.err.println("Failed to get packet!");
+//                    e.printStackTrace();
+                }
             }
 
             if(receivedObject instanceof ServerState)
@@ -184,10 +256,30 @@ public class MultiplayerGame extends Game
                 {
                     System.out.println("Waiting for game resetting info");
 
-                    Object recievedObject;
+                    Object recievedObject = null;
                     synchronized (communicationMutex)
                     {
-                        recievedObject = GlobalCommunication.communicator.getObject();
+                        try
+                        {
+                            recievedObject = GlobalCommunication.communicator.getObject();
+                            if(recievedObject == null)
+                            {
+                                System.err.println("Connection lost!");
+                                close();
+                                return;
+                            }
+                        }
+                        catch(SocketException e)
+                        {
+                            System.err.println("Connection lost!");
+                            close();
+                            return;
+                        }
+                        catch(IOException | ClassNotFoundException e)
+                        {
+                            System.err.println("Failed to get packet!");
+//                            e.printStackTrace();
+                        }
                     }
 
                     if(recievedObject instanceof MovePacket)
@@ -227,7 +319,23 @@ public class MultiplayerGame extends Game
     private void playAgainServer()
     {
         System.out.println("Sending game reset info");
-        GlobalCommunication.communicator.sendState(ServerState.GAME_START);
+
+        try
+        {
+            GlobalCommunication.communicator.sendState(ServerState.GAME_START);
+        }
+        catch(SocketException e)
+        {
+            System.err.println("Connection lost!");
+            close();
+            return;
+        }
+        catch(IOException e)
+        {
+            System.err.println("Failed to send state!");
+//            e.printStackTrace();
+        }
+
         System.out.println("Sent");
         reset();
         start();
@@ -235,7 +343,7 @@ public class MultiplayerGame extends Game
 
     private void createGameOverAlert()
     {
-        playAgain    = new ButtonType("PlayAgain", ButtonBar.ButtonData.OK_DONE);
+        playAgain    = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
         quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
         quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
 
@@ -258,9 +366,19 @@ public class MultiplayerGame extends Game
     {
         ButtonType gameOverAlertResult = gameOverAlert.getResult();
 
-        if(gameOverAlertResult.equals(quit))            Platform.exit();
-        if(gameOverAlertResult.equals(quitMainMenu))    SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-        if(gameOverAlertResult.equals(playAgain))       playAgainServer();
+        if(gameOverAlertResult.equals(quit))
+        {
+            Platform.exit();
+        }
+        if(gameOverAlertResult.equals(quitMainMenu))
+        {
+            GlobalCommunication.communicator.close();
+            SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
+        }
+        if(gameOverAlertResult.equals(playAgain))
+        {
+            playAgainServer();
+        }
     }
 
     private void handleReceivedMove(MovePacket move)

@@ -35,7 +35,7 @@ public class Server extends Communicator
 
         isRunning = true;
 
-        new Thread(() ->
+        Thread startThread = new Thread(() ->
         {
             while(!serverSocket.isClosed() && isRunning)
             {
@@ -79,9 +79,13 @@ public class Server extends Communicator
                     close();
                 }
             }
-        }).start();
+        });
+
+        startThread.setDaemon(true);
+        startThread.start();
     }
 
+    @Override
     public void close()
     {
         if(isRunning) isRunning = false;
@@ -91,6 +95,15 @@ public class Server extends Communicator
 
         try
         {
+            try
+            {
+                if(objectOutputStream != null)
+                {
+                    GlobalCommunication.communicator.sendState(null);
+                }
+            }
+            catch (IOException e2) { }
+
             closeClient();
             if(serverSocket != null) serverSocket.close();
         }

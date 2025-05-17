@@ -6,79 +6,29 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class Communicator
+public abstract class Communicator
 {
     protected final int port = 5555;
     protected ObjectOutputStream objectOutputStream;
     protected ObjectInputStream objectInputStream;
 
-    public void sendMove(MovePacket move)
+    public abstract void close();
+
+    public void sendMove(MovePacket move) throws IOException
     {
-        try
-        {
-            objectOutputStream.writeObject(move);
-            objectOutputStream.flush();
-        }
-        catch (IOException e)
-        {
-            System.err.println("Failed to send move packet!");
-            e.printStackTrace();
-        }
+        objectOutputStream.writeObject(move);
+        objectOutputStream.flush();
     }
 
-    public MovePacket getMove()
+    public void sendState(ServerState state) throws IOException
     {
-        try
-        {
-            return (MovePacket) objectInputStream.readObject();
-        }
-        catch(IOException | ClassNotFoundException e)
-        {
-            System.err.println("Failed to get move packet!");
-        }
-        return null;
+        objectOutputStream.writeObject(state);
+        objectOutputStream.flush();
     }
 
-    public void sendState(ServerState state)
+    public Object getObject() throws IOException, ClassNotFoundException
     {
-        try
-        {
-            objectOutputStream.writeObject(state);
-            objectOutputStream.flush();
-        }
-        catch(IOException e)
-        {
-            System.err.println("Failed to send state!");
-            e.printStackTrace();
-        }
-    }
-
-    public ServerState getState()
-    {
-        try
-        {
-            return (ServerState) objectInputStream.readObject();
-        }
-        catch (IOException | ClassNotFoundException e)
-        {
-            System.err.println("Failed to get state!");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Object getObject()
-    {
-        try
-        {
-            return objectInputStream.readObject();
-        }
-        catch (IOException | ClassNotFoundException e)
-        {
-            System.err.println("Failed to get object!");
-            e.printStackTrace();
-        }
-        return null;
+        return objectInputStream.readObject();
     }
 
     protected void sendSynchronizationData() throws IOException

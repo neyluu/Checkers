@@ -37,7 +37,7 @@ public class TurnTimer extends Text
             }
         };
 
-        Thread thread = new Thread(() -> timer.scheduleAtFixedRate(task, 100, 100));
+        Thread thread = new Thread(() -> timer.scheduleAtFixedRate(task, 1000, 1000));
         thread.setDaemon(true);
         thread.start();
     }

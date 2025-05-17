@@ -61,6 +61,7 @@ public class Client extends Communicator
         waitForGameStart();
     }
 
+    @Override
     public void close()
     {
         if(!isClosed) isClosed = true;
@@ -70,6 +71,15 @@ public class Client extends Communicator
 
         try
         {
+            try
+            {
+                if(objectOutputStream != null)
+                {
+                    GlobalCommunication.communicator.sendState(null);
+                }
+            }
+            catch (IOException e2) { }
+
             if(objectInputStream != null)   objectInputStream.close();
             if(objectOutputStream != null)  objectOutputStream.close();
             if(socket != null)              socket.close();
@@ -110,7 +120,7 @@ public class Client extends Communicator
     {
         Platform.runLater(clientAlerts::showWaitAlert);
 
-        new Thread(() ->
+        Thread waitThread = new Thread(() ->
         {
             try
             {
@@ -133,7 +143,10 @@ public class Client extends Communicator
                 System.err.println("Failed to get game start information");
                 close();
             }
-        }).start();
+        });
+
+        waitThread.setDaemon(true);
+        waitThread.start();
     }
 
     private void startGame()
