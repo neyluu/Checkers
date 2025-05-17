@@ -11,11 +11,13 @@ public abstract class Piece extends Button
     protected int x;
     protected int y;
     protected int size;
+    protected boolean isTop;
 
-    public Piece(int size, PieceType type)
+    public Piece(int size, PieceType type, boolean isTop)
     {
         this.size = size;
         this.type = type;
+        this.isTop = isTop;
         this.setMinHeight(this.size);
         this.setMinWidth(this.size);
         this.setStyle("-fx-background-radius: 50%;");
@@ -25,7 +27,10 @@ public abstract class Piece extends Button
     {
         return size;
     }
-
+    public boolean isTop()
+    {
+        return isTop;
+    }
     public int getX()
     {
         return x;
@@ -91,8 +96,8 @@ public abstract class Piece extends Button
     }
     public boolean isOnKingCells()
     {
-        if(isWhite() && y == 0) return true;
-        if(isBlack() && y == 7) return true;
+        if(!isTop && y == 0) return true;
+        if(isTop && y == 7) return true;
         return false;
     }
 }

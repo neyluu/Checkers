@@ -1,14 +1,14 @@
 package checkers.scenes;
 
-import checkers.game.MultiplayerClientGame;
+import checkers.game.MultiplayerGame;
 
 public class MultiplayerClient extends GameSceneBase
 {
-    private MultiplayerClientGame game;
+    private MultiplayerGame game;
 
     public MultiplayerClient()
     {
-        game = new MultiplayerClientGame(player1UI, player2UI);
+        game = new MultiplayerGame(player1UI, player2UI, false);
         game.getBoard().clearBoard(true);
         updateBoard(game.getBoard());
 

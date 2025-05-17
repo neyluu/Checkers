@@ -11,17 +11,13 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server implements Communicator
+public class Server extends Communicator
 {
-    private final int port = 5555;
     private final ServerSocket serverSocket;
     private Socket clientSocket = null;
 
     private boolean isRunning = false;
     private boolean isBusy = false;
-
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
 
     private final ServerAlerts serverAlerts = new ServerAlerts();
 
@@ -39,7 +35,7 @@ public class Server implements Communicator
 
         isRunning = true;
 
-        new Thread(() ->
+        Thread startThread = new Thread(() ->
         {
             while(!serverSocket.isClosed() && isRunning)
             {
@@ -77,42 +73,19 @@ public class Server implements Communicator
 
                     serverAlerts.setConnectedPlayerUsername(GameSession.getInstance().player2Username);
                     Platform.runLater(serverAlerts::showClientConnectedAlert);
-
-                    handleClient();
                 }
                 catch(IOException e)
                 {
                     close();
                 }
             }
-        }).start();
+        });
+
+        startThread.setDaemon(true);
+        startThread.start();
     }
 
-    public boolean isBusy()
-    {
-        return isBusy;
-    }
-
-    private void handleClient()
-    {
-        new Thread(() ->
-        {
-            while(isBusy)
-            {
-                //TODO tmp
-                if(clientSocket.isClosed()) closeClient();
-                try
-                {
-                    Object o = objectInputStream.readObject();
-                }
-                catch (IOException  | ClassNotFoundException e)
-                {
-                    closeClient();
-                }
-            }
-        }).start();
-    }
-
+    @Override
     public void close()
     {
         if(isRunning) isRunning = false;
@@ -122,6 +95,15 @@ public class Server implements Communicator
 
         try
         {
+            try
+            {
+                if(objectOutputStream != null)
+                {
+                    GlobalCommunication.communicator.sendState(null);
+                }
+            }
+            catch (IOException e2) { }
+
             closeClient();
             if(serverSocket != null) serverSocket.close();
         }
@@ -175,13 +157,6 @@ public class Server implements Communicator
         System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
     }
 
-    private void sendSynchronizationData() throws IOException
-    {
-        objectOutputStream.reset();
-        objectOutputStream.writeObject(GameSession.getInstance());
-        objectOutputStream.flush();
-    }
-
     public void startGame()
     {
         try
@@ -204,26 +179,5 @@ public class Server implements Communicator
 
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_SERVER);
         SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer server");
-    }
-
-    @Override
-    public void sendMove(MovePacket move)
-    {
-        try
-        {
-            objectOutputStream.writeObject(move);
-            System.out.println("Packet sent");
-        }
-        catch (IOException e)
-        {
-            System.err.println("Failed to send move packet!");
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public MovePacket getMove()
-    {
-        return null;
     }
 }

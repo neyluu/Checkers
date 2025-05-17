@@ -58,6 +58,10 @@ public class PlayerUI extends VBox
     {
         text.setText(username);
     }
+    public String getUsername()
+    {
+        return text.getText();
+    }
 
     public void setMinutes(int minutes)
     {

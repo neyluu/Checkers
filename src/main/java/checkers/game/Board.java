@@ -117,23 +117,24 @@ public class Board extends GridPane
     {
         for (int row = 5; row < 8; row++)
         {
-            placePieceInCols(row, inverted ? PieceType.MAN_BLACK : PieceType.MAN_WHITE);
+            placePieceInCols(row, inverted ? PieceType.MAN_BLACK : PieceType.MAN_WHITE, false);
         }
     }
     private void initTopPieces(boolean inverted)
     {
         for (int row = 0; row < 3; row++)
         {
-            placePieceInCols(row, inverted ? PieceType.MAN_WHITE : PieceType.MAN_BLACK);
+            placePieceInCols(row, inverted ? PieceType.MAN_WHITE : PieceType.MAN_BLACK, true);
         }
     }
-    private void placePieceInCols(int row, PieceType type)
+    private void placePieceInCols(int row, PieceType type, boolean isTop)
     {
         for (int col = 0; col < 8; col++)
         {
             if ((row + col) % 2 == 1)
             {
-                Piece piece = new Man(cellSize, type);
+
+                Piece piece = new Man(cellSize, type, isTop);
                 piece.setX(col);
                 piece.setY(row);
                 cells[col][row].setPiece(piece);

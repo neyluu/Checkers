@@ -12,16 +12,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Client implements Communicator
+public class Client extends Communicator
 {
-    private final int port = 5555;
     private Socket socket = null;
 
     private boolean isConnected = false;
     private boolean isClosed = false;
-
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
 
     private ClientAlerts clientAlerts = new ClientAlerts();
 
@@ -59,15 +55,13 @@ public class Client implements Communicator
     {
         if(!isConnected) throw new ServerConnectionException("Failed to connect to server");
 
-//        new Thread(() ->
-//        {
-            System.out.println("Starting client");
+        System.out.println("Starting client");
 
-            synchronizeGameSession();
-            waitForGameStart();
-//        }).start();
+        synchronizeGameSession();
+        waitForGameStart();
     }
 
+    @Override
     public void close()
     {
         if(!isClosed) isClosed = true;
@@ -77,6 +71,15 @@ public class Client implements Communicator
 
         try
         {
+            try
+            {
+                if(objectOutputStream != null)
+                {
+                    GlobalCommunication.communicator.sendState(null);
+                }
+            }
+            catch (IOException e2) { }
+
             if(objectInputStream != null)   objectInputStream.close();
             if(objectOutputStream != null)  objectOutputStream.close();
             if(socket != null)              socket.close();
@@ -104,13 +107,6 @@ public class Client implements Communicator
         }
     }
 
-    private void sendSynchronizationData() throws IOException
-    {
-        objectOutputStream.reset();
-        objectOutputStream.writeObject(GameSession.getInstance());
-        objectOutputStream.flush();
-    }
-
     private void getSynchronizationData() throws IOException, ClassNotFoundException
     {
         GameSession clientData = (GameSession) objectInputStream.readObject();
@@ -124,7 +120,7 @@ public class Client implements Communicator
     {
         Platform.runLater(clientAlerts::showWaitAlert);
 
-        new Thread(() ->
+        Thread waitThread = new Thread(() ->
         {
             try
             {
@@ -147,7 +143,10 @@ public class Client implements Communicator
                 System.err.println("Failed to get game start information");
                 close();
             }
-        }).start();
+        });
+
+        waitThread.setDaemon(true);
+        waitThread.start();
     }
 
     private void startGame()
@@ -155,26 +154,5 @@ public class Client implements Communicator
         System.out.println("Starting game");
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CLIENT);
         SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer client");
-    }
-
-    @Override
-    public void sendMove(MovePacket move)
-    {
-
-    }
-
-    @Override
-    public MovePacket getMove()
-    {
-        try
-        {
-            MovePacket move = (MovePacket) objectInputStream.readObject();
-            return move;
-        }
-        catch(IOException | ClassNotFoundException e)
-        {
-            System.err.println("Failed to get move packet!");
-        }
-        return null;
     }
 }
