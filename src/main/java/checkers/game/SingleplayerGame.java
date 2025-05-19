@@ -89,9 +89,10 @@ public class SingleplayerGame extends Game
             {
                 if (player1UI.isTimerFinished() || player2UI.isTimerFinished())
                 {
+                    System.out.println("TESTN");
                     if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
                     else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
-                    gameOver();
+                    Platform.runLater(this::gameOver);
                     timersScheduler.shutdown();
                 }
             });
@@ -100,6 +101,7 @@ public class SingleplayerGame extends Game
 
     private void gameOver()
     {
+        System.out.println("GAME OVER");
         player1UI.stopTimer();
         player2UI.stopTimer();
 
@@ -239,7 +241,6 @@ public class SingleplayerGame extends Game
         }
         if(gameOverAlertResult.equals(quitMainMenu))
         {
-            GlobalCommunication.communicator.close();
             SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
         }
         if(gameOverAlertResult.equals(playAgain))
