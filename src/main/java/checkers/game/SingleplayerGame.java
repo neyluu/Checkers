@@ -1,7 +1,6 @@
 package checkers.game;
 
 import checkers.gui.outputs.PlayerUI;
-import checkers.network.GlobalCommunication;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
@@ -16,14 +15,13 @@ import java.util.Random;
 
 public class SingleplayerGame extends Game
 {
-
+    private final int aiMoveDelay = 1000;
+    private final Random random = new Random();
 
     private Alert gameOverAlert;
     private ButtonType playAgain;
     private ButtonType quit;
     private ButtonType quitMainMenu;
-
-
 
     public SingleplayerGame(PlayerUI player1UI, PlayerUI player2UI)
     {
@@ -90,7 +88,6 @@ public class SingleplayerGame extends Game
             {
                 if (player1UI.isTimerFinished() || player2UI.isTimerFinished())
                 {
-                    System.out.println("TESTN");
                     if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
                     else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
                     Platform.runLater(this::gameOver);
@@ -113,99 +110,66 @@ public class SingleplayerGame extends Game
 
     private void aiTurn()
     {
-        Thread aiThread = new Thread(() ->
+        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
+        if(!beatMoves.isEmpty())
         {
+            aiDoMove(beatMoves, true);
+            return;
+        }
 
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
+        Map<Piece, List<Position[]>> moves = board.getPiecesWithValidMoves(currentTurn, false);
+        if (moves.isEmpty()) gameOver();
+
+        aiDoMove(moves, false);
+    }
+
+    private void aiDoMove(Map<Piece, List<Position[]>> moves, boolean isBeatMoves)
+    {
+        Thread thread = new Thread(() ->
+        {
+            try
+            {
+                Thread.sleep(aiMoveDelay);
             }
+            catch (Exception e) { }
 
-            System.out.println("Generating beat moves...");
-            Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
-            System.out.println("Moves generated");
-
-            if (!beatMoves.isEmpty()) {
-
-                Random random = new Random();
-                int pieceIndex = random.ints(0, beatMoves.size()).findFirst().getAsInt();
-                System.out.println("Piece: " + pieceIndex);
-
-                int i = 0;
-                for (Map.Entry<Piece, List<Position[]>> entry : beatMoves.entrySet()) {
-                    if (i == pieceIndex) {
-                        int moveIndex = random.ints(0, entry.getValue().size()).findFirst().getAsInt();
-                        System.out.println("Move: " + moveIndex);
-
-
-                        Piece piece = entry.getKey();
-                        List<Position[]> validMoves = entry.getValue();
-                        Position[] to = validMoves.get(moveIndex);
-
-
-                        Platform.runLater(() ->
-                        {
-
-                            board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
-
-                            Cell cell = board.getCell(to[0].x, to[0].y);
-                            Piece currentPiece = cell.getPiece();
-                            currentPiece = tryPromoteToKing(currentPiece, cell);
-
-
-                            board.removePiece(to[1]);
-//                    aiTurn();
-                            aiNextBeats(currentPiece);
-//                            changeTurn();
-                        });
-                        return;
-                    }
-                    i++;
-                }
-
-
-            }
-
-            Map<Piece, List<Position[]>> moves = board.getPiecesWithValidMoves(currentTurn, false);
-            if (moves.isEmpty()) gameOver(); // ???
-
-            Random random = new Random();
             int pieceIndex = random.ints(0, moves.size()).findFirst().getAsInt();
-            System.out.println(pieceIndex);
 
             int i = 0;
-            for (Map.Entry<Piece, List<Position[]>> entry : moves.entrySet()) {
-                if (i == pieceIndex) {
+            for(Map.Entry<Piece, List<Position[]>> entry : moves.entrySet())
+            {
+                if (i == pieceIndex)
+                {
+                    int moveIndex = random.ints(0, entry.getValue().size()).findFirst().getAsInt();
+
                     Piece piece = entry.getKey();
                     List<Position[]> validMoves = entry.getValue();
-
-                    int moveIndex = random.ints(0, entry.getValue().size()).findFirst().getAsInt();
-                    System.out.println("Move: " + moveIndex);
-
                     Position[] to = validMoves.get(moveIndex);
-
 
                     Platform.runLater(() ->
                     {
-
-
                         board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
 
                         Cell cell = board.getCell(to[0].x, to[0].y);
                         Piece currentPiece = cell.getPiece();
                         currentPiece = tryPromoteToKing(currentPiece, cell);
 
+                        if(isBeatMoves)
+                        {
+                            board.removePiece(to[1]);
+                            aiNextBeats(currentPiece);
+                            return;
+                        }
+
                         changeTurn();
                     });
-
                 }
                 i++;
             }
         });
 
-
-        aiThread.setDaemon(true);
-        aiThread.start();
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void aiNextBeats(Piece piece)
@@ -217,49 +181,11 @@ public class SingleplayerGame extends Game
             return;
         }
 
-//        Map<Piece, List<Position[]>> data = new HashMap<>();
-//        data.put(piece, pieceBeatMoves);
+        Map<Piece, List<Position[]>> data = new HashMap<>();
+        data.put(piece, pieceBeatMoves);
 
-        Thread thread = new Thread(() ->
-        {
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {}
-
-            Random random = new Random();
-
-            System.out.println("next beats count: " + pieceBeatMoves.size());
-            int moveIndex = random.ints(0, pieceBeatMoves.size()).findFirst().getAsInt();
-            System.out.println("Move: " + moveIndex);
-
-            Position[] to = pieceBeatMoves.get(moveIndex);
-
-
-            Platform.runLater(() ->
-            {
-                board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
-
-                Cell cell = board.getCell(to[0].x, to[0].y);
-                Piece currentPiece = cell.getPiece();
-                currentPiece = tryPromoteToKing(currentPiece, cell);
-
-
-                board.removePiece(to[1]);
-                aiNextBeats(currentPiece);
-            });
-        });
-
-        thread.setDaemon(true);
-        thread.start();
+        aiDoMove(data, true);
     }
-
-
-
-
-
-
-
-
 
     private void createGameOverAlert()
     {
