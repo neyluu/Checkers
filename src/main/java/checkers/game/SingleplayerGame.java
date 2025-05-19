@@ -1,8 +1,13 @@
 package checkers.game;
 
 import checkers.gui.outputs.PlayerUI;
+import checkers.network.GlobalCommunication;
+import checkers.scenes.utils.SceneManager;
+import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +15,15 @@ import java.util.Random;
 
 public class SingleplayerGame extends Game
 {
+
+
+    private Alert gameOverAlert;
+    private ButtonType playAgain;
+    private ButtonType quit;
+    private ButtonType quitMainMenu;
+
+
+
     public SingleplayerGame(PlayerUI player1UI, PlayerUI player2UI)
     {
         super(player1UI, player2UI);
@@ -86,83 +100,152 @@ public class SingleplayerGame extends Game
 
     private void gameOver()
     {
+        player1UI.stopTimer();
+        player2UI.stopTimer();
 
+        createGameOverAlert();
+        gameOverAlert.show();
+        gameOverAlert.setOnHidden(e -> handleAlertButtons());
     }
 
     private void aiTurn()
     {
-        System.out.println("Generating beat moves...");
-        Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
-        System.out.println("Moves generated");
-
-        if(!beatMoves.isEmpty())
+        Thread aiThread = new Thread(() ->
         {
 
-            System.out.println("Beat move, currently skipped");
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+            }
+
+            System.out.println("Generating beat moves...");
+            Map<Piece, List<Position[]>> beatMoves = board.getPiecesWithValidMoves(currentTurn, true);
+            System.out.println("Moves generated");
+
+            if (!beatMoves.isEmpty()) {
+
+                Random random = new Random();
+                int pieceIndex = random.ints(0, beatMoves.size()).findFirst().getAsInt();
+                System.out.println("Piece: " + pieceIndex);
+
+                int i = 0;
+                for (Map.Entry<Piece, List<Position[]>> entry : beatMoves.entrySet()) {
+                    if (i == pieceIndex) {
+                        int moveIndex = random.ints(0, entry.getValue().size()).findFirst().getAsInt();
+                        System.out.println("Move: " + moveIndex);
+
+
+                        Piece piece = entry.getKey();
+                        List<Position[]> validMoves = entry.getValue();
+                        Position[] to = validMoves.get(moveIndex);
+
+
+                        Platform.runLater(() ->
+                        {
+
+                            board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
+
+                            Cell cell = board.getCell(to[0].x, to[0].y);
+                            Piece currentPiece = cell.getPiece();
+                            currentPiece = tryPromoteToKing(currentPiece, cell);
+
+
+                            board.removePiece(to[1]);
+//                    aiTurn();
+
+                            changeTurn();
+                        });
+                        return;
+                    }
+                    i++;
+                }
+
+
+            }
+
+            Map<Piece, List<Position[]>> moves = board.getPiecesWithValidMoves(currentTurn, false);
+            if (moves.isEmpty()) gameOver(); // ???
+
             Random random = new Random();
-            int pieceIndex = random.ints(0, beatMoves.size()).findFirst().getAsInt();
-            System.out.println("Piece: " + pieceIndex);
+            int pieceIndex = random.ints(0, moves.size()).findFirst().getAsInt();
+            System.out.println(pieceIndex);
 
             int i = 0;
-            for(Map.Entry<Piece, List<Position[]>> entry : beatMoves.entrySet())
-            {
-                if(i == pieceIndex)
-                {
+            for (Map.Entry<Piece, List<Position[]>> entry : moves.entrySet()) {
+                if (i == pieceIndex) {
+                    Piece piece = entry.getKey();
+                    List<Position[]> validMoves = entry.getValue();
+
                     int moveIndex = random.ints(0, entry.getValue().size()).findFirst().getAsInt();
                     System.out.println("Move: " + moveIndex);
 
-                    Piece piece = entry.getKey();
-                    List<Position[]> validMoves = entry.getValue();
                     Position[] to = validMoves.get(moveIndex);
 
-                    board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
 
-                    Cell cell = board.getCell(to[0].x, to[0].y);
-                    Piece currentPiece = cell.getPiece();
-                    currentPiece = tryPromoteToKing(currentPiece, cell);
+                    Platform.runLater(() ->
+                    {
 
 
-                    board.removePiece(to[1]);
-//                    aiTurn();
+                        board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
 
-                    changeTurn();
-                    return;
+                        Cell cell = board.getCell(to[0].x, to[0].y);
+                        Piece currentPiece = cell.getPiece();
+                        currentPiece = tryPromoteToKing(currentPiece, cell);
+
+                        changeTurn();
+                    });
+
                 }
                 i++;
             }
+        });
 
 
-        }
+        aiThread.setDaemon(true);
+        aiThread.start();
+    }
 
-        Map<Piece, List<Position[]>> moves = board.getPiecesWithValidMoves(currentTurn, false);
-        if(moves.isEmpty()) gameOver(); // ???
 
-        Random random = new Random();
-        int pieceIndex = random.ints(0, moves.size()).findFirst().getAsInt();
-        System.out.println(pieceIndex);
 
-        int i = 0;
-        for(Map.Entry<Piece, List<Position[]>> entry : moves.entrySet())
+
+
+
+
+
+
+
+
+    private void createGameOverAlert()
+    {
+        playAgain    = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
+        quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
+        quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+
+        gameOverAlert = new Alert(Alert.AlertType.NONE);
+        gameOverAlert.setTitle("");
+        gameOverAlert.setHeaderText("Game finished!");
+        gameOverAlert.setContentText((currentTurn == PieceType.WHITE ? player2UI.getUsername() : player1UI.getUsername()) + " win!");
+
+        gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
+    }
+
+    private void handleAlertButtons()
+    {
+        ButtonType gameOverAlertResult = gameOverAlert.getResult();
+
+        if(gameOverAlertResult.equals(quit))
         {
-            if(i == pieceIndex)
-            {
-                Piece piece = entry.getKey();
-                List<Position[]> validMoves = entry.getValue();
-
-                int moveIndex = random.ints(0, entry.getValue().size()).findFirst().getAsInt();
-                System.out.println("Move: " + moveIndex);
-
-                Position[] to = validMoves.get(moveIndex);
-
-                board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
-
-                Cell cell = board.getCell(to[0].x, to[0].y);
-                Piece currentPiece = cell.getPiece();
-                currentPiece = tryPromoteToKing(currentPiece, cell);
-
-                changeTurn();
-            }
-            i++;
+            Platform.exit();
+        }
+        if(gameOverAlertResult.equals(quitMainMenu))
+        {
+            GlobalCommunication.communicator.close();
+            SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
+        }
+        if(gameOverAlertResult.equals(playAgain))
+        {
+            reset();
+            start();
         }
     }
 }
