@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -116,7 +117,7 @@ public class SingleplayerGame extends Game
         {
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (Exception e) {
             }
 
@@ -154,8 +155,8 @@ public class SingleplayerGame extends Game
 
                             board.removePiece(to[1]);
 //                    aiTurn();
-
-                            changeTurn();
+                            aiNextBeats(currentPiece);
+//                            changeTurn();
                         });
                         return;
                     }
@@ -207,7 +208,50 @@ public class SingleplayerGame extends Game
         aiThread.start();
     }
 
+    private void aiNextBeats(Piece piece)
+    {
+        List<Position[]> pieceBeatMoves = piece.getBeatMoves(board);
+        if(pieceBeatMoves.isEmpty())
+        {
+            changeTurn();
+            return;
+        }
 
+//        Map<Piece, List<Position[]>> data = new HashMap<>();
+//        data.put(piece, pieceBeatMoves);
+
+        Thread thread = new Thread(() ->
+        {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {}
+
+            Random random = new Random();
+
+            System.out.println("next beats count: " + pieceBeatMoves.size());
+            int moveIndex = random.ints(0, pieceBeatMoves.size()).findFirst().getAsInt();
+            System.out.println("Move: " + moveIndex);
+
+            Position[] to = pieceBeatMoves.get(moveIndex);
+
+
+            Platform.runLater(() ->
+            {
+                board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
+
+                Cell cell = board.getCell(to[0].x, to[0].y);
+                Piece currentPiece = cell.getPiece();
+                currentPiece = tryPromoteToKing(currentPiece, cell);
+
+
+                board.removePiece(to[1]);
+                aiNextBeats(currentPiece);
+            });
+        });
+
+        thread.setDaemon(true);
+        thread.start();
+    }
 
 
 
