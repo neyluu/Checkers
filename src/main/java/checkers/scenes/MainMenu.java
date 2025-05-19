@@ -45,6 +45,7 @@ public class MainMenu extends SceneBase
         MenuButton exitButton         = new MenuButton("Exit", 550);
 
         coopButton.setOnAction(e -> sceneManager.setScene(SceneType.COOPERATION_INTRO));
+        singleplayerButton.setOnAction(e -> sceneManager.setScene(SceneType.SINGLEPLAYER_INTRO));
         exitButton.setOnAction(e -> Platform.exit());
         multiplayerButton.setOnAction(e -> sceneManager.setScene(SceneType.MULTIPLAYER_INTRO));
 
