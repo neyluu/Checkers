@@ -1,6 +1,6 @@
 package checkers.network;
 
-import checkers.game.Position;
+import checkers.game.utils.Position;
 import java.io.Serializable;
 
 public class MovePacket implements Serializable

@@ -1,8 +1,8 @@
 package checkers.scenes;
 
 import checkers.Settings;
-import checkers.game.Board;
-import checkers.game.GameSession;
+import checkers.game.board.Board;
+import checkers.game.utils.GameSession;
 import checkers.game.GameStarter;
 import checkers.gui.outputs.PlayerUI;
 import javafx.geometry.Pos;
@@ -37,8 +37,6 @@ public class GameSceneBase extends SceneBase
         layout.setAlignment(Pos.CENTER);
         layout.setPrefHeight(Settings.screenHeight);
         layout.setPrefWidth(Settings.screenWidth);
-
-        // TODO GAME INITIALIZATION
 
         initLayout();
         layout.getChildren().add(row);

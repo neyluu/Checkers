@@ -1,4 +1,8 @@
-package checkers.game;
+package checkers.game.pieces;
+
+import checkers.game.board.Board;
+import checkers.game.board.Cell;
+import checkers.game.utils.Position;
 
 import java.util.ArrayList;
 import java.util.List;

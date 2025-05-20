@@ -1,7 +1,7 @@
 package checkers.network;
 
 import checkers.exceptions.ServerConnectionException;
-import checkers.game.GameSession;
+import checkers.game.utils.GameSession;
 import checkers.gui.outputs.ClientAlerts;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;

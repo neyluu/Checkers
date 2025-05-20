@@ -1,6 +1,6 @@
 package checkers.network;
 
-import checkers.game.GameSession;
+import checkers.game.utils.GameSession;
 import checkers.gui.outputs.ServerAlerts;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;

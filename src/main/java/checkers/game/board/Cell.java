@@ -1,5 +1,6 @@
-package checkers.game;
+package checkers.game.board;
 
+import checkers.game.pieces.Piece;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 

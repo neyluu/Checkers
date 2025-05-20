@@ -1,5 +1,7 @@
 package checkers.game;
 
+import checkers.game.pieces.PieceType;
+import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;

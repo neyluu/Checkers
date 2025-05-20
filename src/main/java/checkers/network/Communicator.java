@@ -1,6 +1,6 @@
 package checkers.network;
 
-import checkers.game.GameSession;
+import checkers.game.utils.GameSession;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

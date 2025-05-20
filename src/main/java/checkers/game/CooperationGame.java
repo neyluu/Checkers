@@ -1,5 +1,6 @@
 package checkers.game;
 
+import checkers.game.pieces.PieceType;
 import checkers.gui.outputs.PlayerUI;
 
 public class CooperationGame extends OfflineGame

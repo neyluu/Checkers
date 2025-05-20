@@ -1,6 +1,6 @@
 package checkers.scenes;
 
-import checkers.game.GameSession;
+import checkers.game.utils.GameSession;
 import checkers.game.MultiplayerGame;
 
 public class MultiplayerServer extends GameSceneBase

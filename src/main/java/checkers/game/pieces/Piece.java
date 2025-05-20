@@ -1,5 +1,7 @@
-package checkers.game;
+package checkers.game.pieces;
 
+import checkers.game.board.Board;
+import checkers.game.utils.Position;
 import javafx.scene.control.Button;
 import java.net.URL;
 import java.util.List;

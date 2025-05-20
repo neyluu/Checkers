@@ -1,5 +1,11 @@
 package checkers.game;
 
+import checkers.game.board.Board;
+import checkers.game.board.Cell;
+import checkers.game.pieces.King;
+import checkers.game.pieces.Piece;
+import checkers.game.pieces.PieceType;
+import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 
 import java.util.HashMap;
