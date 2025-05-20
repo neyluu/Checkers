@@ -1,7 +1,11 @@
-package checkers.game;
+package checkers.game.board;
 
 import checkers.exceptions.CellHavePieceException;
 import checkers.exceptions.PieceNotFoundException;
+import checkers.game.utils.Position;
+import checkers.game.pieces.Man;
+import checkers.game.pieces.Piece;
+import checkers.game.pieces.PieceType;
 import javafx.scene.layout.GridPane;
 
 import java.util.HashMap;

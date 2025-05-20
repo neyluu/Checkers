@@ -1,6 +1,6 @@
 package checkers.scenes;
 
-import checkers.game.GameSession;
+import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;

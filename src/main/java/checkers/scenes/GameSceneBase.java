@@ -1,9 +1,9 @@
 package checkers.scenes;
 
 import checkers.Settings;
-import checkers.game.Board;
-import checkers.game.Game;
-import checkers.game.GameSession;
+import checkers.game.board.Board;
+import checkers.game.utils.GameSession;
+import checkers.game.GameStarter;
 import checkers.gui.outputs.PlayerUI;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
@@ -19,7 +19,7 @@ public class GameSceneBase extends SceneBase
     private HBox row = new HBox();
     protected StackPane boardContainer;
 
-    // TODO GAME INSTANCE
+    protected GameStarter game;
     protected PlayerUI player1UI = new PlayerUI();
     protected PlayerUI player2UI = new PlayerUI();
 
@@ -38,10 +38,15 @@ public class GameSceneBase extends SceneBase
         layout.setPrefHeight(Settings.screenHeight);
         layout.setPrefWidth(Settings.screenWidth);
 
-        // TODO GAME INITIALIZATION
-
         initLayout();
         layout.getChildren().add(row);
+    }
+
+    protected void startGame()
+    {
+        Thread thread = new Thread(() -> game.start());
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void initLayout()

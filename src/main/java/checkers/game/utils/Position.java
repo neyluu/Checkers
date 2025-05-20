@@ -1,4 +1,4 @@
-package checkers.game;
+package checkers.game.utils;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;

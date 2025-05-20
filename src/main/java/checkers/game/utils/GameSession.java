@@ -1,4 +1,4 @@
-package checkers.game;
+package checkers.game.utils;
 
 import java.io.Serializable;
 

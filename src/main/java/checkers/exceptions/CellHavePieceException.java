@@ -1,6 +1,6 @@
 package checkers.exceptions;
 
-import checkers.game.Position;
+import checkers.game.utils.Position;
 
 public class CellHavePieceException extends RuntimeException
 {

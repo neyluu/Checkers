@@ -1,7 +1,7 @@
 package checkers.scenes;
 
 import checkers.exceptions.ServerConnectionException;
-import checkers.game.GameSession;
+import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledIPAddres;
 import checkers.gui.inputs.LabeledTextField;

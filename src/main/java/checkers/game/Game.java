@@ -1,5 +1,11 @@
 package checkers.game;
 
+import checkers.game.board.Board;
+import checkers.game.board.Cell;
+import checkers.game.pieces.King;
+import checkers.game.pieces.Piece;
+import checkers.game.pieces.PieceType;
+import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 
 import java.util.HashMap;
@@ -9,7 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class Game
+public abstract class Game implements GameStarter
 {
     final protected Board board = new Board();
 
@@ -27,6 +33,7 @@ public abstract class Game
         this.player2UI = player2UI;
     }
 
+    @Override
     public Board getBoard()
     {
         return board;
@@ -121,8 +128,6 @@ public abstract class Game
         }
     }
 
-    abstract protected void onMove(Position from, Position to, Position beat, boolean isBeatMoves);
-
     protected void clearEvents(Piece except, Map<Piece, List<Position[]>> data, boolean clearPiecesEvents)
     {
         for(Map.Entry<Piece, List<Position[]>> entry : data.entrySet())
@@ -174,4 +179,5 @@ public abstract class Game
     }
 
     abstract protected void changeTurn();
+    abstract protected void onMove(Position from, Position to, Position beat, boolean isBeatMoves);
 }
