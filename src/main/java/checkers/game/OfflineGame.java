@@ -27,6 +27,7 @@ public abstract class OfflineGame extends Game
         return;
     }
 
+    @Override
     public void start()
     {
         uiPlayer2Turn();
