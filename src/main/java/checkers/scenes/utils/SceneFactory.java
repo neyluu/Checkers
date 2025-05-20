@@ -24,6 +24,10 @@ public class SceneFactory
                 return new MultiplayerServer();
             case MULTIPLAYER_CLIENT:
                 return new MultiplayerClient();
+            case SINGLEPLAYER_INTRO:
+                return new SingleplayerIntro();
+            case SINGLEPLAYER:
+                return new Singleplayer();
             default:
                 throw new IllegalArgumentException("Unknown scene type: " + type);
         }

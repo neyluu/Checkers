@@ -82,7 +82,7 @@ public abstract class Game
         createMoves(normalMoves, false);
     }
 
-    private void createMoves(Map<Piece, List<Position[]>> movesData, boolean isBeatMoves)
+    protected void createMoves(Map<Piece, List<Position[]>> movesData, boolean isBeatMoves)
     {
         for(Map.Entry<Piece, List<Position[]>> entry : movesData.entrySet())
         {
