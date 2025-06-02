@@ -1,15 +1,11 @@
 package checkers.scenes;
 
-import checkers.Settings;
 import checkers.gui.buttons.MenuButton;
+import checkers.gui.outputs.GameTitle;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
 public class MainMenu extends SceneBase
 {
@@ -25,16 +21,8 @@ public class MainMenu extends SceneBase
 
     private void initText()
     {
-        Text title = new Text();
-        {
-            title.setText("CHECKERS");
-            title.setFill(Color.rgb(180,180,180));
-            title.setFont(Font.font("Impact", FontWeight.NORMAL, 100));
-            double textWidth = title.getLayoutBounds().getWidth();
-            double centerX = (double) Settings.screenWidth / 2;
-            title.setX(centerX - textWidth / 2);
-        }
-        layout.getChildren().add(title);
+        GameTitle gameTitle = new GameTitle();
+        layout.getChildren().add(gameTitle);
     }
 
     private void initButtons()
