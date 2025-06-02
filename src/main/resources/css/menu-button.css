@@ -1,0 +1,15 @@
+.menu-button
+{
+    -fx-padding: 15 0;
+    -fx-background-radius: 8;
+    -fx-background-color: #535353;
+    -fx-effect: dropshadow(one-pass-box, #d9d9d9, 0, 0, 5, 5);
+    -fx-font-size: 2em;
+    -fx-font-family: "Arial";
+    -fx-text-fill: #ffffff;
+}
+
+.menu-button:hover
+{
+    -fx-background-color: #454545;
+}

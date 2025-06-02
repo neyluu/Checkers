@@ -2,9 +2,6 @@ package checkers.gui.buttons;
 
 import checkers.Settings;
 import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 public class MenuButton extends Button
 {
@@ -13,9 +10,10 @@ public class MenuButton extends Button
 
     public MenuButton(String text)
     {
+        getStylesheets().add(getClass().getResource("/css/menu-button.css").toExternalForm());
+        this.getStyleClass().add("menu-button");
+
         this.setText(text);
-        this.setTextFill(Color.BLACK);
-        this.setFont(Font.font("Arial", FontWeight.NORMAL, 32));
         this.setMinWidth(buttonWidth);
         this.setMaxWidth(buttonWidth);
         this.setLayoutX(centerX - buttonWidth / 2);
