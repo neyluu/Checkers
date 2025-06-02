@@ -1,0 +1,49 @@
+.container
+{
+    -fx-font-family: Arial;
+    -fx-font-size: 32;
+}
+
+.label
+{
+    -fx-font-family: Arial;
+    -fx-font-size: 32;
+    -fx-fill: #ffffff;
+}
+
+.combo-box
+{
+    -fx-background-radius: 8;
+    -fx-background-color: #535353;
+    -fx-effect: dropshadow(one-pass-box, #d9d9d9, 0, 0, 5, 5);
+}
+
+.combo-box .list-cell
+{
+    -fx-background-radius: 8;
+    -fx-text-fill: #fff;
+    -fx-background-color: #535353;
+}
+
+.combo-box:showing .list-cell,
+.combo-box:showing .arrow-button
+{
+    -fx-background-color: #535353;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.combo-box .list-cell:hover
+{
+    -fx-background-color: #454545;
+}
+
+.combo-box .list-view
+{
+    -fx-background-color: #535353;
+}
+
+.arrow
+{
+    -fx-background-color: #fff;
+}
+

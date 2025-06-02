@@ -4,9 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class LabeledTimeComboBox extends VBox
@@ -17,14 +14,15 @@ public class LabeledTimeComboBox extends VBox
 
     public LabeledTimeComboBox()
     {
+        getStylesheets().add(getClass().getResource("/css/labeled-time-combo-box.css").toExternalForm());
+        this.getStyleClass().add("container");
+        comboBox.getStyleClass().add("combo-box");
+        label.getStyleClass().add("label");
+
         comboBox.setItems(FXCollections.observableArrayList(times));
         comboBox.setMinWidth(350);
         comboBox.setMinHeight(50);
         comboBox.getSelectionModel().selectFirst();
-        comboBox.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 32px;");
-
-        label.setFont(Font.font("Arial", FontWeight.NORMAL, 32));
-        label.setFill(Color.rgb(180,180,180));
 
         this.getChildren().addAll(label, comboBox);
         this.setAlignment(Pos.CENTER);
