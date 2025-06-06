@@ -4,17 +4,14 @@ import checkers.gui.buttons.MenuButton;
 import checkers.gui.outputs.GameTitle;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 
 public class MainMenu extends SceneBase
 {
     public MainMenu()
     {
-        layout.setStyle("-fx-background-color: rgb(25,25,25);");
-        layout.setPadding(new Insets(50, 50, 50, 50));
-        layout.setSpacing(30);
-        layout.setAlignment(Pos.CENTER);
+        getStylesheets().add(getClass().getResource("/css/main-menu.css").toExternalForm());
+        layout.getStyleClass().add("main-menu");
+
         initText();
         initButtons();
     }
@@ -27,10 +24,10 @@ public class MainMenu extends SceneBase
 
     private void initButtons()
     {
-        MenuButton coopButton         = new MenuButton("Cooperation", 250);
-        MenuButton singleplayerButton = new MenuButton("Singleplayer", 350);
-        MenuButton multiplayerButton  = new MenuButton("Multiplayer", 450);
-        MenuButton exitButton         = new MenuButton("Exit", 550);
+        MenuButton coopButton         = new MenuButton("Cooperation");
+        MenuButton singleplayerButton = new MenuButton("Singleplayer");
+        MenuButton multiplayerButton  = new MenuButton("Multiplayer");
+        MenuButton exitButton         = new MenuButton("Exit");
 
         coopButton.setOnAction(e -> sceneManager.setScene(SceneType.COOPERATION_INTRO));
         singleplayerButton.setOnAction(e -> sceneManager.setScene(SceneType.SINGLEPLAYER_INTRO));
