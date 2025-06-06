@@ -16,6 +16,10 @@
     -fx-background-radius: 8;
     -fx-background-color: #535353;
     -fx-effect: dropshadow(one-pass-box, #d9d9d9, 0, 0, 5, 5);
+
+    -fx-border-color: #454545;
+    -fx-border-radius: 8;
+    -fx-border-width: 4;
 }
 
 .combo-box .list-cell
