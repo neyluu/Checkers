@@ -1,0 +1,22 @@
+.labeled-text-field { }
+
+.label
+{
+    -fx-font-family: Arial;
+    -fx-font-size: 32;
+    -fx-fill: rgb(180, 180, 180);
+}
+
+.text-field
+{
+    -fx-min-height: 64;
+    -fx-font-family: Arial;
+    -fx-font-size: 32;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #535353;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(one-pass-box, #d9d9d9, 3, 3, 5, 5);
+    -fx-border-color: #454545;
+    -fx-border-radius: 8;
+    -fx-border-width: 6;
+}
