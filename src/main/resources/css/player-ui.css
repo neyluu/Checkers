@@ -1,0 +1,31 @@
+.player-ui
+{
+    -fx-min-height: 150;
+    -fx-max-height: 150;
+    -fx-background-color: rgb(123, 123, 123);
+    -fx-alignment: top-center;
+    -fx-spacing: 30;
+    -fx-padding: 10;
+}
+
+.username
+{
+    -fx-text-fill: black;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 28;
+}
+
+.timer
+{
+    -fx-fill: black;
+    -fx-font-family: Arial;
+    -fx-font-weight: normal;
+    -fx-font-size: 24;
+}
+
+.highlight
+{
+    -fx-border-color: red;
+    -fx-border-width: 3px;
+}

@@ -18,22 +18,17 @@ public class PlayerUI extends VBox
 
     public PlayerUI()
     {
+        getStylesheets().add(getClass().getResource("/css/player-ui.css").toExternalForm());
+        this.getStyleClass().add("player-ui");
+
         this.setMinWidth(panelWidth - 50);
         this.setMaxWidth(panelWidth - 50);
-        this.setMinHeight(150);
-        this.setMaxHeight(150);
-        this.setStyle("-fx-background-color: rgb(123,123,123);");
-        this.setAlignment(Pos.TOP_CENTER);
-        this.setPadding(new Insets(10));
-        this.setSpacing(30);
 
         text = new Text("");
-        text.setFill(Color.BLACK);
-        text.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        text.getStyleClass().add("username");
 
         turnTimer = new TurnTimer(0);
-        turnTimer.setFill(Color.BLACK);
-        turnTimer.setFont(Font.font("Arial", FontWeight.NORMAL, 24));
+        turnTimer.getStyleClass().add("timer");
 
         this.getChildren().addAll(text, turnTimer);
     }
@@ -75,14 +70,11 @@ public class PlayerUI extends VBox
 
     public void highlight()
     {
-        this.setStyle("-fx-background-color: rgb(123,123,123);" +
-                      "-fx-border-color: red;" +
-                      "-fx-border-width: 3px");
+        this.getStyleClass().add("highlight");
     }
     public void unHighlight()
     {
-        this.setStyle("-fx-background-color: rgb(123,123,123);" +
-                      "-fx-border-color: none;");
+        this.getStyleClass().remove("highlight");
     }
     public void resetTimer()
     {
