@@ -1,11 +1,17 @@
 .player-ui
 {
+    -fx-min-width: 250;
+    -fx-max-width: 250;
     -fx-min-height: 150;
     -fx-max-height: 150;
-    -fx-background-color: rgb(123, 123, 123);
-    -fx-alignment: top-center;
+    -fx-background-color: rgb(66, 66, 66);
+    -fx-background-radius: 12;
+    -fx-border-radius: 10;
+    -fx-border-width: 3;
+    -fx-border-color: rgb(80, 80, 80);
+    -fx-alignment: center;
     -fx-spacing: 30;
-    -fx-padding: 10;
+    -fx-padding: 15;
 }
 
 .username
@@ -27,5 +33,5 @@
 .highlight
 {
     -fx-border-color: red;
-    -fx-border-width: 3px;
+    -fx-background-color: rgba(123, 123, 123);
 }
