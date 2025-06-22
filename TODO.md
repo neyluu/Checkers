@@ -1,3 +1,2 @@
-* AI multiple beats
-* White king sometimes dont work, idk why
-* 
+# BUGS:
+- UI highlighting is not synchronized properly on multiplayer  
