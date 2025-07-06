@@ -18,9 +18,9 @@ public class PopupAlert extends StackPane
     {
         getStylesheets().add(getClass().getResource("/css/popup-alert.css").toExternalForm());
         layout.getStyleClass().add("popup-alert");
-
-        buttonsContainer.setAlignment(Pos.BASELINE_CENTER);
-        layout.setAlignment(Pos.BASELINE_CENTER);
+        title.getStyleClass().add("title");
+        info.getStyleClass().add("info");
+        buttonsContainer.getStyleClass().add("buttons-container");
 
         layout.getChildren().addAll(title, info, buttonsContainer);
         this.getChildren().add(layout);
