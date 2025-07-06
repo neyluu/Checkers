@@ -1,0 +1,7 @@
+.popup-alert
+{
+    -fx-max-width: 450;
+    -fx-max-height: 200;
+    -fx-background-color: green;
+    -fx-font-size: 24;
+}
