@@ -8,6 +8,7 @@ public class SceneManager
     private static SceneManager instance = null;
 
     private Stage stage = null;
+    private SceneBase currentScene = null;
     private final SceneFactory sceneFactory = new SceneFactory();
 
     private SceneManager() { }
@@ -25,10 +26,14 @@ public class SceneManager
     {
         return stage;
     }
+    public SceneBase getCurrentScene()
+    {
+        return currentScene;
+    }
 
     public void setScene(SceneType newScene)
     {
-        SceneBase scene = sceneFactory.createScene(newScene);
-        stage.setScene(scene);
+        currentScene = sceneFactory.createScene(newScene);
+        stage.setScene(currentScene);
     }
 }

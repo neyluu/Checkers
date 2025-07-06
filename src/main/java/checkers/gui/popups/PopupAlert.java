@@ -1,6 +1,6 @@
 package checkers.gui.popups;
 
-import javafx.geometry.Pos;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -24,20 +24,21 @@ public class PopupAlert extends StackPane
 
         layout.getChildren().addAll(title, info, buttonsContainer);
         this.getChildren().add(layout);
+
+        hide();
     }
 
     public PopupAlert(String title)
     {
         this();
-        this.title.setText(title);
+        setTitle(title);
     }
 
     public PopupAlert(String title, String info)
     {
         this(title);
-        this.info.setText(info);
+        setInfo(info);
     }
-
 
     public void addButton(PopupAlertButton button)
     {
@@ -65,5 +66,15 @@ public class PopupAlert extends StackPane
     public void toggle()
     {
         this.setVisible( ! this.isVisible());
+    }
+
+    public void setTitle(String title)
+    {
+        Platform.runLater(() -> this.title.setText(title));
+    }
+
+    public void setInfo(String info)
+    {
+        Platform.runLater(() -> this.info.setText(info));
     }
 }

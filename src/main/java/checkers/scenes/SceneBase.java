@@ -22,4 +22,9 @@ abstract public class SceneBase extends Scene
         this.container = (StackPane) getRoot();
         this.container.getChildren().add(layout);
     }
+
+    public StackPane getContainer()
+    {
+        return container;
+    }
 }
