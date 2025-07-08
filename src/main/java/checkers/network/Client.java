@@ -2,7 +2,9 @@ package checkers.network;
 
 import checkers.exceptions.ServerConnectionException;
 import checkers.game.utils.GameSession;
-import checkers.gui.outputs.ClientAlerts;
+import checkers.gui.popups.PopupAlert;
+import checkers.gui.popups.PopupAlertButton;
+import checkers.scenes.SceneBase;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
@@ -19,11 +21,21 @@ public class Client extends Communicator
     private boolean isConnected = false;
     private boolean isClosed = false;
 
-    private ClientAlerts clientAlerts = new ClientAlerts();
+    private PopupAlert waitForGameStartAlert = new PopupAlert("Waiting for game start...");
 
     public Client(String ip) throws ServerConnectionException
     {
-        clientAlerts.setOnWaitAction(this::close);
+        PopupAlertButton cancelButton = new PopupAlertButton("Cancel");
+        cancelButton.setOnAction(e ->
+        {
+            close();
+            waitForGameStartAlert.hide();
+        });
+        waitForGameStartAlert.addButton(cancelButton);
+
+        SceneManager sceneManager = SceneManager.getInstance();
+        SceneBase currentScene = sceneManager.getCurrentScene();
+        currentScene.getContainer().getChildren().add(waitForGameStartAlert);
 
         try
         {
@@ -118,7 +130,7 @@ public class Client extends Communicator
 
     private void waitForGameStart()
     {
-        Platform.runLater(clientAlerts::showWaitAlert);
+        waitForGameStartAlert.show();
 
         Thread waitThread = new Thread(() ->
         {
@@ -129,11 +141,9 @@ public class Client extends Communicator
                 System.out.println("Start game state: " + gameStart);
                 if(gameStart == ServerState.GAME_START)
                 {
-                    clientAlerts.setOnWaitAction(null);
-                    Platform.runLater(clientAlerts::hideWaitAlert);
                     Platform.runLater(() ->
                     {
-                        clientAlerts.hideWaitAlert();
+                        waitForGameStartAlert.hide();
                         startGame();
                     });
                 }
