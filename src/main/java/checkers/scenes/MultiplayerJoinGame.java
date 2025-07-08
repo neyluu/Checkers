@@ -5,19 +5,19 @@ import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledIPAddres;
 import checkers.gui.inputs.LabeledTextField;
+import checkers.gui.popups.PopupAlert;
+import checkers.gui.popups.PopupAlertButton;
 import checkers.network.Client;
 import checkers.network.GlobalCommunication;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 
 public class MultiplayerJoinGame extends SceneBase
 {
     private TextField textField;
     private LabeledIPAddres ipField;
+    private PopupAlert failedToConnectAlert = new PopupAlert("Failed to connect to server!");
 
     public MultiplayerJoinGame()
     {
@@ -25,8 +25,27 @@ public class MultiplayerJoinGame extends SceneBase
         layout.setAlignment(Pos.CENTER);
         layout.setSpacing(75);
 
+        initAlert();
         initInputs();
         initButtons();
+    }
+
+    private void initAlert()
+    {
+        PopupAlertButton okButton = new PopupAlertButton("OK");
+        PopupAlertButton tryAgainButton = new PopupAlertButton("Try again");
+        okButton.setOnAction(e ->
+        {
+            failedToConnectAlert.hide();
+        });
+        tryAgainButton.setOnAction( e ->
+        {
+            failedToConnectAlert.hide();
+            handleJoinGame();
+        });
+        failedToConnectAlert.addButtons(okButton, tryAgainButton);
+
+        container.getChildren().add(failedToConnectAlert);
     }
 
     private void initInputs()
@@ -73,20 +92,7 @@ public class MultiplayerJoinGame extends SceneBase
         catch (ServerConnectionException ex)
         {
             System.out.println(ex.getMessage());
-            createServerErrorAlert();
+            failedToConnectAlert.show();
         }
-    }
-
-    private void createServerErrorAlert()
-    {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("");
-        alert.setHeaderText("Failed to connect to server");
-
-        ButtonType tryAgainButton = new ButtonType("Try again", ButtonBar.ButtonData.OK_DONE);
-        alert.getButtonTypes().add(tryAgainButton);
-        alert.showAndWait();
-
-        if(alert.getResult() == tryAgainButton) handleJoinGame();
     }
 }
