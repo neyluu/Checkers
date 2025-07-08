@@ -5,9 +5,12 @@ import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
+import checkers.gui.popups.PopupAlert;
+import checkers.gui.popups.PopupAlertButton;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import checkers.network.ServerState;
+import checkers.scenes.SceneBase;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
@@ -21,7 +24,8 @@ import java.util.List;
 
 public class MultiplayerGame extends Game
 {
-    private Alert gameOverAlert;
+    private PopupAlert gameOverAlert;
+
     private PieceType winner;
     private boolean isServer;
     private boolean isClosed = false;
@@ -29,15 +33,13 @@ public class MultiplayerGame extends Game
     private volatile boolean isRunning;
     private final Object communicationMutex = new Object();
 
-    private ButtonType playAgain;
-    private ButtonType quit;
-    private ButtonType quitMainMenu;
-
     public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
     {
         super(player1UI, player2UI);
         this.isServer = isServer;
         currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
+
+        createGameOverAlert();
     }
 
     @Override
@@ -247,13 +249,23 @@ public class MultiplayerGame extends Game
         Platform.runLater(() ->
         {
             System.out.println("Game over");
+            System.out.println("Winner:" + winner);
 
             player1UI.stopTimer();
             player2UI.stopTimer();
 
-            System.out.println("Winner:" + winner);
 
-            createGameOverAlert();
+            SceneManager sceneManager = SceneManager.getInstance();
+            SceneBase currentScene = sceneManager.getCurrentScene();
+            currentScene.getContainer().getChildren().add(gameOverAlert);
+            gameOverAlert.setInfo(
+                (winner == PieceType.WHITE
+                ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
+                : (isServer ? player1UI.getUsername() : player2UI.getUsername())
+                ) + " won!"
+            );
+            gameOverAlert.show();
+
 
             if(!isServer)
             {
@@ -303,9 +315,6 @@ public class MultiplayerGame extends Game
                 clientPlayAgainThread.setDaemon(true);
                 clientPlayAgainThread.start();
             }
-
-            gameOverAlert.show();
-            gameOverAlert.setOnHidden(e -> handleAlertButtons());
         });
     }
 
@@ -314,8 +323,7 @@ public class MultiplayerGame extends Game
         Platform.runLater(() ->
         {
             System.out.println("Resetting game");
-            gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-            gameOverAlert.close();
+            gameOverAlert.hide();
             reset();
             start();
         });
@@ -348,42 +356,31 @@ public class MultiplayerGame extends Game
 
     private void createGameOverAlert()
     {
-        playAgain    = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
-        quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
-        quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+        System.out.println("CREATING GAME OVER ALERT!");
+        gameOverAlert = new PopupAlert("Game finished!");
 
-        gameOverAlert = new Alert(Alert.AlertType.NONE);
-        gameOverAlert.setTitle("");
-        gameOverAlert.setHeaderText("Game finished!");
+        PopupAlertButton playAgainButton = new PopupAlertButton("Play again");
+        PopupAlertButton quitButton = new PopupAlertButton("Quit");
+        PopupAlertButton quitMainMenuButton = new PopupAlertButton("Quit to main menu");
 
-        gameOverAlert.setContentText(
-                (winner == PieceType.WHITE
-                        ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
-                        : (isServer ? player1UI.getUsername() : player2UI.getUsername())
-                ) + " wins!"
-        );
-
-        if(isServer)    gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
-        else            gameOverAlert.getButtonTypes().setAll(quit, quitMainMenu);
-    }
-
-    private void handleAlertButtons()
-    {
-        ButtonType gameOverAlertResult = gameOverAlert.getResult();
-
-        if(gameOverAlertResult.equals(quit))
+        playAgainButton.setOnAction(e ->
+        {
+            playAgainServer();
+        });
+        quitButton.setOnAction(e ->
         {
             Platform.exit();
-        }
-        if(gameOverAlertResult.equals(quitMainMenu))
+        });
+        quitMainMenuButton.setOnAction(e ->
         {
             GlobalCommunication.communicator.close();
             SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-        }
-        if(gameOverAlertResult.equals(playAgain))
-        {
-            playAgainServer();
-        }
+        });
+
+        gameOverAlert.setInfo("Player unknown won!");
+
+        if(isServer) gameOverAlert.addButtons(playAgainButton, quitButton, quitMainMenuButton);
+        else         gameOverAlert.addButtons(quitButton, quitMainMenuButton);
     }
 
     private void handleReceivedMove(MovePacket move)
