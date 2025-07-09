@@ -1,5 +1,7 @@
 package checkers.gui.popups;
 
+import checkers.scenes.SceneBase;
+import checkers.scenes.utils.SceneManager;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -55,12 +57,26 @@ public class PopupAlert extends StackPane
 
     public void show()
     {
-        this.setVisible(true);
+        Platform.runLater(() ->
+        {
+            SceneManager sceneManager = SceneManager.getInstance();
+            SceneBase currentScene = sceneManager.getCurrentScene();
+            currentScene.getContainer().getChildren().add(this);
+
+            this.setVisible(true);
+        });
     }
 
     public void hide()
     {
-        this.setVisible(false);
+        Platform.runLater(() ->
+        {
+            SceneManager sceneManager = SceneManager.getInstance();
+            SceneBase currentScene = sceneManager.getCurrentScene();
+            currentScene.getContainer().getChildren().remove(this);
+
+            this.setVisible(false);
+        });
     }
 
     public void toggle()

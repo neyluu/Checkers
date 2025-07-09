@@ -3,7 +3,6 @@ package checkers.network;
 import checkers.game.utils.GameSession;
 import checkers.gui.popups.PopupAlert;
 import checkers.gui.popups.PopupAlertButton;
-import checkers.scenes.SceneBase;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 
@@ -53,12 +52,6 @@ public class Server extends Communicator
             clientDisconnectedAlert.hide();
         });
         clientDisconnectedAlert.addButton(okButton);
-
-
-        SceneManager sceneManager = SceneManager.getInstance();
-        SceneBase currentScene = sceneManager.getCurrentScene();
-        currentScene.getContainer().getChildren().addAll(waitForClientAlert, clientConnectedAlert, clientDisconnectedAlert);
-
     }
 
     public void start()

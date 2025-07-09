@@ -11,13 +11,9 @@ import checkers.gui.popups.PopupAlertButton;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import checkers.network.ServerState;
-import checkers.scenes.SceneBase;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -113,15 +109,7 @@ public class MultiplayerGame extends Game
         isClosed = true;
 
         System.out.println("Closing...");
-
-        Platform.runLater(() ->
-        {
-            SceneManager sceneManager = SceneManager.getInstance();
-            SceneBase currentScene = sceneManager.getCurrentScene();
-            currentScene.getContainer().getChildren().add(connectionLostAlert);
-
-            connectionLostAlert.show();
-        });
+        Platform.runLater(() -> connectionLostAlert.show());
     }
 
     private void watchTimers()
@@ -240,10 +228,6 @@ public class MultiplayerGame extends Game
             player1UI.stopTimer();
             player2UI.stopTimer();
 
-
-            SceneManager sceneManager = SceneManager.getInstance();
-            SceneBase currentScene = sceneManager.getCurrentScene();
-            currentScene.getContainer().getChildren().add(gameOverAlert);
             gameOverAlert.setInfo(
                 (winner == PieceType.WHITE
                 ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
@@ -351,6 +335,7 @@ public class MultiplayerGame extends Game
 
         playAgainButton.setOnAction(e ->
         {
+            gameOverAlert.hide();
             playAgainServer();
         });
         quitButton.setOnAction(e ->

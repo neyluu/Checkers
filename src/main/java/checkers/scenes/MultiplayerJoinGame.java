@@ -34,6 +34,7 @@ public class MultiplayerJoinGame extends SceneBase
     {
         PopupAlertButton okButton = new PopupAlertButton("OK");
         PopupAlertButton tryAgainButton = new PopupAlertButton("Try again");
+
         okButton.setOnAction(e ->
         {
             failedToConnectAlert.hide();
@@ -43,9 +44,8 @@ public class MultiplayerJoinGame extends SceneBase
             failedToConnectAlert.hide();
             handleJoinGame();
         });
-        failedToConnectAlert.addButtons(okButton, tryAgainButton);
 
-        container.getChildren().add(failedToConnectAlert);
+        failedToConnectAlert.addButtons(okButton, tryAgainButton);
     }
 
     private void initInputs()
