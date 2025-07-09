@@ -6,7 +6,6 @@ import checkers.gui.popups.PopupAlertButton;
 import checkers.scenes.SceneBase;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
-import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -22,6 +21,7 @@ public class Server extends Communicator
 
     private final PopupAlert waitForClientAlert = new PopupAlert("Waiting for second player...");
     private final PopupAlert clientConnectedAlert = new PopupAlert("Unknown connected!");
+    private final PopupAlert clientDisconnectedAlert = new PopupAlert("Client disconnected!");
 
 
     public Server() throws IOException
@@ -41,12 +41,24 @@ public class Server extends Communicator
         waitForClientAlert.addButton(cancelButton);
 
         PopupAlertButton startGameButton = new PopupAlertButton("Start game!");
-        startGameButton.setOnAction(e -> startGame());
+        startGameButton.setOnAction(e ->
+        {
+            startGame();
+        });
         clientConnectedAlert.addButton(startGameButton);
+
+        PopupAlertButton okButton = new PopupAlertButton("OK");
+        okButton.setOnAction(e ->
+        {
+            clientDisconnectedAlert.hide();
+        });
+        clientDisconnectedAlert.addButton(okButton);
+
 
         SceneManager sceneManager = SceneManager.getInstance();
         SceneBase currentScene = sceneManager.getCurrentScene();
-        currentScene.getContainer().getChildren().addAll(waitForClientAlert, clientConnectedAlert);
+        currentScene.getContainer().getChildren().addAll(waitForClientAlert, clientConnectedAlert, clientDisconnectedAlert);
+
     }
 
     public void start()
@@ -186,14 +198,12 @@ public class Server extends Communicator
         }
         catch (IOException e)
         {
+            clientConnectedAlert.hide();
+            clientDisconnectedAlert.show();
+
             System.err.println("Failed to send game start information to client");
             close();
-            SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CREATE_GAME);
 
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("");
-            alert.setHeaderText("Client disconnected");
-            alert.show();
             return;
         }
 
