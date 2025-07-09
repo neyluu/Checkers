@@ -5,6 +5,7 @@ import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
+import checkers.gui.popups.ConnectionLostAlert;
 import checkers.gui.popups.PopupAlert;
 import checkers.gui.popups.PopupAlertButton;
 import checkers.network.GlobalCommunication;
@@ -25,6 +26,7 @@ import java.util.List;
 public class MultiplayerGame extends Game
 {
     private PopupAlert gameOverAlert;
+    private ConnectionLostAlert connectionLostAlert = new ConnectionLostAlert();
 
     private PieceType winner;
     private boolean isServer;
@@ -114,27 +116,11 @@ public class MultiplayerGame extends Game
 
         Platform.runLater(() ->
         {
-            Alert closeAlert = new Alert(Alert.AlertType.NONE);
-            closeAlert.setTitle("");
-            closeAlert.setHeaderText("Connection lost!");
+            SceneManager sceneManager = SceneManager.getInstance();
+            SceneBase currentScene = sceneManager.getCurrentScene();
+            currentScene.getContainer().getChildren().add(connectionLostAlert);
 
-            ButtonType quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
-            ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
-
-            closeAlert.getButtonTypes().addAll(quit, quitMainMenu);
-            closeAlert.showAndWait();
-
-            ButtonType closeAlertResult = closeAlert.getResult();
-
-            if(closeAlertResult.equals(quit))
-            {
-                Platform.exit();
-            }
-            if(closeAlertResult.equals(quitMainMenu))
-            {
-                GlobalCommunication.communicator.close();
-                SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-            }
+            connectionLostAlert.show();
         });
     }
 
