@@ -8,6 +8,8 @@ public class LogFormatter extends CustomFormatter
     public String format(LogRecord record)
     {
         createLoggingData(record);
+
+        // java.util.logging set type of error() to severe, this change it back to error
         String type = record.getLevel().getName();
         if(type.equals("SEVERE")) type = "ERROR";
 
