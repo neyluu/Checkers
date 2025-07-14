@@ -53,7 +53,47 @@ public class GameLogger
 
     public void log(String message, Object... args)
     {
+        if(message.contains("{}"))
+        {
 
+            int bracketsCount = 0;
+            List<Integer> bracketsIndexes = new ArrayList<>();
+
+            for(int i = 1; i < message.length(); i++)
+            {
+                if(message.charAt(i - 1) == '{' && message.charAt(i) == '}')
+                {
+                    bracketsCount++;
+                    bracketsIndexes.add(i - 1);
+                }
+            }
+
+            int changes = Math.min(bracketsCount, args.length);
+
+            StringBuffer buffer = new StringBuffer(message.length());
+            int bracketsIndexesCounter = 0;
+
+            for(int i = 0; i < message.length(); i++)
+            {
+                if(bracketsIndexesCounter < changes
+                    && bracketsIndexesCounter < bracketsCount
+                    && i == bracketsIndexes.get(bracketsIndexesCounter))
+                {
+                    buffer.append(args[bracketsIndexesCounter].toString());
+                    bracketsIndexesCounter++;
+                    i++;
+                    continue;
+                }
+
+                buffer.append(message.charAt(i));
+            }
+
+            logger.info("{}", buffer);
+        }
+        else
+        {
+            logger.info(message);
+        }
     }
 
     public void log(String message, Object arg1, Object arg2)

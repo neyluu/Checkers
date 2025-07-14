@@ -106,7 +106,50 @@ public class GameLoggerTest
         testConsoleOutput(() -> logger.log("abc {} {} {} abc", 1, 2), "abc 1 2 {} abc");
     }
 
-    
+
+    @Test
+    public void moreArgs_withoutPlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("abc", 1, 2, 3), "abc");
+    }
+
+    @Test
+    public void moreArgs_onePlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("abc {} abc", 1, 2, 3), "abc 1 abc");
+    }
+
+    @Test
+    public void moreArgs_twoPlaceholders()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} abc", 1, 2, 3), "abc 1 2 abc");
+    }
+
+    @Test
+    public void moreArgs_threePlaceholders()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} a {} abc", 1, 2, 3), "abc 1 2 a 3 abc");
+    }
+
+    @Test
+    public void moreArgs_fourPlaceholders()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} abc {} {} abc", 1, 2, 3, 4), "abc 1 2 abc 3 4 abc");
+    }
+
+    @Test
+    public void moreArgs_fourPlaceholders_threeArguments()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} abc {} {} abc", 1, 2, 3), "abc 1 2 abc 3 {} abc");
+    }
+
+    @Test
+    public void moreArgs_threePlaceholders_fourArguments()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} abc {} abc", 1, 2, 3, 4), "abc 1 2 abc 3 abc");
+    }
+
+
     /**
      * Function checks if message written to console by GameLogger is the same as expected output
      * Only message is checked, without additional logging info
