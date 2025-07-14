@@ -69,7 +69,44 @@ public class GameLoggerTest
     }
 
 
+    @Test
+    public void twoArgs_withoutPlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("abc", 1, 2), "abc");
+    }
 
+    @Test
+    public void twoArgs_onePlaceholder_intParameter()
+    {
+        testConsoleOutput(() -> logger.log("abc {} abc", 1, 2), "abc 1 abc");
+    }
+
+    @Test
+    public void twoArgs_onePlaceholder_stringParameter()
+    {
+        testConsoleOutput(() -> logger.log("abc {} abc", "aaa", 2), "abc aaa abc");
+    }
+
+    @Test
+    public void twoArgs_twoPlaceholders_intParameters()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} abc", 1, 2), "abc 1 2 abc");
+    }
+
+    @Test
+    public void twoArgs_twoPlaceholders_stringParameters()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} abc", "dd", "gg"), "abc dd gg abc");
+
+    }
+
+    @Test
+    public void twoArgs_threePlaceholders_oneUnused()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {} {} abc", 1, 2), "abc 1 2 {} abc");
+    }
+
+    
     /**
      * Function checks if message written to console by GameLogger is the same as expected output
      * Only message is checked, without additional logging info
