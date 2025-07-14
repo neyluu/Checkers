@@ -74,6 +74,12 @@ public class GameLoggerTest
         testConsoleOutput(() -> logger.log("abc {} {}", "bbb"), "abc bbb {}");
     }
 
+    @Test
+    public void oneArg_placeholderInsideArgument()
+    {
+        testConsoleOutput(() -> logger.log("abc {} abc", "abc {} abc"), "abc abc {} abc abc");
+    }
+
 
     @Test
     public void twoArgs_withoutPlaceholder()
@@ -116,6 +122,12 @@ public class GameLoggerTest
     public void twoArgs_threePlaceholders_oneUnused()
     {
         testConsoleOutput(() -> logger.log("abc {} {} {} abc", 1, 2), "abc 1 2 {} abc");
+    }
+
+    @Test
+    public void twoArgs_placeholderInsideArgument()
+    {
+        testConsoleOutput(() -> logger.log("a {} {} a", "a {} a", "b {c} b"), "a a {} a b {c} b a");
     }
 
 
@@ -165,6 +177,12 @@ public class GameLoggerTest
     public void moreArgs_threePlaceholders_fourArguments()
     {
         testConsoleOutput(() -> logger.log("abc {} {} abc {} abc", 1, 2, 3, 4), "abc 1 2 abc 3 abc");
+    }
+
+    @Test
+    public void moreArgs_placeholderInsideArgument()
+    {
+        testConsoleOutput(() -> logger.log("a {} {} {} c", "a {} a", "b {c} b", 3), "a a {} a b {c} b 3 c");
     }
 
 
