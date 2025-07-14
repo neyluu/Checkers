@@ -18,6 +18,7 @@ public class GameLoggerTest
 {
     private final GameLogger logger = new GameLogger(GameLoggerTest.class);
 
+
     @Test
     public void noArgs_normalInput()
     {
@@ -35,6 +36,38 @@ public class GameLoggerTest
     {
         testConsoleOutput(() -> logger.log("abc {}"), "abc {}");
     }
+
+
+    @Test
+    public void oneArg_withoutPlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("abc", 2), "abc");
+    }
+
+    @Test
+    public void oneArg_onePlaceholderUsed_intParameter()
+    {
+        testConsoleOutput(() -> logger.log("abc {}", 1), "abc 1");
+    }
+
+    @Test
+    public void oneArg_onePlaceholderUsed_stringParameter()
+    {
+        testConsoleOutput(() -> logger.log("abc {}", "aaa"), "abc aaa");
+    }
+
+    @Test
+    public void oneArg_twoPlaceholders_oneUsed_intParameter()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {}", 3), "abc 3 {}");
+    }
+
+    @Test
+    public void oneArg_twoPlaceholders_oneUsed_stringParameter()
+    {
+        testConsoleOutput(() -> logger.log("abc {} {}", "bbb"), "abc bbb {}");
+    }
+
 
 
     /**

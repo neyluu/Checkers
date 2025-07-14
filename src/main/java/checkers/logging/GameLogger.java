@@ -38,7 +38,15 @@ public class GameLogger
 
     public void log(String message, Object arg)
     {
-
+        if(message.contains("{}"))
+        {
+            String result = message.replaceFirst("\\{}", arg.toString());
+            logger.info(result);
+        }
+        else
+        {
+            logger.info(message);
+        }
     }
 
     public void log(String message, Object... args)
