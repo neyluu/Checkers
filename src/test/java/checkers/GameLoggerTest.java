@@ -45,6 +45,12 @@ public class GameLoggerTest
     }
 
     @Test
+    public void oneArg_OnlyPlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("{}", 1), "1");
+    }
+
+    @Test
     public void oneArg_onePlaceholderUsed_intParameter()
     {
         testConsoleOutput(() -> logger.log("abc {}", 1), "abc 1");
@@ -73,6 +79,12 @@ public class GameLoggerTest
     public void twoArgs_withoutPlaceholder()
     {
         testConsoleOutput(() -> logger.log("abc", 1, 2), "abc");
+    }
+
+    @Test
+    public void twoArgs_onlyPlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("{}", 1, 2), "1");
     }
 
     @Test
@@ -111,6 +123,12 @@ public class GameLoggerTest
     public void moreArgs_withoutPlaceholder()
     {
         testConsoleOutput(() -> logger.log("abc", 1, 2, 3), "abc");
+    }
+
+    @Test
+    public void moreArgs_onlyPlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("{}", 1, 2, 3), "1");
     }
 
     @Test

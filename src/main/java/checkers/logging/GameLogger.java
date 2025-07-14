@@ -112,9 +112,6 @@ public class GameLogger
                 }
             }
 
-            System.out.println("brackets: " + bracketsCount);
-            System.out.println("indexes: " + bracketsIndexes);
-
             if(bracketsCount == 1)
             {
                 log(message, arg1);
