@@ -80,6 +80,24 @@ public class GameLoggerTest
         testConsoleOutput(() -> logger.log("abc {} abc", "abc {} abc"), "abc abc {} abc abc");
     }
 
+    @Test
+    public void oneArg_escapePlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("abc \\{} abc", 1), "abc {} abc");
+    }
+
+    @Test
+    public void oneArg_onlyEscapePlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("\\{}", 1), "{}");
+    }
+
+    @Test
+    public void oneArg_escapePlaceholderAndNormal()
+    {
+        testConsoleOutput(() -> logger.log("aaa \\{} aa {}", 1), "aaa {} aa 1");
+    }
+
 
     @Test
     public void twoArgs_withoutPlaceholder()
@@ -128,6 +146,12 @@ public class GameLoggerTest
     public void twoArgs_placeholderInsideArgument()
     {
         testConsoleOutput(() -> logger.log("a {} {} a", "a {} a", "b {c} b"), "a a {} a b {c} b a");
+    }
+
+    @Test
+    public void twoArgs_escapePlaceholder()
+    {
+        testConsoleOutput(() -> logger.log("a \\{} {} {} a", 1, 2), "a {} 1 2 a");
     }
 
 
@@ -183,6 +207,12 @@ public class GameLoggerTest
     public void moreArgs_placeholderInsideArgument()
     {
         testConsoleOutput(() -> logger.log("a {} {} {} c", "a {} a", "b {c} b", 3), "a a {} a b {c} b 3 c");
+    }
+
+    @Test
+    public void moreArgs_escapeCharacter()
+    {
+        testConsoleOutput(() -> logger.log("a {} \\{} {} {}", 1, 2, 3), "a 1 {} 2 3");
     }
 
 
