@@ -3,6 +3,7 @@ package checkers.gui.popups;
 import checkers.scenes.SceneBase;
 import checkers.scenes.utils.SceneManager;
 import javafx.application.Platform;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -53,6 +54,11 @@ public class PopupAlert extends StackPane
         {
             addButton(button);
         }
+    }
+
+    protected void removeButton(Button button)
+    {
+        buttonsContainer.getChildren().remove(button);
     }
 
     public void show()

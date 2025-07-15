@@ -6,8 +6,7 @@ import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 import checkers.gui.popups.ConnectionLostAlert;
-import checkers.gui.popups.PopupAlert;
-import checkers.gui.popups.PopupAlertButton;
+import checkers.gui.popups.GameOverAlert;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import checkers.network.ServerState;
@@ -21,7 +20,7 @@ import java.util.List;
 
 public class MultiplayerGame extends Game
 {
-    private PopupAlert gameOverAlert;
+    private GameOverAlert gameOverAlert = new GameOverAlert();
     private ConnectionLostAlert connectionLostAlert = new ConnectionLostAlert();
 
     private PieceType winner;
@@ -327,31 +326,23 @@ public class MultiplayerGame extends Game
     private void createGameOverAlert()
     {
         System.out.println("CREATING GAME OVER ALERT!");
-        gameOverAlert = new PopupAlert("Game finished!");
 
-        PopupAlertButton playAgainButton = new PopupAlertButton("Play again");
-        PopupAlertButton quitButton = new PopupAlertButton("Quit");
-        PopupAlertButton quitMainMenuButton = new PopupAlertButton("Quit to main menu");
-
-        playAgainButton.setOnAction(e ->
+        gameOverAlert.setEventOnPlayAgain(e ->
         {
             gameOverAlert.hide();
             playAgainServer();
         });
-        quitButton.setOnAction(e ->
+        gameOverAlert.setEventOnQuit(e ->
         {
             Platform.exit();
         });
-        quitMainMenuButton.setOnAction(e ->
+        gameOverAlert.setEventOnQuitMainMenu(e ->
         {
             GlobalCommunication.communicator.close();
             SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
         });
 
-        gameOverAlert.setInfo("Player unknown won!");
-
-        if(isServer) gameOverAlert.addButtons(playAgainButton, quitButton, quitMainMenuButton);
-        else         gameOverAlert.addButtons(quitButton, quitMainMenuButton);
+        if(!isServer) gameOverAlert.removePlayAgainButton();
     }
 
     private void handleReceivedMove(MovePacket move)

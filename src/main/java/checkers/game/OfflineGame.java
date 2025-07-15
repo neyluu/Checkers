@@ -3,42 +3,36 @@ package checkers.game;
 import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
-import checkers.gui.popups.PopupAlert;
-import checkers.gui.popups.PopupAlertButton;
+import checkers.gui.popups.GameOverAlert;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
 
 public abstract class OfflineGame extends Game
 {
-    private PopupAlert gameOverAlert = new PopupAlert("Game finished!");
+    private GameOverAlert gameOverAlert = new GameOverAlert();
 
     public OfflineGame(PlayerUI player1UI, PlayerUI player2UI)
     {
         super(player1UI, player2UI);
         currentTurn = PieceType.WHITE;
 
-        PopupAlertButton playAgainButton = new PopupAlertButton("Play again");
-        PopupAlertButton quitButton = new PopupAlertButton("Quit");
-        PopupAlertButton quitMainMenuButton = new PopupAlertButton("Quit to main menu");
-
-        playAgainButton.setOnAction(e ->
+        gameOverAlert.setEventOnPlayAgain(e ->
         {
             gameOverAlert.hide();
             reset();
             start();
         });
-        quitButton.setOnAction(e ->
+
+        gameOverAlert.setEventOnQuit(e ->
         {
             Platform.exit();
         });
-        quitMainMenuButton.setOnAction(e ->
+
+        gameOverAlert.setEventOnQuitMainMenu(e ->
         {
             SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
         });
-
-        gameOverAlert.setInfo("Player unknown won!");
-        gameOverAlert.addButtons(playAgainButton, quitButton, quitMainMenuButton);
     }
 
     @Override
