@@ -4,7 +4,10 @@ import checkers.Settings;
 import checkers.game.GameStarter;
 import checkers.game.board.Board;
 import checkers.game.utils.GameSession;
+import checkers.gui.buttons.MenuButton;
 import checkers.gui.outputs.PlayerUI;
+import checkers.scenes.utils.SceneType;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -60,6 +63,14 @@ public class GameSceneBase extends SceneBase
     {
         VBox left = new VBox();
         left.setMinWidth(sizeSidePanel);
+        left.setAlignment(Pos.BOTTOM_CENTER);
+
+        MenuButton quitMainMenuButton = new MenuButton("Main menu");
+        quitMainMenuButton.setOnAction(e -> sceneManager.setScene(SceneType.MAIN_MENU));
+        quitMainMenuButton.setMaxWidth(250);
+        quitMainMenuButton.setMinWidth(250);
+        left.getChildren().add(quitMainMenuButton);
+
         row.getChildren().add(left);
     }
     private void initMiddlePanel()
