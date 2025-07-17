@@ -1,0 +1,8 @@
+.game-title
+{
+    -fx-font-family: Impact;
+    -fx-font-size: 100;
+    -fx-text-fill: rgb(50, 50, 50);
+    -fx-effect: dropshadow(one-pass-box , rgb(255, 255, 255), 30, 50 , 0 , 0);
+    -fx-padding: 0 0 40 0 ;
+}

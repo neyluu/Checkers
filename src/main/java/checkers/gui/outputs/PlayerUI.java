@@ -1,39 +1,23 @@
 package checkers.gui.outputs;
 
-import checkers.Settings;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class PlayerUI extends VBox
 {
-    private final double panelWidth = (Settings.screenWidth - ((Settings.screenWidth / 2) + 100)) / 2;
-
     private TurnTimer turnTimer;
     private Text text;
 
     public PlayerUI()
     {
-        this.setMinWidth(panelWidth - 50);
-        this.setMaxWidth(panelWidth - 50);
-        this.setMinHeight(150);
-        this.setMaxHeight(150);
-        this.setStyle("-fx-background-color: rgb(123,123,123);");
-        this.setAlignment(Pos.TOP_CENTER);
-        this.setPadding(new Insets(10));
-        this.setSpacing(30);
+        getStylesheets().add(getClass().getResource("/css/player-ui.css").toExternalForm());
+        this.getStyleClass().add("player-ui");
 
         text = new Text("");
-        text.setFill(Color.BLACK);
-        text.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        text.getStyleClass().add("username");
 
         turnTimer = new TurnTimer(0);
-        turnTimer.setFill(Color.BLACK);
-        turnTimer.setFont(Font.font("Arial", FontWeight.NORMAL, 24));
+        turnTimer.getStyleClass().add("timer");
 
         this.getChildren().addAll(text, turnTimer);
     }
@@ -75,14 +59,11 @@ public class PlayerUI extends VBox
 
     public void highlight()
     {
-        this.setStyle("-fx-background-color: rgb(123,123,123);" +
-                      "-fx-border-color: red;" +
-                      "-fx-border-width: 3px");
+        this.getStyleClass().add("highlight");
     }
     public void unHighlight()
     {
-        this.setStyle("-fx-background-color: rgb(123,123,123);" +
-                      "-fx-border-color: none;");
+        this.getStyleClass().remove("highlight");
     }
     public void resetTimer()
     {

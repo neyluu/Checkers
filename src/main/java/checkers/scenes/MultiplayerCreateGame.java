@@ -4,19 +4,26 @@ import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
+import checkers.gui.popups.PopupAlert;
+import checkers.gui.popups.PopupAlertButton;
 import checkers.network.GlobalCommunication;
 import checkers.network.Server;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class MultiplayerCreateGame extends SceneBase
 {
+    private Logger logger = LoggerFactory.getLogger(MultiplayerCreateGame.class);
+
     private TextField textField;
     private ComboBox<String> comboBox;
+    private PopupAlert failedCreateServerAlert = new PopupAlert("Failed to create server!");
 
     public MultiplayerCreateGame()
     {
@@ -24,8 +31,28 @@ public class MultiplayerCreateGame extends SceneBase
         layout.setAlignment(Pos.CENTER);
         layout.setSpacing(75);
 
+        initAlert();
         initInputs();
         initButtons();
+    }
+
+    private void initAlert()
+    {
+        PopupAlertButton okButton = new PopupAlertButton("OK");
+        PopupAlertButton tryAgainButton = new PopupAlertButton("Try again");
+
+        okButton.setOnAction(e ->
+        {
+            failedCreateServerAlert.hide();
+        });
+
+        tryAgainButton.setOnAction(e ->
+        {
+            failedCreateServerAlert.hide();
+            createServer();
+        });
+
+        failedCreateServerAlert.addButtons(okButton, tryAgainButton);
     }
 
     private void initInputs()
@@ -55,6 +82,8 @@ public class MultiplayerCreateGame extends SceneBase
     {
         try
         {
+            logger.info("Creating server...");
+
             GameSession session = GameSession.getInstance();
 
             String username = textField.getText();
@@ -66,10 +95,13 @@ public class MultiplayerCreateGame extends SceneBase
             server.start();
             GlobalCommunication.communicator = server;
             Runtime.getRuntime().addShutdownHook(new Thread(server::close));
+
+            logger.info("Server created");
         }
         catch (IOException ex)
         {
-            System.err.println("Failed to create server");
+            logger.error("Failed to create server");
+            failedCreateServerAlert.show();
         }
     }
 }

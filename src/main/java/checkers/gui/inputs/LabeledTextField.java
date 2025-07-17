@@ -2,9 +2,6 @@ package checkers.gui.inputs;
 
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class LabeledTextField extends VBox
@@ -15,13 +12,16 @@ public class LabeledTextField extends VBox
     public LabeledTextField(String labelText, String placeholder)
     {
         super(25);
+
+        getStylesheets().add(getClass().getResource("/css/labeled-text-field.css").toExternalForm());
+        this.getStyleClass().add("labeled-text-field");
+
         this.label = new Text(labelText);
-        this.label.setFill(Color.rgb(180,180,180));
-        this.label.setFont(Font.font("Arial", FontWeight.NORMAL, 32));
+        this.label.getStyleClass().add("label");
 
         this.textField = new TextField();
-        this.textField.setMinHeight(64);
-        this.textField.setFont(Font.font("Arial", FontWeight.NORMAL, 32));
+        this.textField.getStyleClass().add("text-field");
+
         this.textField.setPromptText(placeholder);
 
         this.getChildren().addAll(label, textField);

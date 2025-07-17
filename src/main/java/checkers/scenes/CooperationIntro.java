@@ -20,7 +20,7 @@ public class CooperationIntro extends SceneBase
     {
         layout.setStyle("-fx-background-color: rgb(25,25,25);");
         layout.setAlignment(Pos.CENTER);
-        layout.setSpacing(100);
+        layout.setSpacing(50);
 
 
         initPlayerUsernameInputs();

@@ -1,9 +1,9 @@
 package checkers.scenes;
 
 import checkers.Settings;
+import checkers.game.GameStarter;
 import checkers.game.board.Board;
 import checkers.game.utils.GameSession;
-import checkers.game.GameStarter;
 import checkers.gui.outputs.PlayerUI;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
@@ -23,7 +23,7 @@ public class GameSceneBase extends SceneBase
     protected PlayerUI player1UI = new PlayerUI();
     protected PlayerUI player2UI = new PlayerUI();
 
-    private final double sizeMiddlePanel = (Settings.screenWidth / 2) + 100;
+    private final double sizeMiddlePanel = (Settings.screenWidth / 2);
     private final double sizeSidePanel = (Settings.screenWidth - sizeMiddlePanel) / 2;
 
     protected GameSceneBase()
@@ -83,7 +83,7 @@ public class GameSceneBase extends SceneBase
 
         VBox right = new VBox();
         right.setMinWidth(sizeSidePanel);
-        right.setSpacing(350);
+        right.setSpacing(301);
         right.setAlignment(Pos.CENTER);
         right.getChildren().addAll(player1UI, player2UI);
 

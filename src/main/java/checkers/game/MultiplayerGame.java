@@ -5,15 +5,14 @@ import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
+import checkers.gui.popups.ConnectionLostAlert;
+import checkers.gui.popups.GameOverAlert;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import checkers.network.ServerState;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -21,7 +20,9 @@ import java.util.List;
 
 public class MultiplayerGame extends Game
 {
-    private Alert gameOverAlert;
+    private GameOverAlert gameOverAlert = new GameOverAlert();
+    private ConnectionLostAlert connectionLostAlert = new ConnectionLostAlert();
+
     private PieceType winner;
     private boolean isServer;
     private boolean isClosed = false;
@@ -29,15 +30,13 @@ public class MultiplayerGame extends Game
     private volatile boolean isRunning;
     private final Object communicationMutex = new Object();
 
-    private ButtonType playAgain;
-    private ButtonType quit;
-    private ButtonType quitMainMenu;
-
     public MultiplayerGame(PlayerUI player1UI, PlayerUI player2UI, boolean isServer)
     {
         super(player1UI, player2UI);
         this.isServer = isServer;
         currentTurn = isServer ? PieceType.WHITE : PieceType.BLACK;
+
+        createGameOverAlert();
     }
 
     @Override
@@ -109,31 +108,7 @@ public class MultiplayerGame extends Game
         isClosed = true;
 
         System.out.println("Closing...");
-
-        Platform.runLater(() ->
-        {
-            Alert closeAlert = new Alert(Alert.AlertType.NONE);
-            closeAlert.setTitle("");
-            closeAlert.setHeaderText("Connection lost!");
-
-            ButtonType quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
-            ButtonType quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
-
-            closeAlert.getButtonTypes().addAll(quit, quitMainMenu);
-            closeAlert.showAndWait();
-
-            ButtonType closeAlertResult = closeAlert.getResult();
-
-            if(closeAlertResult.equals(quit))
-            {
-                Platform.exit();
-            }
-            if(closeAlertResult.equals(quitMainMenu))
-            {
-                GlobalCommunication.communicator.close();
-                SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-            }
-        });
+        Platform.runLater(() -> connectionLostAlert.show());
     }
 
     private void watchTimers()
@@ -247,13 +222,19 @@ public class MultiplayerGame extends Game
         Platform.runLater(() ->
         {
             System.out.println("Game over");
+            System.out.println("Winner:" + winner);
 
             player1UI.stopTimer();
             player2UI.stopTimer();
 
-            System.out.println("Winner:" + winner);
+            gameOverAlert.setInfo(
+                (winner == PieceType.WHITE
+                ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
+                : (isServer ? player1UI.getUsername() : player2UI.getUsername())
+                ) + " won!"
+            );
+            gameOverAlert.show();
 
-            createGameOverAlert();
 
             if(!isServer)
             {
@@ -303,9 +284,6 @@ public class MultiplayerGame extends Game
                 clientPlayAgainThread.setDaemon(true);
                 clientPlayAgainThread.start();
             }
-
-            gameOverAlert.show();
-            gameOverAlert.setOnHidden(e -> handleAlertButtons());
         });
     }
 
@@ -314,8 +292,7 @@ public class MultiplayerGame extends Game
         Platform.runLater(() ->
         {
             System.out.println("Resetting game");
-            gameOverAlert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
-            gameOverAlert.close();
+            gameOverAlert.hide();
             reset();
             start();
         });
@@ -348,42 +325,24 @@ public class MultiplayerGame extends Game
 
     private void createGameOverAlert()
     {
-        playAgain    = new ButtonType("Play Again", ButtonBar.ButtonData.OK_DONE);
-        quit         = new ButtonType("Quit", ButtonBar.ButtonData.OK_DONE);
-        quitMainMenu = new ButtonType("Quit to main menu", ButtonBar.ButtonData.OK_DONE);
+        System.out.println("CREATING GAME OVER ALERT!");
 
-        gameOverAlert = new Alert(Alert.AlertType.NONE);
-        gameOverAlert.setTitle("");
-        gameOverAlert.setHeaderText("Game finished!");
-
-        gameOverAlert.setContentText(
-                (winner == PieceType.WHITE
-                        ? (isServer ? player2UI.getUsername() : player1UI.getUsername())
-                        : (isServer ? player1UI.getUsername() : player2UI.getUsername())
-                ) + " wins!"
-        );
-
-        if(isServer)    gameOverAlert.getButtonTypes().addAll(playAgain, quit, quitMainMenu);
-        else            gameOverAlert.getButtonTypes().setAll(quit, quitMainMenu);
-    }
-
-    private void handleAlertButtons()
-    {
-        ButtonType gameOverAlertResult = gameOverAlert.getResult();
-
-        if(gameOverAlertResult.equals(quit))
+        gameOverAlert.setEventOnPlayAgain(e ->
+        {
+            gameOverAlert.hide();
+            playAgainServer();
+        });
+        gameOverAlert.setEventOnQuit(e ->
         {
             Platform.exit();
-        }
-        if(gameOverAlertResult.equals(quitMainMenu))
+        });
+        gameOverAlert.setEventOnQuitMainMenu(e ->
         {
             GlobalCommunication.communicator.close();
             SceneManager.getInstance().setScene(SceneType.MAIN_MENU);
-        }
-        if(gameOverAlertResult.equals(playAgain))
-        {
-            playAgainServer();
-        }
+        });
+
+        if(!isServer) gameOverAlert.removePlayAgainButton();
     }
 
     private void handleReceivedMove(MovePacket move)

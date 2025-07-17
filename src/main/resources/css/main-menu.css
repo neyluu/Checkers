@@ -1,0 +1,6 @@
+.main-menu
+{
+  -fx-background-color: rgb(25,25,25);
+  -fx-spacing: 30;
+  -fx-alignment: center;
+}
