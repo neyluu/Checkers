@@ -15,6 +15,13 @@ public class Cell extends VBox
         this.setAlignment(Pos.CENTER);
     }
 
+    public Cell(int sizeX, int sizeY)
+    {
+        this.setMinHeight(sizeY);
+        this.setMinWidth(sizeX);
+        this.setAlignment(Pos.CENTER);
+    }
+
     public Piece getPiece()
     {
         return piece;

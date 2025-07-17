@@ -1,0 +1,17 @@
+.position-map-cell
+{
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.dark-background
+{
+    -fx-background-color: rgb(104, 70, 52);
+
+}
+
+.light-background
+{
+    -fx-background-color: rgb(113, 93, 85);
+
+}

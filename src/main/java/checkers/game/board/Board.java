@@ -2,11 +2,12 @@ package checkers.game.board;
 
 import checkers.exceptions.CellHavePieceException;
 import checkers.exceptions.PieceNotFoundException;
-import checkers.game.utils.Position;
 import checkers.game.pieces.Man;
 import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
+import checkers.game.utils.Position;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +21,20 @@ public class Board extends GridPane
 
     private Cell[][] cells = new Cell[boardSize][boardSize];
 
+    private GridPane cellContainer = new GridPane();
+    private GridPane rightMap = new GridPane();
+    private GridPane bottomMap = new GridPane();
+
     public Board()
     {
-        this.setMaxWidth(width);
+        getStylesheets().add(getClass().getResource("/css/board.css").toExternalForm());
+        cellContainer.setMaxWidth(width);
 
+        this.add(cellContainer, 0, 0);
+        this.add(rightMap, 1, 0);
+        this.add(bottomMap, 0, 1);
+
+        initBoardPositionsLegend();
         clearBoard(false);
     }
 
@@ -91,6 +102,36 @@ public class Board extends GridPane
         return isInBounds(pos.x, pos.y);
     }
 
+    private void initBoardPositionsLegend()
+    {
+        int width = cellSize / 2;
+        int height = cellSize;
+
+        char positionLetter = 'A';
+        int positionNumber = 8;
+
+        for(int i = 0; i < boardSize; i++) 
+        {
+            Cell verticalCell = new Cell(width, height);
+            verticalCell.getStyleClass().add((i % 2 == 0) ? "light-background" : "dark-background");
+            verticalCell.getStyleClass().add("position-map-cell");
+            verticalCell.getChildren().add(new Text("" + positionNumber));
+            positionNumber--;
+            rightMap.add(verticalCell, 0, i);
+
+            Cell horizontalCell = new Cell(height, width);
+            horizontalCell.getStyleClass().add((i % 2 == 0) ? "light-background" : "dark-background");
+            horizontalCell.getStyleClass().add("position-map-cell");
+            horizontalCell.getChildren().add(new Text("" + positionLetter));
+            positionLetter++;
+            bottomMap.add(horizontalCell, i, 0);
+        }
+
+        Cell cornerCell = new Cell(width, width);
+        cornerCell.getStyleClass().add("light-background");
+        this.add(cornerCell, 1, 1);
+    }
+
     public void clearBoard(boolean inverted)
     {
         initCells();
@@ -106,7 +147,7 @@ public class Board extends GridPane
                 Cell cell = new Cell(cellSize);
                 setCellCheckboardColor(cell, i, j);
                 cells[i][j] = cell;
-                this.add(cell, i, j);
+                cellContainer.add(cell, i, j);
             }
         }
     }
