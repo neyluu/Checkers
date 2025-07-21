@@ -23,4 +23,10 @@ public class Position
     {
         return distanceTo(new Position(x, y));
     }
+
+    @Override
+    public String toString()
+    {
+        return "(" + x +"," + y + ")";
+    }
 }

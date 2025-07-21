@@ -7,14 +7,17 @@ import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.outputs.PlayerUI;
 import checkers.scenes.utils.SceneType;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameSceneBase extends SceneBase
 {
+    private Logger logger = LoggerFactory.getLogger(GameSceneBase.class);
+
     protected String player1Username;
     protected String player2Username;
     protected String turnTime;
@@ -112,7 +115,11 @@ public class GameSceneBase extends SceneBase
             {
                 return Integer.parseInt(tokens[0]);
             }
-            catch (Exception e) { return 0; }
+            catch (Exception e)
+            {
+                logger.error("Failed to parse turn time [{}] to int", turnTime);
+                return 0;
+            }
         }
     }
 

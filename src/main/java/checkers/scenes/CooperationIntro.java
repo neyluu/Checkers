@@ -9,12 +9,16 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CooperationIntro extends SceneBase
 {
+    private Logger logger = LoggerFactory.getLogger(CooperationIntro.class);
+
     private TextField player1;
     private TextField player2;
-    ComboBox<String> turnTime;
+    private ComboBox<String> turnTime;
 
     public CooperationIntro()
     {
@@ -55,7 +59,12 @@ public class CooperationIntro extends SceneBase
             if(player2Username.isEmpty()) session.player2Username = "Player 2";
 
             session.turnTime = turnTime.getValue();
-            
+
+            logger.info("Cooperation gamer created");
+            logger.info("Player 1 name: {}", session.player1Username);
+            logger.info("Player 2 name: {}", session.player2Username);
+            logger.info("Game time:     {}", session.turnTime);
+
             sceneManager.setScene(SceneType.COOPERATION);
         });
 

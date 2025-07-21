@@ -5,7 +5,10 @@ import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
+import checkers.logging.GameLogger;
 import javafx.application.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +17,9 @@ import java.util.Random;
 
 public class SingleplayerGame extends OfflineGame
 {
+    private GameLogger gameLogger = new GameLogger(SingleplayerGame.class);
+    private Logger logger = LoggerFactory.getLogger(SingleplayerGame.class);
+
     private final int aiMoveDelay = 1000;
     private final Random random = new Random();
 
@@ -29,24 +35,30 @@ public class SingleplayerGame extends OfflineGame
         {
             if(board.getBlackPiecesCount() == 0)
             {
-                gameOver();
+                gameOver("All black pieces are beaten");
                 return;
             }
+
             currentTurn = PieceType.BLACK;
+            gameLogger.log("======================");
+            gameLogger.log("Current turn: {}", currentTurn);
+
             uiPlayer1Turn();
-            System.out.println("Black turn");
             aiTurn();
         }
         else if(currentTurn == PieceType.BLACK)
         {
             if(board.getWhitePieceCount() == 0)
             {
-                gameOver();
+                gameOver("All white pieces are beaten");
                 return;
             }
+
             currentTurn = PieceType.WHITE;
+            gameLogger.log("======================");
+            gameLogger.log("Current turn: {}", currentTurn);
+
             uiPlayer2Turn();
-            System.out.println("White turn");
             turn();
         }
     }
@@ -61,7 +73,7 @@ public class SingleplayerGame extends OfflineGame
         }
 
         Map<Piece, List<Position[]>> moves = board.getPiecesWithValidMoves(currentTurn, false);
-        if (moves.isEmpty()) gameOver();
+        if (moves.isEmpty()) gameOver("No moves available");
 
         aiDoMove(moves, false);
     }
@@ -91,7 +103,10 @@ public class SingleplayerGame extends OfflineGame
 
                     Platform.runLater(() ->
                     {
-                        board.movePiece(piece.getX(), piece.getY(), to[0].x, to[0].y);
+                        Position from = new Position(piece.getX(), piece.getY());
+                        board.movePiece(from, to[0]);
+                        gameLogger.log("Moving piece from {} to {}", from, to[0]);
+
 
                         Cell cell = board.getCell(to[0].x, to[0].y);
                         Piece currentPiece = cell.getPiece();
@@ -100,6 +115,7 @@ public class SingleplayerGame extends OfflineGame
                         if(isBeatMoves)
                         {
                             board.removePiece(to[1]);
+                            gameLogger.log("Beating piece on {}", to[1]);
                             aiNextBeats(currentPiece);
                             return;
                         }

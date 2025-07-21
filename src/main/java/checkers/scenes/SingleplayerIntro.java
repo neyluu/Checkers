@@ -8,9 +8,13 @@ import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SingleplayerIntro extends SceneBase
 {
+    private Logger logger = LoggerFactory.getLogger(SingleplayerIntro.class);
+
     private TextField usernameField;
     private ComboBox<String> turnTime;
 
@@ -57,6 +61,11 @@ public class SingleplayerIntro extends SceneBase
         if(playerUsername.isEmpty()) session.player2Username = "Player";
 
         session.turnTime = turnTime.getValue();
+
+        logger.info("Singleplayer game created");
+        logger.info("Player name: {}", session.player2Username);
+        logger.info("Game time:   {}", session.turnTime);
+
         sceneManager.setScene(SceneType.SINGLEPLAYER);
     }
 }

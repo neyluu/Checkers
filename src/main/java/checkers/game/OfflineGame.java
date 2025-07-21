@@ -4,12 +4,18 @@ import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 import checkers.gui.popups.GameOverAlert;
+import checkers.logging.GameLogger;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class OfflineGame extends Game
 {
+    private Logger logger = LoggerFactory.getLogger(OfflineGame.class);
+    private GameLogger gameLogger = new GameLogger(OfflineGame.class);
+
     private GameOverAlert gameOverAlert = new GameOverAlert();
 
     public OfflineGame(PlayerUI player1UI, PlayerUI player2UI)
@@ -17,8 +23,32 @@ public abstract class OfflineGame extends Game
         super(player1UI, player2UI);
         currentTurn = PieceType.WHITE;
 
+        initAlert();
+    }
+
+    @Override
+    protected void onMove(Position from, Position to, Position beat, boolean isBeatMoves)
+    {
+        return;
+    }
+
+    @Override
+    public void start()
+    {
+        logger.info("Starting game");
+        gameLogger.log("======================");
+        gameLogger.log("Current turn: {}", currentTurn);
+
+        uiPlayer2Turn();
+        watchTimers();
+        turn();
+    }
+
+    private void initAlert()
+    {
         gameOverAlert.setEventOnPlayAgain(e ->
         {
+            logger.info("Preparing another game");
             gameOverAlert.hide();
             reset();
             start();
@@ -35,22 +65,10 @@ public abstract class OfflineGame extends Game
         });
     }
 
-    @Override
-    protected void onMove(Position from, Position to, Position beat, boolean isBeatMoves)
-    {
-        return;
-    }
-
-    @Override
-    public void start()
-    {
-        uiPlayer2Turn();
-        watchTimers();
-        turn();
-    }
-
     private void reset()
     {
+        logger.info("Resetting game");
+
         resetScheduler();
         board.clearBoard(false);
         player1UI.resetTimer();
@@ -68,16 +86,18 @@ public abstract class OfflineGame extends Game
                 {
                     if (currentTurn == PieceType.WHITE) currentTurn = PieceType.BLACK;
                     else if (currentTurn == PieceType.BLACK) currentTurn = PieceType.WHITE;
-                    Platform.runLater(this::gameOver);
+                    Platform.runLater(() -> gameOver("Time left"));
                     timersScheduler.shutdown();
                 }
             });
         }
     }
 
-    protected void gameOver()
+    protected void gameOver(String reasonMessage)
     {
-        System.out.println("GAME OVER");
+        gameLogger.log("======================");
+        logger.info("Game finished - {}", reasonMessage);
+
         player1UI.stopTimer();
         player2UI.stopTimer();
 
