@@ -115,8 +115,9 @@ public class AppLogger
 
     public void info(String message)
     {
+        String finalMessage = parseMessage(message, null);
         String[] metaData = getClassAndMethodData();
-        logger.logp(Level.INFO, metaData[0], metaData[1], message);
+        logger.logp(Level.INFO, metaData[0], metaData[1], finalMessage);
     }
     public void info(String message, Object... args)
     {
@@ -139,24 +140,24 @@ public class AppLogger
     {
         StringBuilder result = new StringBuilder(message.length());
         int argCounter = 0;
+        int argsLength = args == null ? 0: args.length;
 
         for(int i = 0; i < message.length(); i++)
         {
             int prev = i - 1;
             int next = i + 1;
+            int next2 = i + 2;
 
-            if( prev >= 0 && message.charAt(prev) == '\\'
-                && message.charAt(i) == '{'
-                && next < message.length() && message.charAt(next) == '}'
-            )
+            if( message.charAt(i) == '\\'
+                && message.charAt(next) == '{'
+                && message.charAt(next2) == '}')
             {
-                result.deleteCharAt(result.length() - 1);
+                continue;
             }
-            if( prev >= 0 && message.charAt(prev) != '\\'
+            if( (prev >= 0 && message.charAt(prev) != '\\' || i == 0)
                 && message.charAt(i) == '{'
                 && next < message.length() && message.charAt(next) == '}'
-                && argCounter < args.length
-            )
+                && argCounter < argsLength)
             {
                 result.append(args[argCounter++]);
                 i++;
