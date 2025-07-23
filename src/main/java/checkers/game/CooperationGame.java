@@ -2,11 +2,13 @@ package checkers.game;
 
 import checkers.game.pieces.PieceType;
 import checkers.gui.outputs.PlayerUI;
-import checkers.logging.GameLogger;
+import checkers.logging.AppLogger;
+
+import java.rmi.ConnectIOException;
 
 public class CooperationGame extends OfflineGame
 {
-    private GameLogger gameLogger = new GameLogger(CooperationGame.class);
+    private final AppLogger logger = new AppLogger(ConnectIOException.class);
 
     public CooperationGame(PlayerUI player1UI, PlayerUI player2UI)
     {
@@ -24,8 +26,8 @@ public class CooperationGame extends OfflineGame
                 return;
             }
             currentTurn = PieceType.BLACK;
-            gameLogger.log("======================");
-            gameLogger.log("Current turn: {}", currentTurn);
+            logger.game("======================");
+            logger.game("Current turn: {}", currentTurn);
             uiPlayer1Turn();
         }
         else if(currentTurn == PieceType.BLACK)
@@ -36,8 +38,8 @@ public class CooperationGame extends OfflineGame
                 return;
             }
             currentTurn = PieceType.WHITE;
-            gameLogger.log("======================");
-            gameLogger.log("Current turn: {}", currentTurn);
+            logger.game("======================");
+            logger.game("Current turn: {}", currentTurn);
             uiPlayer2Turn();
         }
 

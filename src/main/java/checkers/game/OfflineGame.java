@@ -4,18 +4,14 @@ import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 import checkers.gui.popups.GameOverAlert;
-import checkers.logging.GameLogger;
+import checkers.logging.AppLogger;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 import javafx.application.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class OfflineGame extends Game
 {
-    private Logger logger = LoggerFactory.getLogger(OfflineGame.class);
-    private GameLogger gameLogger = new GameLogger(OfflineGame.class);
-
+    private final AppLogger logger = new AppLogger(OfflineGame.class);
     private GameOverAlert gameOverAlert = new GameOverAlert();
 
     public OfflineGame(PlayerUI player1UI, PlayerUI player2UI)
@@ -36,8 +32,8 @@ public abstract class OfflineGame extends Game
     public void start()
     {
         logger.info("Starting game");
-        gameLogger.log("======================");
-        gameLogger.log("Current turn: {}", currentTurn);
+        logger.game("======================");
+        logger.game("Current turn: {}", currentTurn);
 
         uiPlayer2Turn();
         watchTimers();
@@ -95,7 +91,7 @@ public abstract class OfflineGame extends Game
 
     protected void gameOver(String reasonMessage)
     {
-        gameLogger.log("======================");
+        logger.game("======================");
         logger.info("Game finished - {}", reasonMessage);
 
         player1UI.stopTimer();

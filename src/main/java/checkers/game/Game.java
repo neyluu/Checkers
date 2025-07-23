@@ -7,7 +7,7 @@ import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
-import checkers.logging.GameLogger;
+import checkers.logging.AppLogger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Game implements GameStarter
 {
-    final protected Board board = new Board();
-
-    private GameLogger gameLogger = new GameLogger(Game.class);
+    private final AppLogger logger = new AppLogger(Game.class);
+    protected final Board board = new Board();
 
     protected boolean promoted = false;
 
@@ -112,7 +111,7 @@ public abstract class Game implements GameStarter
                         Position from = new Position(piece.getX(), piece.getY());
                         board.movePiece(from, pos[0]);
 
-                        gameLogger.log("Moving piece from {} to {}", from, pos[0]);
+                        logger.game("Moving piece from {} to {}", from, pos[0]);
 
                         onMove(from, pos[0], isBeatMoves ? pos[1] : null, isBeatMoves);
 
@@ -125,7 +124,7 @@ public abstract class Game implements GameStarter
                             if(isBeatMoves)
                             {
                                 board.removePiece(pos[1]);
-                                gameLogger.log("Beating piece on {}", pos[1]);
+                                logger.game("Beating piece on {}", pos[1]);
                             }
                             nextBeats(currentPiece);
                         }
@@ -180,7 +179,7 @@ public abstract class Game implements GameStarter
             cell.clearPiece();
             cell.setPiece(king);
 
-            gameLogger.log("Piece promoted to king");
+            logger.game("Piece promoted to king");
 
             return king;
         }
