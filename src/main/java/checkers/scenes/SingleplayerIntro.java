@@ -4,16 +4,15 @@ import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
+import checkers.logging.AppLogger;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SingleplayerIntro extends SceneBase
 {
-    private Logger logger = LoggerFactory.getLogger(SingleplayerIntro.class);
+    private final AppLogger logger = new AppLogger(SingleplayerIntro.class);
 
     private TextField usernameField;
     private ComboBox<String> turnTime;

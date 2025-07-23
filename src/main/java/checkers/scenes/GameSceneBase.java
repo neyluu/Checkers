@@ -6,17 +6,16 @@ import checkers.game.board.Board;
 import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.outputs.PlayerUI;
+import checkers.logging.AppLogger;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GameSceneBase extends SceneBase
 {
-    private Logger logger = LoggerFactory.getLogger(GameSceneBase.class);
+    private final AppLogger logger = new AppLogger(GameSceneBase.class);
 
     protected String player1Username;
     protected String player2Username;

@@ -6,20 +6,19 @@ import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
 import checkers.gui.popups.PopupAlert;
 import checkers.gui.popups.PopupAlertButton;
+import checkers.logging.AppLogger;
 import checkers.network.GlobalCommunication;
 import checkers.network.Server;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class MultiplayerCreateGame extends SceneBase
 {
-    private Logger logger = LoggerFactory.getLogger(MultiplayerCreateGame.class);
+    private final AppLogger logger = new AppLogger(MultiplayerCreateGame.class);
 
     private TextField textField;
     private ComboBox<String> comboBox;

@@ -4,17 +4,16 @@ import checkers.game.utils.GameSession;
 import checkers.gui.buttons.MenuButton;
 import checkers.gui.inputs.LabeledTextField;
 import checkers.gui.inputs.LabeledTimeComboBox;
+import checkers.logging.AppLogger;
 import checkers.scenes.utils.SceneType;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CooperationIntro extends SceneBase
 {
-    private Logger logger = LoggerFactory.getLogger(CooperationIntro.class);
+    private final AppLogger logger = new AppLogger(CooperationIntro.class);
 
     private TextField player1;
     private TextField player2;

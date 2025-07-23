@@ -3,7 +3,6 @@ module checkers {
     requires javafx.fxml;
     requires jdk.compiler;
     requires java.desktop;
-    requires org.slf4j;
     requires java.rmi;
     requires java.logging;
 
