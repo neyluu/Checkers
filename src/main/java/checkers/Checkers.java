@@ -1,6 +1,5 @@
 package checkers;
 
-import checkers.logging.GameLogger;
 import checkers.logging.LogFormatter;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;

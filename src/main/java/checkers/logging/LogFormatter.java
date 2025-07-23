@@ -13,6 +13,7 @@ public class LogFormatter extends CustomFormatter
         String type = record.getLevel().getName();
         if(type.equals("SEVERE")) type = "ERROR";
         if(type.equals("FINER")) type = "GAME";
+        if(type.equals("FINE")) type = "DEBUG";
 
         return String.format("[%s] %s: %s   (%s.%s:%d)[%d]%n", timestamp, type, message, shortClassName, methodName, lineNumber, thread);
     }

@@ -34,12 +34,13 @@ public class AppLogger
     }
 
 
-    private static FileHandler fileHandler;
-    private final static String logFilename = "checkersLog.txt";
-
     private final Class<?> clazz;
     private final Logger logger;
     private final ConsoleHandler consoleHandler = new ConsoleHandler();
+
+
+    private static FileHandler fileHandler;
+    private final static String logFilename = "checkersLog.txt";
 
     private final static boolean errorLogs = true;
     private final static boolean warnLogs  = true;
@@ -88,53 +89,62 @@ public class AppLogger
 
     public void error(String message)
     {
-
+        log(Level.SEVERE, message);
     }
     public void error(String message, Object... args)
     {
-
+        log(Level.SEVERE, message, args);
     }
 
     public void warn(String message)
     {
-
+        log(Level.WARNING, message);
     }
     public void warn(String message, Object... args)
     {
-
-    }
-
-    public void debug(String message)
-    {
-
-    }
-    public void debug(String message, Object... args)
-    {
-
+        log(Level.WARNING, message, args);
     }
 
     public void info(String message)
     {
-        String finalMessage = parseMessage(message, null);
-        String[] metaData = getClassAndMethodData();
-        logger.logp(Level.INFO, metaData[0], metaData[1], finalMessage);
+        log(Level.INFO, message);
     }
     public void info(String message, Object... args)
     {
-        String finalMessage = parseMessage(message, args);
-        String[] metaData = getClassAndMethodData();
-        logger.logp(Level.INFO, metaData[0], metaData[1], finalMessage, args);
+        log(Level.INFO, message, args);
+    }
+
+    public void debug(String message)
+    {
+        log(Level.FINE, message);
+    }
+    public void debug(String message, Object... args)
+    {
+        log(Level.FINE, message, args);
     }
 
     public void game(String message)
     {
-
+        log(Level.FINER, message);
     }
     public void game(String message, Object... args)
     {
-
+        log(Level.FINER, message, args);
     }
 
+    private void log(Level level, String message)
+    {
+        String finalMessage = parseMessage(message, null);
+        String[] metaData = getClassAndMethodData();
+        logger.logp(level, metaData[0], metaData[1], finalMessage);
+    }
+
+    private void log(Level level, String message, Object[] args)
+    {
+        String finalMessage = parseMessage(message, args);
+        String[] metaData = getClassAndMethodData();
+        logger.logp(level, metaData[0], metaData[1], finalMessage, args);
+    }
 
     private String parseMessage(String message, Object[] args)
     {
