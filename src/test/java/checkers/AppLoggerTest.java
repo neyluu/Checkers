@@ -17,7 +17,12 @@ public class AppLoggerTest
     private final static Scanner scanner;
 
     private final AppLogger l = new AppLogger(AppLoggerTest.class);
+
+    private final String errorPrefix = "ERROR: ";
+    private final String warnPrefix = "WARNING: ";
     private final String infoPrefix = "INFO: ";
+    private final String debugPrefix = "DEBUG: ";
+    private final String gamePrefix = "GAME: ";
 
     static
     {
@@ -33,84 +38,118 @@ public class AppLoggerTest
 
 
     @Test
-    public void info_empty()
+    public void emptyMessage()
     {
-        testOutput(() -> l.info(""), infoPrefix + "");
+        testAllLevels("", "");
     }
 
     @Test
-    public void info_normalString()
+    public void normalString()
     {
-        testOutput(() -> l.info("abc"), infoPrefix + "abc");
+        testAllLevels("abc", "abc");
     }
 
     @Test
-    public void info_placeholderWithoutArgs()
+    public void placeholderWithoutArgs()
     {
-        testOutput(() -> l.info("{}"), infoPrefix + "{}");
+        testAllLevels("{}", "{}");
     }
 
     @Test
-    public void info_fewPlaceholdersWithoutArgs()
+    public void fewPlaceholdersWithoutArgs()
     {
-        testOutput(() -> l.info("{} abc {} abc {}"), infoPrefix + "{} abc {} abc {}");
+        testAllLevels("{} abc {} abc {}", "{} abc {} abc {}");
     }
 
     @Test
-    public void info_escapePlaceholder()
+    public void escapePlaceholder()
     {
-        testOutput(() -> l.info("\\{}"), infoPrefix + "{}");
+        testAllLevels("{}", "\\{}");
     }
 
     @Test
-    public void info_twoEscapePlaceholders()
+    public void twoEscapePlaceholders()
     {
-        testOutput(() -> l.info("\\{} \\{}"), infoPrefix + "{} {}");
+        testAllLevels("{} {}", "\\{} \\{}");
     }
 
     @Test
-    public void info_args_onePlaceholder()
+    public void backslashMessage()
     {
-        testOutput(() -> l.info("{}", 1), infoPrefix + "1");
+        testAllLevels("Path: C:\\\\Program Files", "Path: C:\\\\Program Files");
     }
 
     @Test
-    public void info_args_fewPlaceholders()
+    public void args_onePlaceholder()
     {
-        testOutput(() -> l.info("{} abc {} abc {}", 1, "bbb", 2.1), infoPrefix + "1 abc bbb abc 2.1");
+        testAllLevels("1", "{}", 1);
     }
 
     @Test
-    public void info_args_noPlaceholder()
+    public void args_fewPlaceholders()
     {
-        testOutput(() -> l.info("abc abc", 1, 2), infoPrefix + "abc abc");
+        testAllLevels("1 abc bbb abc 2.1", "{} abc {} abc {}", 1, "bbb", 2.1);
     }
 
     @Test
-    public void info_args_morePlaceholdersThanArgs()
+    public void args_noPlaceholder()
     {
-        testOutput(() -> l.info("{} a {} a {}", 2, "c"), infoPrefix + "2 a c a {}");
+        testAllLevels("abc abc", "abc abc", 1, 2);
     }
 
     @Test
-    public void info_args_moreArgsThanPlaceholders()
+    public void args_morePlaceholdersThanArgs()
     {
-        testOutput(() -> l.info("{} a {} a", 1, "cc", 2.1), infoPrefix + "1 a cc a");
+        testAllLevels("2 a c a {}", "{} a {} a {}", 2, "c");
     }
 
     @Test
-    public void info_args_escapePlaceholder()
+    public void args_moreArgsThanPlaceholders()
     {
-        testOutput(() -> l.info("\\{}", 1), infoPrefix + "{}");
+        testAllLevels("1 a cc a", "{} a {} a", 1, "cc", 2.1);
     }
 
     @Test
-    public void info_args_escapePlaceholderAndNormal()
+    public void args_escapePlaceholder()
     {
-        testOutput(() -> l.info("{} \\{}", 1, 2), infoPrefix + "1 {}");
+        testAllLevels("{}", "\\{}", 1);
+    }
+
+    @Test
+    public void args_escapePlaceholderAndNormal()
+    {
+        testAllLevels("1 {}", "{} \\{}", 1, 2);
     }
 
 
+    private void testAllLevels(String expectedOutput, String message)
+    {
+        testOutput(() -> l.error(message), errorPrefix + expectedOutput);
+        testOutput(() -> l.warn(message), warnPrefix + expectedOutput);
+        testOutput(() -> l.info(message), infoPrefix + expectedOutput);
+        testOutput(() -> l.debug(message), debugPrefix + expectedOutput);
+        testOutput(() -> l.game(message), gamePrefix + expectedOutput);
+    }
+
+    private void testAllLevels(String expectedOutput, String message, Object... args)
+    {
+        testOutput(() -> l.error(message, args), errorPrefix + expectedOutput);
+        testOutput(() -> l.warn(message, args), warnPrefix + expectedOutput);
+        testOutput(() -> l.info(message, args), infoPrefix + expectedOutput);
+        testOutput(() -> l.debug(message, args), debugPrefix + expectedOutput);
+        testOutput(() -> l.game(message, args), gamePrefix + expectedOutput);
+    }
+
+    /**
+     * Function checks if log print proper message, method should print to both console and file,
+     * checking is based on file output.
+     * Only message and class name is checked, without additional logging info
+     * Current format: [dd-mm-yyyy hh:mm:ss] GAME: [message]   (class.method:line)[thread]
+     * In case of changing format this function may not work properly
+     *
+     * @param function       log method call
+     * @param expectedOutput message that should be written by log method
+     **/
     private static void testOutput(Runnable function, String expectedOutput)
     {
         function.run();
