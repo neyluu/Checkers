@@ -7,6 +7,8 @@ import checkers.logging.AppLogger;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -21,6 +23,7 @@ public class GameSaver
 
     private static GameSaver instance = null;
 
+    private final String path = "games";
     private String filename;
     private File file;
     private FileWriter fileWriter;
@@ -47,7 +50,9 @@ public class GameSaver
         currentDateTime = LocalDateTime.now();
         filename = createFilename();
         logger.debug("Created filename: {}", filename);
-        file = new File(filename);
+
+        Files.createDirectories(Paths.get(path));
+        file = new File(path + "/" + filename);
 
         try
         {
