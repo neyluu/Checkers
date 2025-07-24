@@ -88,25 +88,45 @@ public class GameSaver
         writeTurn();
     }
 
+    // TODO Convert positions to code (A1, B5 etc)
 
-
-    public void move(Position from, Position to)
+    public void move(Position from, Position to) throws IOException
     {
-
+        fileWriter.write("    Move: " + from + " to " + to + "\n");
     }
 
-    public void beat(Position position)
+    public void move(int fromX, int fromY, int toX, int toY) throws IOException
     {
-
+        move(new Position(fromX, fromY), new Position(toX, toY));
     }
 
-    public void promote(Position position)
+    public void beat(Position position) throws IOException
     {
-
+        fileWriter.write("    Beat: " + position + "\n");
     }
-    public void win(String player, String reason)
-    {
 
+    public void beat(int x, int y) throws IOException
+    {
+        beat(new Position(x, y));
+    }
+
+    public void promote(Position position) throws IOException
+    {
+        fileWriter.write("    Prom: " + position + "\n");
+    }
+
+    public void promote(int x, int y) throws IOException
+    {
+        promote(new Position(x, y));
+    }
+
+    public void win(String player, String reason) throws IOException
+    {
+        fileWriter.write("\n");
+        fileWriter.write("GAME END\n");
+        fileWriter.write("\n");
+        fileWriter.write("Winner:       " + player + "\n");
+        fileWriter.write("Reason:       " + reason);
     }
 
     private String createFilename()
@@ -127,17 +147,21 @@ public class GameSaver
         fileWriter.write("Player 2:     " + gameSession.player2Username + "\n");
         fileWriter.write("Game time:    " + gameSession.turnTime + "\n");
         fileWriter.write("\n");
-        fileWriter.write("GAME START" + "\n");
+        fileWriter.write("GAME START\n");
         fileWriter.write("\n");
     }
 
     private void writeTurn() throws IOException
     {
-        String turnName = turn.name().toLowerCase();
-        char c = turnName.charAt(0);
-        c -= 32;
-        turnName = c + turnName.substring(1);
-
+        String turnName = capitalize(turn.name());
         fileWriter.write("[" + turnName + "]:\n");
+    }
+
+    private String capitalize(String string)
+    {
+        string = string.toLowerCase();
+        char firstChar = string.charAt(0);
+        firstChar -= 32;
+        return firstChar + string.substring(1);
     }
 }
