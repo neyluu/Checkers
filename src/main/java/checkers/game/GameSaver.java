@@ -2,6 +2,7 @@ package checkers.game;
 
 import checkers.game.utils.GameSession;
 import checkers.game.utils.Position;
+import checkers.game.utils.PositionCode;
 import checkers.logging.AppLogger;
 
 import java.io.File;
@@ -93,11 +94,9 @@ public class GameSaver
         writeTurn();
     }
 
-    // TODO Convert positions to code (A1, B5 etc)
-
     public void move(Position from, Position to) throws IOException
     {
-        fileWriter.write("    Move: " + from + " to " + to + "\n");
+        fileWriter.write("    Move: " + PositionCode.toCode(from) + " to " + PositionCode.toCode(to) + "\n");
     }
 
     public void move(int fromX, int fromY, int toX, int toY) throws IOException
@@ -107,7 +106,7 @@ public class GameSaver
 
     public void beat(Position position) throws IOException
     {
-        fileWriter.write("    Beat: " + position + "\n");
+        fileWriter.write("    Beat: " + PositionCode.toCode(position) + "\n");
     }
 
     public void beat(int x, int y) throws IOException
@@ -117,7 +116,7 @@ public class GameSaver
 
     public void promote(Position position) throws IOException
     {
-        fileWriter.write("    Prom: " + position + "\n");
+        fileWriter.write("    Prom: " + PositionCode.toCode(position) + "\n");
     }
 
     public void promote(int x, int y) throws IOException
