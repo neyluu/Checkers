@@ -46,22 +46,21 @@ public class GameSaver
         return instance;
     }
 
-    public void start() throws IOException
+    public void start()
     {
         currentDateTime = LocalDateTime.now();
         filename = createFilename();
         logger.debug("Created filename: {}", filename);
 
-        Files.createDirectories(Paths.get(path));
-        file = new File(path + "/" + filename);
-
         try
         {
+            Files.createDirectories(Paths.get(path));
+            file = new File(path + "/" + filename);
             fileWriter = new FileWriter(file, true);
         }
         catch (IOException e)
         {
-            logger.error("Failed to create file writer!" + e.getMessage());
+            logger.error("Failed to open file!" + e.getMessage());
             // TODO if file cannot be created, rest of methods should not try save anything to it
         }
 
@@ -80,57 +79,99 @@ public class GameSaver
         }
     }
 
-    public void setTurn(TurnType type) throws IOException
+    public void setTurn(TurnType type)
     {
         turn = type;
-        writeTurn();
+        try
+        {
+            writeTurn();
+        }
+        catch (IOException e)
+        {
+            logger.error("Failed to save turn to file!");
+        }
     }
 
-    public void changeTurn() throws IOException
+    public void changeTurn()
     {
         if(turn == TurnType.WHITE) turn = TurnType.BLACK;
         else                       turn = TurnType.WHITE;
 
-        writeTurn();
+        try
+        {
+            writeTurn();
+        }
+        catch (IOException e)
+        {
+            logger.error("Failed to save turn to file!");
+        }
     }
 
-    public void move(Position from, Position to) throws IOException
+    public void move(Position from, Position to)
     {
-        fileWriter.write("    Move: " + PositionCode.toCode(from) + " to " + PositionCode.toCode(to) + "\n");
+        try
+        {
+            fileWriter.write("    Move: " + PositionCode.toCode(from) + " to " + PositionCode.toCode(to) + "\n");
+        }
+        catch(IOException e)
+        {
+            logger.error("Failed to save move to file!");
+        }
     }
 
-    public void move(int fromX, int fromY, int toX, int toY) throws IOException
+    public void move(int fromX, int fromY, int toX, int toY)
     {
         move(new Position(fromX, fromY), new Position(toX, toY));
     }
 
-    public void beat(Position position) throws IOException
+    public void beat(Position position)
     {
-        fileWriter.write("    Beat: " + PositionCode.toCode(position) + "\n");
+        try
+        {
+            fileWriter.write("    Beat: " + PositionCode.toCode(position) + "\n");
+        }
+        catch(IOException e)
+        {
+            logger.error("Failed to save beat to file!");
+        }
     }
 
-    public void beat(int x, int y) throws IOException
+    public void beat(int x, int y)
     {
         beat(new Position(x, y));
     }
 
-    public void promote(Position position) throws IOException
+    public void promote(Position position)
     {
-        fileWriter.write("    Prom: " + PositionCode.toCode(position) + "\n");
+        try
+        {
+            fileWriter.write("    Prom: " + PositionCode.toCode(position) + "\n");
+        }
+        catch(IOException e)
+        {
+            logger.error("Failed to save promote to file!");
+        }
     }
 
-    public void promote(int x, int y) throws IOException
+    public void promote(int x, int y)
     {
         promote(new Position(x, y));
     }
 
-    public void win(String player, String reason) throws IOException
+    public void win(String player, String reason)
     {
-        fileWriter.write("\n");
-        fileWriter.write("GAME END\n");
-        fileWriter.write("\n");
-        fileWriter.write("Winner:       " + player + "\n");
-        fileWriter.write("Reason:       " + reason);
+        try
+        {
+            fileWriter.write("\n");
+            fileWriter.write("GAME END\n");
+            fileWriter.write("\n");
+            fileWriter.write("Winner:       " + player + "\n");
+            fileWriter.write("Reason:       " + reason);
+        }
+        catch(IOException e)
+        {
+            logger.error("Failed to save win to file!");
+        }
     }
 
     private String createFilename()
@@ -140,19 +181,26 @@ public class GameSaver
         return formattedDateTime + "__" + gameSession.type + ".txt";
     }
 
-    private void writeHeader() throws IOException
+    private void writeHeader()
     {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String time = currentDateTime.format(formatter);
 
-        fileWriter.write("Time:         " + time + "\n");
-        fileWriter.write("Type:         " + gameSession.type + "\n");
-        fileWriter.write("Player 1:     " + gameSession.player1Username + "\n");
-        fileWriter.write("Player 2:     " + gameSession.player2Username + "\n");
-        fileWriter.write("Game time:    " + gameSession.turnTime + "\n");
-        fileWriter.write("\n");
-        fileWriter.write("GAME START\n");
-        fileWriter.write("\n");
+        try
+        {
+            fileWriter.write("Time:         " + time + "\n");
+            fileWriter.write("Type:         " + gameSession.type + "\n");
+            fileWriter.write("Player 1:     " + gameSession.player1Username + "\n");
+            fileWriter.write("Player 2:     " + gameSession.player2Username + "\n");
+            fileWriter.write("Game time:    " + gameSession.turnTime + "\n");
+            fileWriter.write("\n");
+            fileWriter.write("GAME START\n");
+            fileWriter.write("\n");
+        }
+        catch(IOException e)
+        {
+            logger.error("Failed to write header to file!");
+        }
     }
 
     private void writeTurn() throws IOException

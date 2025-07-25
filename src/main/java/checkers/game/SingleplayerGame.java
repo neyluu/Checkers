@@ -16,6 +16,7 @@ import java.util.Random;
 public class SingleplayerGame extends OfflineGame
 {
     private final AppLogger logger = new AppLogger(SingleplayerGame.class);
+    private final GameSaver gameSaver = GameSaver.get();
     
     private final int aiMoveDelay = 1000;
     private final Random random = new Random();
@@ -40,6 +41,8 @@ public class SingleplayerGame extends OfflineGame
             logger.game("======================");
             logger.game("Current turn: {}", currentTurn);
 
+            gameSaver.changeTurn();
+
             uiPlayer1Turn();
             aiTurn();
         }
@@ -54,6 +57,8 @@ public class SingleplayerGame extends OfflineGame
             currentTurn = PieceType.WHITE;
             logger.game("======================");
             logger.game("Current turn: {}", currentTurn);
+
+            gameSaver.changeTurn();
 
             uiPlayer2Turn();
             turn();
@@ -103,6 +108,7 @@ public class SingleplayerGame extends OfflineGame
                         Position from = new Position(piece.getX(), piece.getY());
                         board.movePiece(from, to[0]);
                         logger.game("Moving piece from {} to {}", from, to[0]);
+                        gameSaver.move(from, to[0]);;
 
 
                         Cell cell = board.getCell(to[0].x, to[0].y);
@@ -113,6 +119,7 @@ public class SingleplayerGame extends OfflineGame
                         {
                             board.removePiece(to[1]);
                             logger.game("Beating piece on {}", to[1]);
+                            gameSaver.beat(to[1]);
                             aiNextBeats(currentPiece);
                             return;
                         }

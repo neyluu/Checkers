@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class Game implements GameStarter
 {
     private final AppLogger logger = new AppLogger(Game.class);
+    private final GameSaver gameSaver = GameSaver.get();
     protected final Board board = new Board();
 
     protected boolean promoted = false;
@@ -112,6 +113,7 @@ public abstract class Game implements GameStarter
                         board.movePiece(from, pos[0]);
 
                         logger.game("Moving piece from {} to {}", from, pos[0]);
+                        gameSaver.move(from, pos[0]);
 
                         onMove(from, pos[0], isBeatMoves ? pos[1] : null, isBeatMoves);
 
@@ -125,6 +127,7 @@ public abstract class Game implements GameStarter
                             {
                                 board.removePiece(pos[1]);
                                 logger.game("Beating piece on {}", pos[1]);
+                                gameSaver.beat(pos[1]);
                             }
                             nextBeats(currentPiece);
                         }
@@ -180,6 +183,7 @@ public abstract class Game implements GameStarter
             cell.setPiece(king);
 
             logger.game("Piece promoted to king");
+            gameSaver.promote(piece.getX(), piece.getY());
 
             return king;
         }

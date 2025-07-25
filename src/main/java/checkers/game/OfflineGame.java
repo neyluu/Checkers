@@ -12,6 +12,7 @@ import javafx.application.Platform;
 public abstract class OfflineGame extends Game
 {
     private final AppLogger logger = new AppLogger(OfflineGame.class);
+    private final GameSaver gameSaver = GameSaver.get();
     private GameOverAlert gameOverAlert = new GameOverAlert();
 
     public OfflineGame(PlayerUI player1UI, PlayerUI player2UI)
@@ -34,6 +35,9 @@ public abstract class OfflineGame extends Game
         logger.info("Starting game");
         logger.game("======================");
         logger.game("Current turn: {}", currentTurn);
+
+        gameSaver.start();
+        gameSaver.setTurn(GameSaver.TurnType.WHITE);
 
         uiPlayer2Turn();
         watchTimers();
@@ -91,13 +95,18 @@ public abstract class OfflineGame extends Game
 
     protected void gameOver(String reasonMessage)
     {
+        String winner = currentTurn == PieceType.WHITE ? player2UI.getUsername() : player1UI.getUsername();
+
         logger.game("======================");
         logger.info("Game finished - {}", reasonMessage);
+
+        gameSaver.win(winner, reasonMessage);
+        gameSaver.stop();
 
         player1UI.stopTimer();
         player2UI.stopTimer();
 
         gameOverAlert.show();
-        gameOverAlert.setInfo((currentTurn == PieceType.WHITE ? player2UI.getUsername() : player1UI.getUsername()) + " won!");
+        gameOverAlert.setInfo(winner + " won!");
     }
 }
