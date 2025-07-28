@@ -109,12 +109,12 @@ public abstract class OfflineGame extends Game
         gameOverAlert.setInfo(winner + " won!");
     }
 
-    protected void turnBlack()
+    protected boolean turnBlack()
     {
         if(board.getWhitePieceCount() == 0)
         {
             gameOver("All white pieces are beaten");
-            return;
+            return false;
         }
 
         currentTurn = PieceType.WHITE;
@@ -122,14 +122,16 @@ public abstract class OfflineGame extends Game
         logger.game("Current turn: {}", currentTurn);
         gameSaver.changeTurn();
         uiPlayer2Turn();
+
+        return true;
     }
 
-    protected void turnWhite()
+    protected boolean turnWhite()
     {
         if(board.getBlackPiecesCount() == 0)
         {
             gameOver("All black pieces are beaten");
-            return;
+            return false;
         }
 
         currentTurn = PieceType.BLACK;
@@ -137,5 +139,7 @@ public abstract class OfflineGame extends Game
         logger.game("Current turn: {}", currentTurn);
         gameSaver.changeTurn();
         uiPlayer1Turn();
+
+        return true;
     }
 }

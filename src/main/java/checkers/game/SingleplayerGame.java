@@ -18,7 +18,7 @@ public class SingleplayerGame extends OfflineGame
     private final AppLogger logger = new AppLogger(SingleplayerGame.class);
     private final GameSaver gameSaver = GameSaver.get();
     
-    private final int aiMoveDelay = 1000;
+    private final int aiMoveDelay = 1;
     private final Random random = new Random();
 
     public SingleplayerGame(PlayerUI player1UI, PlayerUI player2UI)
@@ -31,12 +31,12 @@ public class SingleplayerGame extends OfflineGame
     {
         if(currentTurn == PieceType.WHITE)
         {
-            turnWhite();
+            if(!turnWhite()) return;
             aiTurn();
         }
         else if(currentTurn == PieceType.BLACK)
         {
-            turnBlack();
+            if(!turnBlack()) return;
             turn();
         }
     }

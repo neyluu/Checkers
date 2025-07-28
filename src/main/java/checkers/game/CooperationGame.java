@@ -15,11 +15,11 @@ public class CooperationGame extends OfflineGame
     {
         if(currentTurn == PieceType.WHITE)
         {
-            turnWhite();
+            if(!turnWhite()) return;
         }
         else if(currentTurn == PieceType.BLACK)
         {
-            turnBlack();
+            if(!turnBlack()) return;
         }
 
         turn();
