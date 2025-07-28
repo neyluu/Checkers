@@ -28,6 +28,8 @@ public class SceneFactory
                 return new SingleplayerIntro();
             case SINGLEPLAYER:
                 return new Singleplayer();
+            case REPLAYS_INTRO:
+                return new ReplaysIntro();
             default:
                 throw new IllegalArgumentException("Unknown scene type: " + type);
         }
