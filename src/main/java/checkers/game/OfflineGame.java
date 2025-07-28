@@ -109,4 +109,34 @@ public abstract class OfflineGame extends Game
         gameOverAlert.show();
         gameOverAlert.setInfo(winner + " won!");
     }
+
+    protected void turnBlack()
+    {
+        if(board.getWhitePieceCount() == 0)
+        {
+            gameOver("All white pieces are beaten");
+            return;
+        }
+
+        currentTurn = PieceType.WHITE;
+        logger.game("======================");
+        logger.game("Current turn: {}", currentTurn);
+        gameSaver.changeTurn();
+        uiPlayer2Turn();
+    }
+
+    protected void turnWhite()
+    {
+        if(board.getBlackPiecesCount() == 0)
+        {
+            gameOver("All black pieces are beaten");
+            return;
+        }
+
+        currentTurn = PieceType.BLACK;
+        logger.game("======================");
+        logger.game("Current turn: {}", currentTurn);
+        gameSaver.changeTurn();
+        uiPlayer1Turn();
+    }
 }

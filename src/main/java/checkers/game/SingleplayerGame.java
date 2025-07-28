@@ -31,36 +31,12 @@ public class SingleplayerGame extends OfflineGame
     {
         if(currentTurn == PieceType.WHITE)
         {
-            if(board.getBlackPiecesCount() == 0)
-            {
-                gameOver("All black pieces are beaten");
-                return;
-            }
-
-            currentTurn = PieceType.BLACK;
-            logger.game("======================");
-            logger.game("Current turn: {}", currentTurn);
-
-            gameSaver.changeTurn();
-
-            uiPlayer1Turn();
+            turnWhite();
             aiTurn();
         }
         else if(currentTurn == PieceType.BLACK)
         {
-            if(board.getWhitePieceCount() == 0)
-            {
-                gameOver("All white pieces are beaten");
-                return;
-            }
-
-            currentTurn = PieceType.WHITE;
-            logger.game("======================");
-            logger.game("Current turn: {}", currentTurn);
-
-            gameSaver.changeTurn();
-
-            uiPlayer2Turn();
+            turnBlack();
             turn();
         }
     }
