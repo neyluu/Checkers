@@ -44,18 +44,6 @@ public class AppLogger
     private static FileHandler fileHandler;
     private final static String logFilename = "checkersLog.txt";
 
-//    private final static boolean errorLogs = true;
-//    private final static boolean warnLogs  = true;
-//    private final static boolean infoLogs  = true;
-//    private final static boolean debugLogs = true;
-//    private final static boolean gameLogs  = true;
-//
-//    private final static boolean errorFile = true;
-//    private final static boolean warnFile  = true;
-//    private final static boolean infoFile  = true;
-//    private final static boolean debugFile = true;
-//    private final static boolean gameFile  = true;
-
     static
     {
         try
