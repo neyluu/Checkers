@@ -24,7 +24,7 @@ public class Settings
 
     public static String iconPath = "/assets/icon.png";
 
-    public static boolean logCodeInfo = false;
+    public static boolean logCodeInfo = true;
 
     public static LoggingConsoleFlags loggingConsole = new LoggingConsoleFlags();
     public static LoggingFileFlags loggingFile = new LoggingFileFlags();

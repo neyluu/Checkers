@@ -67,18 +67,6 @@ public class GameSaver
         writeHeader();
     }
 
-    public void stop()
-    {
-        try
-        {
-            fileWriter.close();
-        }
-        catch (IOException e)
-        {
-            logger.error("Failed to close file writer!");
-        }
-    }
-
     public void setTurn(TurnType type)
     {
         turn = type;

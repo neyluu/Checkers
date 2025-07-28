@@ -101,7 +101,6 @@ public abstract class OfflineGame extends Game
         logger.info("Game finished - {}", reasonMessage);
 
         gameSaver.win(winner, reasonMessage);
-        gameSaver.stop();
 
         player1UI.stopTimer();
         player2UI.stopTimer();
