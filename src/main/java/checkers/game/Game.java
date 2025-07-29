@@ -5,6 +5,7 @@ import checkers.game.board.Cell;
 import checkers.game.pieces.King;
 import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
+import checkers.game.replays.GameSaver;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 import checkers.logging.AppLogger;

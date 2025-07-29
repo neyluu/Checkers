@@ -1,4 +1,4 @@
-package checkers.game;
+package checkers.game.replays;
 
 import checkers.Settings;
 import checkers.game.utils.GameSession;
