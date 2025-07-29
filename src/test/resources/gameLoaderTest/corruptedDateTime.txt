@@ -1,0 +1,5 @@
+Time:         25-07-2 17:38-24
+Type:         singleplayer
+Player 1:     Bot
+Player 2:     Player
+Game time:    unlimited

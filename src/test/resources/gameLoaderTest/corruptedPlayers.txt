@@ -1,0 +1,5 @@
+Time:         2025-07-28 17:38:24
+Type:         singleplayer
+Player 4:     Bot
+Player2 Player
+Game time:    unlimited
