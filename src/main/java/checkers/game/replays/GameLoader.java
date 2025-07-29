@@ -100,31 +100,26 @@ public class GameLoader
     private String getMode(String data) throws ReplayFileCorrupted
     {
         if(!data.contains("Type:")) throw new ReplayFileCorrupted();
-
-        String result = getHeaderLineValue(data);
-        if(result.isEmpty()) throw new ReplayFileCorrupted();
-
-        return result;
+        return getAndAssertResult(data);
     }
 
     private String getPlayer(String data) throws ReplayFileCorrupted
     {
         if(!data.contains("Player 1:") && !data.contains("Player 2:")) throw new ReplayFileCorrupted();
-
-        String result = getHeaderLineValue(data);
-        if(result.isEmpty()) throw new ReplayFileCorrupted();
-
-        return result;
+        return getAndAssertResult(data);
     }
 
     private String getGameTime(String data) throws ReplayFileCorrupted
     {
         if(!data.contains("Game time:")) throw new ReplayFileCorrupted();
+        return getAndAssertResult(data);
+    }
 
+    private String getAndAssertResult(String data) throws ReplayFileCorrupted
+    {
         String result = getHeaderLineValue(data);
         if(result.isEmpty()) throw new ReplayFileCorrupted();
-
-        return getHeaderLineValue(data);
+        return result;
     }
 
     private String reformatDate(String date)
