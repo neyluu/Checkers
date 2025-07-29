@@ -101,7 +101,7 @@ public class GameLoader
     {
         if(!data.contains("Type:")) throw new ReplayFileCorrupted();
 
-        String result = getHeaderLineValue(data).trim();
+        String result = getHeaderLineValue(data);
         if(result.isEmpty()) throw new ReplayFileCorrupted();
 
         return result;
@@ -111,7 +111,10 @@ public class GameLoader
     {
         if(!data.contains("Player 1:") && !data.contains("Player 2:")) throw new ReplayFileCorrupted();
 
-        return getHeaderLineValue(data);
+        String result = getHeaderLineValue(data);
+        if(result.isEmpty()) throw new ReplayFileCorrupted();
+
+        return result;
     }
 
     private String getGameTime(String data) throws ReplayFileCorrupted

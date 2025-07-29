@@ -85,6 +85,27 @@ public class GameLoaderTest
         assertThrows(Exception.class, loader::getHeader);
     }
 
+    @Test
+    public void getHeader_noPlayer1()
+    {
+        GameLoader loader = new GameLoader(loadTestFile("noPlayer1.txt"));
+        assertThrows(Exception.class, loader::getHeader);
+    }
+
+    @Test
+    public void getHeader_noPlayer2()
+    {
+        GameLoader loader = new GameLoader(loadTestFile("noPlayer2.txt"));
+        assertThrows(Exception.class, loader::getHeader);
+    }
+
+    @Test
+    public void getHeader_noBothPlayers()
+    {
+        GameLoader loader = new GameLoader(loadTestFile("noBothPlayers.txt"));
+        assertThrows(Exception.class, loader::getHeader);
+    }
+
     private File loadTestFile(String path)
     {
         URL resource = getClass().getClassLoader().getResource(testFileDirectory + path);
