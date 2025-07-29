@@ -1,0 +1,5 @@
+Time:         2025-07-28 17:38:24
+Type:
+Player 1:     Bot
+Player 2:     Player
+Game time:    unlimited

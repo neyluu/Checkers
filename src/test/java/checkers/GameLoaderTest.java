@@ -71,6 +71,20 @@ public class GameLoaderTest
         assertThrows(Exception.class, loader::getHeader);
     }
 
+    @Test
+    public void getHeader_noDateTime()
+    {
+        GameLoader loader = new GameLoader(loadTestFile("noDateTime.txt"));
+        assertThrows(Exception.class, loader::getHeader);
+    }
+
+    @Test
+    public void getHeader_noMode()
+    {
+        GameLoader loader = new GameLoader(loadTestFile("noMode.txt"));
+        assertThrows(Exception.class, loader::getHeader);
+    }
+
     private File loadTestFile(String path)
     {
         URL resource = getClass().getClassLoader().getResource(testFileDirectory + path);

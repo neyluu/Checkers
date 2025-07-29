@@ -101,7 +101,10 @@ public class GameLoader
     {
         if(!data.contains("Type:")) throw new ReplayFileCorrupted();
 
-        return getHeaderLineValue(data).trim();
+        String result = getHeaderLineValue(data).trim();
+        if(result.isEmpty()) throw new ReplayFileCorrupted();
+
+        return result;
     }
 
     private String getPlayer(String data) throws ReplayFileCorrupted
