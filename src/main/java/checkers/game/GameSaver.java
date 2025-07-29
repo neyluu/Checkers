@@ -1,5 +1,6 @@
 package checkers.game;
 
+import checkers.Settings;
 import checkers.game.utils.GameSession;
 import checkers.game.utils.Position;
 import checkers.game.utils.PositionCode;
@@ -24,7 +25,7 @@ public class GameSaver
 
     private static GameSaver instance = null;
 
-    private final String path = "games";
+    private final String path = Settings.replaysPath;
     private String filename;
     private File file;
     private FileWriter fileWriter;

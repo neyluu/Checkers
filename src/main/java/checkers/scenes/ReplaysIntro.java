@@ -1,14 +1,19 @@
 package checkers.scenes;
 
 import checkers.gui.buttons.MenuButton;
+import checkers.gui.outputs.replays.ReplaysChooser;
 import checkers.scenes.utils.SceneType;
 
 public class ReplaysIntro extends  SceneBase
 {
+    private ReplaysChooser replaysChooser = new ReplaysChooser();
+
     public ReplaysIntro()
     {
         getStylesheets().add(getClass().getResource("/css/replays-intro.css").toExternalForm());
         layout.getStyleClass().add("replays-intro");
+
+        layout.getChildren().add(replaysChooser);
 
         initButtons();
     }

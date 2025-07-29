@@ -23,6 +23,7 @@ public class Settings
     public static final int screenHeight = 720;
 
     public static String iconPath = "/assets/icon.png";
+    public static String replaysPath = "replays";
 
     public static boolean logCodeInfo = true;
 

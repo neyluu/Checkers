@@ -1,0 +1,14 @@
+.replays-chooser
+{
+    -fx-max-width: 700;
+    -fx-max-height: 400;
+}
+.replays-chooser .viewport
+{
+    -fx-background-color: rgb(38, 38, 38);  /* TODO tmp color */
+}
+
+.container
+{
+    -fx-spacing: 10;
+}
