@@ -121,6 +121,9 @@ public class GameLoader
     {
         if(!data.contains("Game time:")) throw new ReplayFileCorrupted();
 
+        String result = getHeaderLineValue(data);
+        if(result.isEmpty()) throw new ReplayFileCorrupted();
+
         return getHeaderLineValue(data);
     }
 

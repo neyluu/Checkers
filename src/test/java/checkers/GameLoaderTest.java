@@ -106,6 +106,14 @@ public class GameLoaderTest
         assertThrows(Exception.class, loader::getHeader);
     }
 
+    @Test
+    public void getHeader_noGameTime()
+    {
+        GameLoader loader = new GameLoader(loadTestFile("noGameTime.txt"));
+        assertThrows(Exception.class, loader::getHeader);
+    }
+
+
     private File loadTestFile(String path)
     {
         URL resource = getClass().getClassLoader().getResource(testFileDirectory + path);
