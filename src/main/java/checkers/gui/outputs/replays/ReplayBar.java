@@ -1,18 +1,19 @@
 package checkers.gui.outputs.replays;
 
+import checkers.exceptions.ReplayFileCorrupted;
+import checkers.game.replays.GameLoader;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class ReplayBar extends HBox
 {
-    private LocalDateTime time = LocalDateTime.now();
-
     private File file;
+    private GameLoader loader;
+    private GameLoader.FileHeader fileHeader;
+
 
     private VBox left = new VBox();
     private VBox middle = new VBox();
@@ -21,13 +22,16 @@ public class ReplayBar extends HBox
     private Text date;
     private Text mode;
 
-    public ReplayBar(File file)
+    public ReplayBar(File file) throws ReplayFileCorrupted
     {
         getStylesheets().add(getClass().getResource("/css/replay-bar.css").toExternalForm());
         this.getStyleClass().add("replay-bar");
 
         this.file = file;
-        parseFileData();
+        this.loader = new GameLoader(this.file);
+        this.fileHeader = this.loader.getHeader();
+
+        parseHeaderData();
 
         left.setStyle("-fx-background-color: #7676ff");
         middle.setStyle("-fx-background-color: green");
@@ -40,19 +44,9 @@ public class ReplayBar extends HBox
         this.getChildren().addAll(left, middle, right);
     }
 
-    private void parseFileData()
+    private void parseHeaderData()
     {
-        String filename = file.getName();
-
-        String dateTimeRaw = filename.substring(0, 20);
-        DateTimeFormatter parseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd__HH-mm-ss");
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeRaw, parseFormatter);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String dateTimeFormatted = dateTime.format(formatter);
-        date = new Text(dateTimeFormatted);
-        
-        int dotIndex = filename.indexOf('.');
-        String modeRaw = filename.substring(22, dotIndex);
-        mode = new Text(modeRaw);
+        date = new Text(fileHeader.date + " " + fileHeader.time);
+        mode = new Text(fileHeader.mode);
     }
 }

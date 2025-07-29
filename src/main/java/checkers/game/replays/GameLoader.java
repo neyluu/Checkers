@@ -62,12 +62,10 @@ public class GameLoader
         }
         catch(FileNotFoundException e)
         {
-            logger.error("Failed to create scanner!");
             throw new ReplayFileCorrupted();
         }
         catch(NoSuchElementException e)
         {
-            logger.error("Failed to load line!");
             throw new ReplayFileCorrupted();
         }
         catch(ReplayFileCorrupted e)

@@ -1,6 +1,7 @@
 package checkers.gui.outputs.replays;
 
 import checkers.Settings;
+import checkers.exceptions.ReplayFileCorrupted;
 import checkers.logging.AppLogger;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
@@ -34,7 +35,12 @@ public class ReplaysChooser extends ScrollPane
 
         for(File file : replays)
         {
-            records.add(new ReplayBar(file));
+            try
+            {
+                ReplayBar replayBar = new ReplayBar(file);
+                records.add(replayBar);
+            }
+            catch (ReplayFileCorrupted e) { }
         }
     }
 
