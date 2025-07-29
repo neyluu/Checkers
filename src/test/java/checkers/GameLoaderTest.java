@@ -3,6 +3,8 @@ package checkers;
 import checkers.exceptions.ReplayFileCorrupted;
 import checkers.game.replays.GameLoader;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -36,80 +38,23 @@ public class GameLoaderTest
         assertEquals("unlimited", header.gameTime);
     }
 
-    @Test
-    public void getHeader_emptyFile()
+    @ParameterizedTest(name = "getHeader throws exception for invalid file: {0}")
+    @ValueSource(strings = {
+            "empty.txt",
+            "corruptedDateTime.txt",
+            "corruptedType.txt",
+            "corruptedPlayers.txt",
+            "corruptedGameTime.txt",
+            "noDateTime.txt",
+            "noMode.txt",
+            "noPlayer1.txt",
+            "noPlayer2.txt",
+            "noBothPlayers.txt",
+            "noGameTime.txt"
+    })
+    public void getHeader_throwsExceptionForCorruptedFiles(String invalidFilename)
     {
-        GameLoader loader = new GameLoader(loadTestFile("empty.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_corruptedDateTime()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("corruptedDateTime.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_corruptedType()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("corruptedType.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_corruptedPlayers()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("corruptedPlayers.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_corruptedGameTime()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("corruptedGameTime.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_noDateTime()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("noDateTime.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_noMode()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("noMode.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_noPlayer1()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("noPlayer1.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_noPlayer2()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("noPlayer2.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_noBothPlayers()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("noBothPlayers.txt"));
-        assertThrows(Exception.class, loader::getHeader);
-    }
-
-    @Test
-    public void getHeader_noGameTime()
-    {
-        GameLoader loader = new GameLoader(loadTestFile("noGameTime.txt"));
+        GameLoader loader = new GameLoader(loadTestFile(invalidFilename));
         assertThrows(Exception.class, loader::getHeader);
     }
 
