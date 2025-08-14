@@ -2,6 +2,7 @@
 {
     -fx-max-width: 700;
     -fx-max-height: 400;
+    -fx-alignment: center;
 }
 .replays-chooser .viewport
 {
@@ -11,4 +12,12 @@
 .container
 {
     -fx-spacing: 10;
+    -fx-alignment: center;
+}
+
+.empty-list-text
+{
+    -fx-font-size: 48;
+    -fx-fill: white;
+    -fx-font-weight: bold;
 }

@@ -1,7 +1,40 @@
 .replay-bar
 {
-    /*-fx-text-fill: black;*/
     /*-fx-background-color: red;*/
+    /*-fx-padding: 10;*/
+    -fx-font-size: 20;
+    -fx-min-height: 50;
+    -fx-min-width: 600;
 
+    -fx-alignment: center;
+}
 
+.left
+{
+    -fx-background-color: #9999fa;
+    -fx-min-width: 250;
+    -fx-alignment: center;
+
+}
+
+.middle
+{
+    -fx-background-color: green;
+    -fx-min-width: 150;
+    -fx-alignment: center;
+
+}
+
+.right
+{
+    -fx-background-color: yellow;
+    -fx-min-width: 200;
+    -fx-alignment: center;
+
+}
+
+.selected
+{
+    -fx-border-color: red;
+    -fx-border-width: 2;
 }

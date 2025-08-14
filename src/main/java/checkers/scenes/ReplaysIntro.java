@@ -23,9 +23,14 @@ public class ReplaysIntro extends  SceneBase
         MenuButton loadButton = new MenuButton("Load");
         MenuButton backButton = new MenuButton("Back");
 
-        loadButton.setOnAction(e -> { });
+        loadButton.setOnAction(e -> loadReplay());
         backButton.setOnAction(e -> sceneManager.setScene(SceneType.MAIN_MENU));
 
         layout.getChildren().addAll(loadButton, backButton);
+    }
+
+    private void loadReplay()
+    {
+        replaysChooser.load();
     }
 }
