@@ -32,7 +32,6 @@ public class ReplayBar extends HBox
         left.getStyleClass().add("left");
         middle.getStyleClass().add("middle");
         right.getStyleClass().add("right");
-
         this.file = file;
         this.loader = new GameLoader(this.file);
         this.fileHeader = this.loader.getHeader();
@@ -51,6 +50,16 @@ public class ReplayBar extends HBox
     public static ReplayBar getLastClicked()
     {
         return lastClicked;
+    }
+
+    public GameLoader getLoader()
+    {
+        return loader;
+    }
+
+    public GameLoader.FileHeader getFileHeader()
+    {
+        return fileHeader;
     }
 
     private void parseHeaderData()

@@ -2,6 +2,8 @@ package checkers.gui.outputs.replays;
 
 import checkers.Settings;
 import checkers.exceptions.ReplayFileCorrupted;
+import checkers.game.replays.GameLoader;
+import checkers.game.utils.GameSession;
 import checkers.logging.AppLogger;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
@@ -27,6 +29,7 @@ public class ReplaysChooser extends ScrollPane
 
     public ReplaysChooser()
     {
+        System.out.println("constructor");
         getStylesheets().add(getClass().getResource("/css/replays-chooser.css").toExternalForm());
         this.getStyleClass().add("replays-chooser");
         container.getStyleClass().add("container");
@@ -54,7 +57,20 @@ public class ReplaysChooser extends ScrollPane
             return;
         }
 
+        fillGameSession();
+
         SceneManager.getInstance().setScene(SceneType.REPLAYS);
+    }
+
+    private void fillGameSession()
+    {
+        GameSession gameSession = GameSession.getInstance();
+        GameLoader.FileHeader fileHeader = selectedRecord.getFileHeader();
+
+        gameSession.player1Username = fileHeader.player1;
+        gameSession.player2Username = fileHeader.player2;
+        gameSession.turnTime = fileHeader.gameTime;
+        gameSession.type = fileHeader.mode;
     }
 
     private void createRecords()
@@ -71,10 +87,7 @@ public class ReplaysChooser extends ScrollPane
                 ReplayBar replayBar = new ReplayBar(file);
                 records.add(replayBar);
             }
-            catch (ReplayFileCorrupted e)
-            {
-                logger.error("Failed to load file: {}", file.toString());
-            }
+            catch (ReplayFileCorrupted e) { }
         }
 
         logger.info("Created {} log records!", records.size());

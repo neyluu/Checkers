@@ -185,6 +185,7 @@ public class GameSaver
             fileWriter.write("\n");
             fileWriter.write("GAME START\n");
             fileWriter.write("\n");
+            fileWriter.flush();
         }
         catch(IOException e)
         {
