@@ -55,4 +55,28 @@ public class PositionCode
         int c2 = boardSize - y;
         return "" + (char) c1 + (char)(c2 + '0');
     }
+
+    public static Position fromCode(String code)
+    {
+        if(!validateCode(code))
+        {
+            throw new IllegalArgumentException("Code are invalid!");
+        }
+
+        int x = code.toUpperCase().charAt(0) - 'A';
+        int y = 8 - (int)(code.charAt(1) - '0');
+
+        return new Position(x, y);
+    }
+
+    private static boolean validateCode(String code)
+    {
+        if(code.length() != 2) return false;
+
+        final char c1 = code.toUpperCase().charAt(0);
+        final char c2 = code.charAt(1);
+
+        return ((int) c1 >= (int) 'A' && (int) c1 <= (int) 'H') &&
+               ((int) c2 >= (int) '0' && (int) c2 <= (int) '8');
+    }
 }

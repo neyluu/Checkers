@@ -3,6 +3,7 @@ package checkers;
 import checkers.game.utils.Position;
 import checkers.game.utils.PositionCode;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -101,5 +102,26 @@ public class PositionCodeTest
     {
         PositionCode positionCode = new PositionCode(7,7);
         assertEquals(new Position(7, 7).toString(), positionCode.getPosition().toString());
+    }
+
+    @Test
+    public void fromCode_1()
+    {
+        Position position = PositionCode.fromCode("A1");
+        assertEquals(new Position(0, 7).toString(), position.toString());
+    }
+
+    @Test
+    public void fromCode_2()
+    {
+        Position position = PositionCode.fromCode("c2");
+        assertEquals(new Position(2, 6).toString(), position.toString());
+    }
+
+    @Test
+    public void fromCode_3()
+    {
+        Position position = PositionCode.fromCode("H1");
+        assertEquals(new Position(7, 7).toString(), position.toString());
     }
 }
