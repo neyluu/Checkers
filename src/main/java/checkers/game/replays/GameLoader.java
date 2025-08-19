@@ -164,146 +164,32 @@ public class GameLoader
 
     private Optional<Move> getMove() throws ReplayFileCorrupted
     {
-        System.out.println("====");
-
         Move move = new Move();
-        String line;
+        String line = null;
 
         try
         {
-            line = reader.readLine();
-            if(line.trim().isEmpty())
-            {
-                System.out.println("E5");
-
-                return Optional.empty();
-            }
-            System.out.println(line);
-
-            boolean turnLoaded = false;
-
-            if(line.toLowerCase().startsWith("[white]") || line.toLowerCase().startsWith("[black]"))
-            {
-                GameSaver.TurnType turn = line.substring(1, 6).equalsIgnoreCase("white")
-                            ? GameSaver.TurnType.WHITE
-                            : GameSaver.TurnType.BLACK;
-
-                currentTurn = turn;
-                move.turn = turn;
-                turnLoaded = true;
-                System.out.println("=reading turn");
-            }
-            else
-            {
-                move.turn = currentTurn;
-            }
-
+            line = loadAndCheckLine();
+            boolean turnLoaded = loadTurn(move, line);
 
             if(turnLoaded)
             {
-                line = reader.readLine();
-                if(line.trim().isEmpty())
-                {
-                    System.out.println("E4");
-
-                    return Optional.empty();
-                }
-                System.out.println(line);
+                line = loadAndCheckLine();
             }
 
-            if(line.toLowerCase().startsWith("    move:"))
-            {
-//                System.out.println("--move");
-
-                try
-                {
-                    Position from = PositionCode.fromCode(line.substring(10, 12));
-                    Position to = PositionCode.fromCode(line.substring(16, 18));
-
-                    move.from = from;
-                    move.to = to;
-                    System.out.println("=reading move");
-                }
-                catch(IllegalArgumentException e)
-                {
-                    throw new ReplayFileCorrupted();
-                }
-            }
-//            else
-//            {
-//                System.out.println("test");
-//                throw new ReplayFileCorrupted();
-//            }
-
+            loadMove(move, line);
 
             reader.mark(0);
-            line = reader.readLine();
-            System.out.println(line);
-            if(line.trim().isEmpty())
-            {
-                return Optional.of(move);
-//                System.out.println("E3");
-//                return Optional.empty();
-            }
-
-            boolean promoteLoaded = false;
-
-            if(line.toLowerCase().startsWith("    prom:"))
-            {
-//                System.out.println("--prom");
-
-                try
-                {
-                    // dummy parse to check if code is correct
-                    Position prom = PositionCode.fromCode(line.substring(10, 12));
-                    move.promote = true;
-                    promoteLoaded = true;
-                    System.out.println("=reading prom");
-                }
-                catch(IllegalArgumentException e)
-                {
-                    throw new ReplayFileCorrupted();
-                }
-            }
-
+            line = loadAndCheckLine();
+            boolean promoteLoaded = loadPromote(move, line);
 
             if(promoteLoaded)
             {
-//                System.out.println("--promLoaded");
-
                 reader.mark(0);
-                line = reader.readLine();
-                if(line.trim().isEmpty())
-                {
-                    System.out.println("E2");
-
-                    return Optional.empty();
-                }
-                System.out.println(line);
+                line = loadAndCheckLine();
             }
 
-            boolean beatLoaded = false;
-
-            if(line.toLowerCase().startsWith("    beat:"))
-            {
-//                System.out.println("--beat");
-
-                try
-                {
-                    Position beat = PositionCode.fromCode(line.substring(10, 12));
-
-                    move.beat = true;
-                    move.beatPosition = beat;
-
-                    beatLoaded = true;
-                    System.out.println("=reading beat");
-                }
-                catch(IllegalArgumentException e)
-                {
-                    throw new ReplayFileCorrupted();
-                }
-            }
-
+            boolean beatLoaded = loadBeat(move, line);
 
             if( ! promoteLoaded)
             {
@@ -317,7 +203,6 @@ public class GameLoader
 
             if( ! promoteLoaded && ! beatLoaded)
             {
-                System.out.println("reset");
                 reader.reset();
             }
 
@@ -325,7 +210,6 @@ public class GameLoader
         }
         catch(Exception e)
         {
-            System.out.println("E1");
             return Optional.empty();
         }
     }
@@ -333,6 +217,95 @@ public class GameLoader
     public List<Move> getMoves()
     {
         return moves;
+    }
+
+    private String loadAndCheckLine() throws IOException
+    {
+        String line = reader.readLine();
+        if(line.trim().isEmpty())
+        {
+            throw new IOException();
+        }
+        return line;
+    }
+
+    private boolean loadTurn(Move move, String line)
+    {
+        if(line.toLowerCase().startsWith("[white]") || line.toLowerCase().startsWith("[black]"))
+        {
+            GameSaver.TurnType turn = line.substring(1, 6).equalsIgnoreCase("white")
+                    ? GameSaver.TurnType.WHITE
+                    : GameSaver.TurnType.BLACK;
+
+            currentTurn = turn;
+            move.turn = turn;
+            return true;
+        }
+        else
+        {
+            move.turn = currentTurn;
+            return false;
+        }
+    }
+
+    private void loadMove(Move move, String line) throws ReplayFileCorrupted
+    {
+        if(line.toLowerCase().startsWith("    move:"))
+        {
+            try
+            {
+                Position from = PositionCode.fromCode(line.substring(10, 12));
+                Position to = PositionCode.fromCode(line.substring(16, 18));
+
+                move.from = from;
+                move.to = to;
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new ReplayFileCorrupted();
+            }
+        }
+    }
+
+    private boolean loadPromote(Move move, String line) throws ReplayFileCorrupted
+    {
+        if(line.toLowerCase().startsWith("    prom:"))
+        {
+            try
+            {
+                // dummy parse to check if code is correct
+                Position prom = PositionCode.fromCode(line.substring(10, 12));
+                move.promote = true;
+                return true;
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new ReplayFileCorrupted();
+            }
+        }
+
+        return false;
+    }
+
+    private boolean loadBeat(Move move, String line) throws ReplayFileCorrupted
+    {
+        if(line.toLowerCase().startsWith("    beat:"))
+        {
+            try
+            {
+                Position beat = PositionCode.fromCode(line.substring(10, 12));
+
+                move.beat = true;
+                move.beatPosition = beat;
+                return true;
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new ReplayFileCorrupted();
+            }
+        }
+
+        return false;
     }
 
     private void checkGameStart() throws ReplayFileCorrupted
