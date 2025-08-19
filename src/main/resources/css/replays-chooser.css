@@ -1,0 +1,23 @@
+.replays-chooser
+{
+    -fx-max-width: 700;
+    -fx-max-height: 400;
+    -fx-alignment: center;
+}
+.replays-chooser .viewport
+{
+    -fx-background-color: rgb(38, 38, 38);  /* TODO tmp color */
+}
+
+.container
+{
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}
+
+.empty-list-text
+{
+    -fx-font-size: 48;
+    -fx-fill: white;
+    -fx-font-weight: bold;
+}

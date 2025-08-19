@@ -1,5 +1,7 @@
 package checkers.logging;
 
+import checkers.Settings;
+
 import java.util.logging.LogRecord;
 
 public class LogFormatter extends CustomFormatter
@@ -15,6 +17,13 @@ public class LogFormatter extends CustomFormatter
         if(type.equals("FINER")) type = "GAME";
         if(type.equals("FINE")) type = "DEBUG";
 
-        return String.format("[%s] %s: %s   (%s.%s:%d)[%d]%n", timestamp, type, message, shortClassName, methodName, lineNumber, thread);
+        if(Settings.logCodeInfo)
+        {
+            return String.format("[%s] %s: %s   (%s.%s:%d)[%d]%n", timestamp, type, message, shortClassName, methodName, lineNumber, thread);
+        }
+        else
+        {
+            return String.format("[%s] %s: %s\n", timestamp, type, message);
+        }
     }
 }

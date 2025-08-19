@@ -9,6 +9,7 @@ public class GameSession implements Serializable
     public String player1Username = "Player 1";
     public String player2Username = "Player 2";
     public String turnTime = "unlimited";
+    public String type = "unknown";
 
     private GameSession() { }
 

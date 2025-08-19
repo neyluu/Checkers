@@ -58,6 +58,7 @@ public class CooperationIntro extends SceneBase
             if(player2Username.isEmpty()) session.player2Username = "Player 2";
 
             session.turnTime = turnTime.getValue();
+            session.type = "cooperation";
 
             logger.info("Cooperation gamer created");
             logger.info("Player 1 name: {}", session.player1Username);

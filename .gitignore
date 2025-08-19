@@ -163,4 +163,6 @@ buildNumber.properties
 hs_err_pid*
 replay_pid*
 
-*.txt
+replays/*
+*Log.txt
+*.lck

@@ -1,0 +1,37 @@
+Time:         2025-07-28 17:38:24
+Type:         singleplayer
+Player 1:     Bot
+Player 2:     Player
+Game time:    unlimited
+
+GAME START
+
+[White]:
+    Move: E3 to D4
+[Black]:
+    Move: F6 to G5
+[White]:
+    Move: G5 to E3
+    Beat: F4
+    Move: E3 to C5
+    Beat: D4
+[Black]:
+    Move: C5 to E3
+    Beat: D4
+[White]:
+    Move: C5 to E3
+    Beat: D4
+    Move: E3 to G1
+    Prom: G1
+    Beat: F2
+[Black]:
+    Move: A3 to C1
+    Prom: C1
+    Beat: B2
+    Move: C1 to F4
+    Beat: D2
+
+GAME END
+
+Winner:       Bot
+Reason:       All white pieces are beaten

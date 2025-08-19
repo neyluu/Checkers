@@ -60,6 +60,7 @@ public class SingleplayerIntro extends SceneBase
         if(playerUsername.isEmpty()) session.player2Username = "Player";
 
         session.turnTime = turnTime.getValue();
+        session.type = "singleplayer";
 
         logger.info("Singleplayer game created");
         logger.info("Player name: {}", session.player2Username);

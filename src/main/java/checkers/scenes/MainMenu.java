@@ -28,12 +28,14 @@ public class MainMenu extends SceneBase
         MenuButton singleplayerButton = new MenuButton("Singleplayer");
         MenuButton multiplayerButton  = new MenuButton("Multiplayer");
         MenuButton exitButton         = new MenuButton("Exit");
+        MenuButton replaysButton      = new MenuButton("Replays");
 
         coopButton.setOnAction(e -> sceneManager.setScene(SceneType.COOPERATION_INTRO));
         singleplayerButton.setOnAction(e -> sceneManager.setScene(SceneType.SINGLEPLAYER_INTRO));
         exitButton.setOnAction(e -> Platform.exit());
         multiplayerButton.setOnAction(e -> sceneManager.setScene(SceneType.MULTIPLAYER_INTRO));
+        replaysButton.setOnAction(e -> sceneManager.setScene(SceneType.REPLAYS_INTRO));
 
-        layout.getChildren().addAll(coopButton, singleplayerButton, multiplayerButton, exitButton);
+        layout.getChildren().addAll(coopButton, singleplayerButton, multiplayerButton, replaysButton, exitButton);
     }
 }

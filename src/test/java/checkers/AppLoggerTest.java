@@ -157,7 +157,7 @@ public class AppLoggerTest
         String output = scanner.nextLine();
 
         int startIndex = output.indexOf("] ");
-        int endIndex = output.lastIndexOf("   (AppLoggerTest");
+        int endIndex = Settings.logCodeInfo ? output.lastIndexOf("   (AppLoggerTest") : output.length();
 
         if(startIndex == -1 || endIndex == -1) fail("Log message doesn't follow syntax!");
         String outputMessage = output.substring(startIndex + 2, endIndex);

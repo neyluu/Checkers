@@ -89,6 +89,7 @@ public class MultiplayerCreateGame extends SceneBase
             if(username.isEmpty()) username = "Player 1";
             session.player1Username = username;
             session.turnTime = comboBox.getValue();
+            session.type = "multiplayer";
 
             Server server = new Server();
             server.start();

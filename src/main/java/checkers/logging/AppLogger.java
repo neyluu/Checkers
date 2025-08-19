@@ -1,5 +1,7 @@
 package checkers.logging;
 
+import checkers.Settings;
+
 import java.io.IOException;
 import java.util.logging.*;
 
@@ -11,11 +13,11 @@ public class AppLogger
         public boolean isLoggable(LogRecord record)
         {
             Level level = record.getLevel();
-            return     (level == Level.SEVERE  && AppLogger.errorLogs)
-                    || (level == Level.WARNING && AppLogger.warnLogs)
-                    || (level == Level.INFO    && AppLogger.infoLogs)
-                    || (level == Level.FINE    && AppLogger.debugLogs)
-                    || (level == Level.FINER   && AppLogger.gameLogs);
+            return     (level == Level.SEVERE  && Settings.loggingConsole.error)
+                    || (level == Level.WARNING && Settings.loggingConsole.warn)
+                    || (level == Level.INFO    && Settings.loggingConsole.info)
+                    || (level == Level.FINE    && Settings.loggingConsole.debug)
+                    || (level == Level.FINER   && Settings.loggingConsole.game);
         }
     }
 
@@ -25,11 +27,11 @@ public class AppLogger
         public boolean isLoggable(LogRecord record)
         {
             Level level = record.getLevel();
-            return     (level == Level.SEVERE  && AppLogger.errorFile)
-                    || (level == Level.WARNING && AppLogger.warnFile)
-                    || (level == Level.INFO    && AppLogger.infoFile)
-                    || (level == Level.FINE    && AppLogger.debugFile)
-                    || (level == Level.FINER   && AppLogger.gameFile);
+            return     (level == Level.SEVERE  && Settings.loggingFile.error)
+                    || (level == Level.WARNING && Settings.loggingFile.warn)
+                    || (level == Level.INFO    && Settings.loggingFile.info)
+                    || (level == Level.FINE    && Settings.loggingFile.debug)
+                    || (level == Level.FINER   && Settings.loggingFile.game);
         }
     }
 
@@ -41,18 +43,6 @@ public class AppLogger
 
     private static FileHandler fileHandler;
     private final static String logFilename = "checkersLog.txt";
-
-    private final static boolean errorLogs = true;
-    private final static boolean warnLogs  = true;
-    private final static boolean infoLogs  = true;
-    private final static boolean debugLogs = true;
-    private final static boolean gameLogs  = true;
-
-    private final static boolean errorFile = true;
-    private final static boolean warnFile  = true;
-    private final static boolean infoFile  = true;
-    private final static boolean debugFile = true;
-    private final static boolean gameFile  = true;
 
     static
     {

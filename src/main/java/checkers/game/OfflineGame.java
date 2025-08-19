@@ -1,6 +1,7 @@
 package checkers.game;
 
 import checkers.game.pieces.PieceType;
+import checkers.game.replays.GameSaver;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 import checkers.gui.popups.GameOverAlert;
@@ -12,6 +13,7 @@ import javafx.application.Platform;
 public abstract class OfflineGame extends Game
 {
     private final AppLogger logger = new AppLogger(OfflineGame.class);
+    private final GameSaver gameSaver = GameSaver.get();
     private GameOverAlert gameOverAlert = new GameOverAlert();
 
     public OfflineGame(PlayerUI player1UI, PlayerUI player2UI)
@@ -34,6 +36,9 @@ public abstract class OfflineGame extends Game
         logger.info("Starting game");
         logger.game("======================");
         logger.game("Current turn: {}", currentTurn);
+
+        gameSaver.start();
+        gameSaver.setTurn(GameSaver.TurnType.WHITE);
 
         uiPlayer2Turn();
         watchTimers();
@@ -91,13 +96,51 @@ public abstract class OfflineGame extends Game
 
     protected void gameOver(String reasonMessage)
     {
+        String winner = currentTurn == PieceType.WHITE ? player2UI.getUsername() : player1UI.getUsername();
+
         logger.game("======================");
         logger.info("Game finished - {}", reasonMessage);
+
+        gameSaver.win(winner, reasonMessage);
 
         player1UI.stopTimer();
         player2UI.stopTimer();
 
         gameOverAlert.show();
-        gameOverAlert.setInfo((currentTurn == PieceType.WHITE ? player2UI.getUsername() : player1UI.getUsername()) + " won!");
+        gameOverAlert.setInfo(winner + " won!");
+    }
+
+    protected boolean turnBlack()
+    {
+        if(board.getWhitePieceCount() == 0)
+        {
+            gameOver("All white pieces are beaten");
+            return false;
+        }
+
+        currentTurn = PieceType.WHITE;
+        logger.game("======================");
+        logger.game("Current turn: {}", currentTurn);
+        gameSaver.changeTurn();
+        uiPlayer2Turn();
+
+        return true;
+    }
+
+    protected boolean turnWhite()
+    {
+        if(board.getBlackPiecesCount() == 0)
+        {
+            gameOver("All black pieces are beaten");
+            return false;
+        }
+
+        currentTurn = PieceType.BLACK;
+        logger.game("======================");
+        logger.game("Current turn: {}", currentTurn);
+        gameSaver.changeTurn();
+        uiPlayer1Turn();
+
+        return true;
     }
 }
