@@ -29,7 +29,6 @@ public class ReplaysChooser extends ScrollPane
 
     public ReplaysChooser()
     {
-        System.out.println("constructor");
         getStylesheets().add(getClass().getResource("/css/replays-chooser.css").toExternalForm());
         this.getStyleClass().add("replays-chooser");
         container.getStyleClass().add("container");
@@ -52,7 +51,7 @@ public class ReplaysChooser extends ScrollPane
 
         if(selectedRecord == null)
         {
-            // TODO
+            // TODO some popup info ???
             System.out.println("Theres no selected record!");
             return;
         }

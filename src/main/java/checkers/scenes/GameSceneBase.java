@@ -22,6 +22,9 @@ public class GameSceneBase extends SceneBase
     protected String turnTime;
 
     private HBox row = new HBox();
+    protected VBox left;
+    protected VBox middle;
+    protected VBox right;
     protected StackPane boardContainer;
 
     protected GameStarter game;
@@ -63,7 +66,7 @@ public class GameSceneBase extends SceneBase
 
     private void initLeftPanel()
     {
-        VBox left = new VBox();
+        left = new VBox();
         left.setMinWidth(sizeSidePanel);
         left.setAlignment(Pos.BOTTOM_CENTER);
 
@@ -80,7 +83,7 @@ public class GameSceneBase extends SceneBase
         boardContainer = new StackPane();
         boardContainer.setAlignment(Pos.CENTER);
 
-        VBox middle = new VBox();
+        middle = new VBox();
         middle.setMinWidth(sizeMiddlePanel);
         middle.setAlignment(Pos.CENTER);
         middle.getChildren().add(boardContainer);
@@ -94,7 +97,7 @@ public class GameSceneBase extends SceneBase
         player2UI.setUsername(player2Username);
         player2UI.setMinutes(parseTurnTime());
 
-        VBox right = new VBox();
+        right = new VBox();
         right.setMinWidth(sizeSidePanel);
         right.setSpacing(301);
         right.setAlignment(Pos.CENTER);
