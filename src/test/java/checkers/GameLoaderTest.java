@@ -1,7 +1,6 @@
 package checkers;
 
 import checkers.exceptions.ReplayFileCorrupted;
-import checkers.game.Game;
 import checkers.game.replays.GameLoader;
 import checkers.game.replays.GameSaver;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +29,7 @@ public class GameLoaderTest
         }
         catch (ReplayFileCorrupted e)
         {
-            fail();
+            fail(e.getMessage());
         }
 
         assertEquals("28-07-2025", header.date);
@@ -100,7 +98,7 @@ public class GameLoaderTest
             assertEquals(expectedMoves.get(i).toString(), loadedMoves.get(i).toString(), " index: " + i);
         }
     }
-
+    
 
     private GameLoader createLoader(String filename)
     {

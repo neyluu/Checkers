@@ -122,15 +122,11 @@ public class GameLoader
         }
         catch(FileNotFoundException e)
         {
-            throw new ReplayFileCorrupted();
+            throw new ReplayFileCorrupted("File not found");
         }
         catch(NoSuchElementException e)
         {
-            throw new ReplayFileCorrupted();
-        }
-        catch(ReplayFileCorrupted e)
-        {
-            throw e;
+            throw new ReplayFileCorrupted(e.getMessage());
         }
 
         return header;
@@ -316,13 +312,16 @@ public class GameLoader
 
         if(! (empty1.isEmpty() && gameStart.equals("GAME START") && empty2.isEmpty()))
         {
-            throw new ReplayFileCorrupted();
+            throw new ReplayFileCorrupted("Invalid game start tag");
         }
     }
 
     private String getDate(String data) throws ReplayFileCorrupted
     {
-        if(!data.contains("Time:")) throw new ReplayFileCorrupted();
+        if(!data.contains("Time:"))
+        {
+            throw new ReplayFileCorrupted("Failed to load date");
+        }
 
         String[] parts = splitHeaderRawLine(data);
         String dateTime = parts[1].trim();
@@ -332,7 +331,10 @@ public class GameLoader
 
     private String getTime(String data) throws ReplayFileCorrupted
     {
-        if(!data.contains("Time:")) throw new ReplayFileCorrupted();
+        if(!data.contains("Time:"))
+        {
+            throw new ReplayFileCorrupted("Failed to time");
+        }
 
         String[] parts = splitHeaderRawLine(data);
         String dateTime = parts[1].trim();
@@ -341,26 +343,38 @@ public class GameLoader
 
     private String getMode(String data) throws ReplayFileCorrupted
     {
-        if(!data.contains("Type:")) throw new ReplayFileCorrupted();
+        if(!data.contains("Type:"))
+        {
+            throw new ReplayFileCorrupted("Failed to load mode");
+        }
         return getAndAssertResult(data);
     }
 
     private String getPlayer(String data) throws ReplayFileCorrupted
     {
-        if(!data.contains("Player 1:") && !data.contains("Player 2:")) throw new ReplayFileCorrupted();
+        if(!data.contains("Player 1:") && !data.contains("Player 2:"))
+        {
+            throw new ReplayFileCorrupted("Failed to load player");
+        }
         return getAndAssertResult(data);
     }
 
     private String getGameTime(String data) throws ReplayFileCorrupted
     {
-        if(!data.contains("Game time:")) throw new ReplayFileCorrupted();
+        if(!data.contains("Game time:"))
+        {
+            throw new ReplayFileCorrupted("Failed to load game time");
+        }
         return getAndAssertResult(data);
     }
 
     private String getAndAssertResult(String data) throws ReplayFileCorrupted
     {
         String result = getHeaderLineValue(data);
-        if(result.isEmpty()) throw new ReplayFileCorrupted();
+        if(result.isEmpty())
+        {
+            throw new ReplayFileCorrupted("Result is empty");
+        }
         return result;
     }
 
