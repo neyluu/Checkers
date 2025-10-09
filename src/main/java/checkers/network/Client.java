@@ -4,6 +4,7 @@ import checkers.exceptions.ServerConnectionException;
 import checkers.game.utils.GameSession;
 import checkers.gui.popups.PopupAlert;
 import checkers.gui.popups.PopupAlertButton;
+import checkers.logging.AppLogger;
 import checkers.scenes.SceneBase;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
@@ -22,8 +23,43 @@ public class Client extends Communicator
     private boolean isClosed = false;
 
     private PopupAlert waitForGameStartAlert = new PopupAlert("Waiting for game start...");
+    private final AppLogger logger = new AppLogger(Client.class);
 
     public Client(String ip) throws ServerConnectionException
+    {
+        initAlert();
+
+        logger.info("Creating client...");
+
+        try
+        {
+            this.socket = new Socket(ip, port);
+
+            this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            this.objectOutputStream.flush();
+            this.objectInputStream = new ObjectInputStream(socket.getInputStream());
+
+            logger.info("Trying to connect to server...");
+
+            ServerState response = (ServerState) objectInputStream.readObject();
+            logger.debug("Server response: {}", response);
+            if(response == ServerState.BUSY)
+            {
+                // TODO alert????????
+                throw new ServerConnectionException();
+            }
+
+            isConnected = true;
+
+            logger.info("Connected to server!");
+        }
+        catch (IOException | ClassNotFoundException e)
+        {
+            logger.error("Failed to connect to server: {}", e.getMessage());
+        }
+    }
+
+    private void initAlert()
     {
         PopupAlertButton cancelButton = new PopupAlertButton("Cancel");
         cancelButton.setOnAction(e ->
@@ -36,38 +72,13 @@ public class Client extends Communicator
         SceneManager sceneManager = SceneManager.getInstance();
         SceneBase currentScene = sceneManager.getCurrentScene();
         currentScene.getContainer().getChildren().add(waitForGameStartAlert);
-
-        try
-        {
-            System.out.println("Creating new socket");
-            this.socket = new Socket(ip, port);
-            System.out.println("Socket created");
-
-            this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            this.objectOutputStream.flush();
-            this.objectInputStream = new ObjectInputStream(socket.getInputStream());
-
-            ServerState response = (ServerState) objectInputStream.readObject();
-            System.out.println("Server response: " + response);
-            if(response == ServerState.BUSY)
-            {
-                throw new ServerConnectionException();
-            }
-
-            isConnected = true;
-            System.out.println("Connected to server");
-        }
-        catch (IOException | ClassNotFoundException e)
-        {
-            System.out.println("Failed to create socket");
-        }
     }
 
     public void start() throws ServerConnectionException
     {
         if(!isConnected) throw new ServerConnectionException("Failed to connect to server");
 
-        System.out.println("Starting client");
+        logger.info("Starting client...");
 
         synchronizeGameSession();
         waitForGameStart();
@@ -79,7 +90,7 @@ public class Client extends Communicator
         if(!isClosed) isClosed = true;
         else return;
 
-        System.out.println("Closing client");
+        logger.info("Closing client...");
 
         try
         {
@@ -95,26 +106,28 @@ public class Client extends Communicator
             if(objectInputStream != null)   objectInputStream.close();
             if(objectOutputStream != null)  objectOutputStream.close();
             if(socket != null)              socket.close();
+
+            logger.info("Client closed!");
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.error("Failed to close client!");
         }
     }
 
     private void synchronizeGameSession()
     {
-        System.out.println("Synchronizing game session");
+        logger.info("Synchronizing game session...");
 
         try
         {
             sendSynchronizationData();
             getSynchronizationData();
-            System.out.println("Data synchronized");
+            logger.info("Game session synchronized!");
        }
         catch (IOException | ClassNotFoundException e)
         {
-            System.err.println("Failed to synchronize game session");
+            logger.error("Failed to synchronize game session!");
             close();
         }
     }
@@ -125,7 +138,7 @@ public class Client extends Communicator
         GameSession.getInstance().player1Username = clientData.player1Username;
         GameSession.getInstance().turnTime = clientData.turnTime;
 
-        System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
+        logger.debug(GameSession.getInstance().toString());
     }
 
     private void waitForGameStart()
@@ -136,9 +149,10 @@ public class Client extends Communicator
         {
             try
             {
-                System.out.println("Waiting for game start");
+                logger.info("Waiting to game start...");
+
                 ServerState gameStart = (ServerState) objectInputStream.readObject();
-                System.out.println("Start game state: " + gameStart);
+                logger.debug("Start game state: {}", gameStart);
                 if(gameStart == ServerState.GAME_START)
                 {
                     Platform.runLater(() ->
@@ -150,7 +164,7 @@ public class Client extends Communicator
             }
             catch (IOException | ClassNotFoundException e)
             {
-                System.err.println("Failed to get game start information");
+                logger.error("Failed to get game start state!");
                 close();
             }
         });
@@ -161,7 +175,7 @@ public class Client extends Communicator
 
     private void startGame()
     {
-        System.out.println("Starting game");
+        logger.info("Starting game");
         SceneManager.getInstance().setScene(SceneType.MULTIPLAYER_CLIENT);
         SceneManager.getInstance().getStage().setTitle("Checkers - multiplayer client");
     }

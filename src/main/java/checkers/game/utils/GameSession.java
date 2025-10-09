@@ -1,6 +1,7 @@
 package checkers.game.utils;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 
 public class GameSession implements Serializable
 {
@@ -17,5 +18,12 @@ public class GameSession implements Serializable
     {
         if(instance == null) instance = new GameSession();
         return instance;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MessageFormat.format("[player1:{0} player2:{1} turnTime:{2} type:{3}]",
+                player1Username, player2Username, turnTime, type);
     }
 }

@@ -3,6 +3,7 @@ package checkers.network;
 import checkers.game.utils.GameSession;
 import checkers.gui.popups.PopupAlert;
 import checkers.gui.popups.PopupAlertButton;
+import checkers.logging.AppLogger;
 import checkers.scenes.utils.SceneManager;
 import checkers.scenes.utils.SceneType;
 
@@ -22,6 +23,7 @@ public class Server extends Communicator
     private final PopupAlert clientConnectedAlert = new PopupAlert("Unknown connected!");
     private final PopupAlert clientDisconnectedAlert = new PopupAlert("Client disconnected!");
 
+    private final AppLogger logger = new AppLogger(Server.class);
 
     public Server() throws IOException
     {
@@ -56,7 +58,7 @@ public class Server extends Communicator
 
     public void start()
     {
-        System.out.println("Starting server");
+        logger.info("Starting server...");
 
         isRunning = true;
 
@@ -66,7 +68,7 @@ public class Server extends Communicator
             {
                 try
                 {
-                    System.out.println("Waiting for client");
+                    logger.info("Waiting for client...");
                     if(!isBusy) waitForClientAlert.show();
 
                     Socket incomingSocket = serverSocket.accept();
@@ -91,16 +93,20 @@ public class Server extends Communicator
                     isBusy = true;
 
                     waitForClientAlert.hide();
-                    System.out.println("Client connected");
+                    logger.info("Client connected!");
 
                     synchronizeGameSession();
 
+                    // todo ???????
                     System.out.println(GameSession.getInstance().player2Username);
+
                     clientConnectedAlert.setTitle(GameSession.getInstance().player2Username + " connected!");
                     clientConnectedAlert.show();
                 }
                 catch(IOException e)
                 {
+                    if(!isRunning) return;
+                    logger.error("Error occurred during client handling: {}", e.getMessage());
                     close();
                 }
             }
@@ -116,7 +122,7 @@ public class Server extends Communicator
         if(isRunning) isRunning = false;
         else return;
 
-        System.out.println("Closing server");
+        logger.info("Closing server...");
 
         try
         {
@@ -130,11 +136,14 @@ public class Server extends Communicator
             catch (IOException e2) { }
 
             closeClient();
+
             if(serverSocket != null) serverSocket.close();
+
+            logger.info("Server closed!");
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.error("Failed to close server!");
         }
     }
 
@@ -142,34 +151,36 @@ public class Server extends Communicator
     {
         if(!isBusy) return;
 
-        System.out.println("Closing client");
+        logger.info("Closing client...");
+
         try
         {
             if(objectInputStream != null)   objectInputStream.close();
             if(objectOutputStream != null)  objectOutputStream.close();
             if(clientSocket != null)        clientSocket.close();
             isBusy = false;
+
+            logger.info("Client closed!");
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.info("Failed to close client!");
         }
     }
 
     private void synchronizeGameSession()
     {
-        System.out.println("Synchronizing game session");
+        logger.info("Synchronizing game session...");
 
         try
         {
             getSynchronizationData();
             sendSynchronizationData();
-            System.out.println("Data synchronized");
+            logger.info("Data synchronized");
         }
         catch (IOException | ClassNotFoundException e)
         {
-            System.err.println("Failed to synchronize game session");
-            e.printStackTrace();
+            logger.error("Failed to synchronize game session!");
             closeClient();
         }
     }
@@ -179,22 +190,26 @@ public class Server extends Communicator
         GameSession clientData = (GameSession) objectInputStream.readObject();
         GameSession.getInstance().player2Username = clientData.player2Username;
 
-        System.out.println(GameSession.getInstance().player1Username + " " +  GameSession.getInstance().player2Username + " " + GameSession.getInstance().turnTime);
+        logger.debug(GameSession.getInstance().toString());
     }
 
     public void startGame()
     {
+        logger.info("Sending game start state to client...");
+
         try
         {
             objectOutputStream.writeObject(ServerState.GAME_START);
             objectOutputStream.flush();
+
+            logger.info("State sent successfully!");
         }
         catch (IOException e)
         {
             clientConnectedAlert.hide();
             clientDisconnectedAlert.show();
 
-            System.err.println("Failed to send game start information to client");
+            logger.error("Failed to sent game start state!");
             close();
 
             return;

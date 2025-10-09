@@ -3,10 +3,12 @@ package checkers.game;
 import checkers.game.board.Cell;
 import checkers.game.pieces.Piece;
 import checkers.game.pieces.PieceType;
+import checkers.game.replays.GameSaver;
 import checkers.game.utils.Position;
 import checkers.gui.outputs.PlayerUI;
 import checkers.gui.popups.ConnectionLostAlert;
 import checkers.gui.popups.GameOverAlert;
+import checkers.logging.AppLogger;
 import checkers.network.GlobalCommunication;
 import checkers.network.MovePacket;
 import checkers.network.ServerState;
@@ -22,6 +24,9 @@ public class MultiplayerGame extends Game
 {
     private GameOverAlert gameOverAlert = new GameOverAlert();
     private ConnectionLostAlert connectionLostAlert = new ConnectionLostAlert();
+
+    private final GameSaver gameSaver = GameSaver.get();
+    private final AppLogger logger = new AppLogger(MultiplayerGame.class);
 
     private PieceType winner;
     private boolean isServer;
@@ -42,40 +47,47 @@ public class MultiplayerGame extends Game
     @Override
     protected void onMove(Position from, Position to, Position beat, boolean isBeatMoves)
     {
-        System.out.println("Sending move packet");
+        logger.info("Sending move packet...");
 
         try
         {
             if(isBeatMoves)     GlobalCommunication.communicator.sendMove(new MovePacket(from, to, isBeatMoves, beat));
             else                GlobalCommunication.communicator.sendMove(new MovePacket(from, to));
+
+            logger.info("Packet sent successfully!");
         }
         catch(SocketException e)
         {
-            System.err.println("Connection lost!");
+            logger.error("Connection lost!");
             close();
-            return;
         }
         catch(IOException e)
         {
-            System.err.println("Failed to send data!");
-//            e.printStackTrace();
+            logger.error("Failed to send packet!");
         }
     }
 
     @Override
     public void start()
     {
+        logger.info("Starting game");
+        logger.game("======================");
+        logger.game("Current turn: {}", currentTurn);
+
         isRunning = true;
         isClosed = false;
 
+        gameSaver.start();
+        gameSaver.setTurn(isServer ? GameSaver.TurnType.WHITE : GameSaver.TurnType.BLACK);
+
         if(isServer)
         {
-            uiPlayer2Turn();
+//            uiPlayer2Turn();
             startServerGame();
         }
         else
         {
-            uiPlayer1Turn();
+//            uiPlayer1Turn();
             startClientGame();
         }
 
@@ -84,12 +96,10 @@ public class MultiplayerGame extends Game
 
     private void startServerGame()
     {
-        System.out.println("Starting server game");
         turn();
     }
     private void startClientGame()
     {
-        System.out.println("Starting client game");
         changeTurn();
     }
 
@@ -107,7 +117,7 @@ public class MultiplayerGame extends Game
         if(isClosed) return;
         isClosed = true;
 
-        System.out.println("Closing...");
+        logger.info("Closing connection");
         Platform.runLater(() -> connectionLostAlert.show());
     }
 
@@ -125,7 +135,7 @@ public class MultiplayerGame extends Game
                     winner = isServer ?
                             (isTimerPlayer1Finished ? PieceType.WHITE : PieceType.BLACK) :
                             (isTimerPlayer1Finished ? PieceType.BLACK : PieceType.WHITE);
-                    gameOver();
+                    gameOver("Time left");
                     timersScheduler.shutdown();
                 }
             });
@@ -134,13 +144,15 @@ public class MultiplayerGame extends Game
 
     public void changeTurn()
     {
-        System.out.println("Waiting for move");
+//        System.out.println("Waiting for move");
 
         checkGameOverAtNoPieces();
 
         Thread changeTurnThread = new Thread(() ->
         {
             if(!isRunning) return;
+
+            logger.debug("ui1");
 
             uiPlayer1Turn();
 
@@ -152,21 +164,20 @@ public class MultiplayerGame extends Game
                     receivedObject  = GlobalCommunication.communicator.getObject();
                     if(receivedObject == null)
                     {
-                        System.err.println("Connection lost!");
+                        logger.error("Connection lost!");
                         close();
                         return;
                     }
                 }
                 catch(SocketException e)
                 {
-                    System.err.println("Connection lost!");
+                    logger.error("Connection lost!");
                     close();
                     return;
                 }
                 catch(IOException | ClassNotFoundException e)
                 {
-                    System.err.println("Failed to get packet!");
-//                    e.printStackTrace();
+                    logger.error("Failed to get packet!");
                 }
             }
 
@@ -177,7 +188,7 @@ public class MultiplayerGame extends Game
             }
 
             MovePacket move = (MovePacket) receivedObject ;
-            System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
+//            System.out.println("Move received: " + move.fromX + " " + move.fromY + " " + move.toX + " " + move.toY);
             MovePacket translatedMove = translateMove(move);
             handleReceivedMove(translatedMove);
         });
@@ -191,12 +202,12 @@ public class MultiplayerGame extends Game
         if(board.getBlackPiecesCount() == 0)
         {
             winner = PieceType.WHITE;
-            gameOver();
+            gameOver("All black pieces are beaten");
         }
         if(board.getWhitePieceCount() == 0)
         {
             winner = PieceType.BLACK;
-            gameOver();
+            gameOver("All white pieces are beaten");
         }
     }
 
@@ -214,15 +225,15 @@ public class MultiplayerGame extends Game
         );
     }
 
-    private void gameOver()
+    private void gameOver(String reasonMessage)
     {
         timersScheduler.shutdownNow();
         isRunning = false;
 
         Platform.runLater(() ->
         {
-            System.out.println("Game over");
-            System.out.println("Winner:" + winner);
+            logger.game("======================");
+            logger.info("Game finished - {}", reasonMessage);
 
             player1UI.stopTimer();
             player2UI.stopTimer();
@@ -240,7 +251,7 @@ public class MultiplayerGame extends Game
             {
                 Thread clientPlayAgainThread = new Thread(() ->
                 {
-                    System.out.println("Waiting for game resetting info");
+                    logger.info("Waiting for game reset state...");
 
                     Object recievedObject = null;
                     synchronized (communicationMutex)
@@ -250,21 +261,20 @@ public class MultiplayerGame extends Game
                             recievedObject = GlobalCommunication.communicator.getObject();
                             if(recievedObject == null)
                             {
-                                System.err.println("Connection lost!");
+                                logger.error("Connection lost!");
                                 close();
                                 return;
                             }
                         }
                         catch(SocketException e)
                         {
-                            System.err.println("Connection lost!");
+                            logger.error("Connection lost!");
                             close();
                             return;
                         }
                         catch(IOException | ClassNotFoundException e)
                         {
-                            System.err.println("Failed to get packet!");
-//                            e.printStackTrace();
+                            logger.error("Failed to get state!");
                         }
                     }
 
@@ -276,7 +286,7 @@ public class MultiplayerGame extends Game
                     }
 
                     ServerState state = (ServerState) recievedObject;
-                    System.out.println("State: " + String.valueOf(state));
+                    logger.debug("State: {}", String.valueOf(state));
 
                     if(state == ServerState.GAME_START) playAgainClient();
                 });
@@ -291,7 +301,7 @@ public class MultiplayerGame extends Game
     {
         Platform.runLater(() ->
         {
-            System.out.println("Resetting game");
+            logger.info("Resetting game");
             gameOverAlert.hide();
             reset();
             start();
@@ -300,35 +310,34 @@ public class MultiplayerGame extends Game
 
     private void playAgainServer()
     {
-        System.out.println("Sending game reset info");
+        logger.info("Sending game reset state...");
 
         try
         {
             GlobalCommunication.communicator.sendState(ServerState.GAME_START);
+            logger.info("Game reset state sent successfully!");
         }
         catch(SocketException e)
         {
-            System.err.println("Connection lost!");
+            logger.error("Connection lost!");
             close();
             return;
         }
         catch(IOException e)
         {
-            System.err.println("Failed to send state!");
-//            e.printStackTrace();
+            logger.error("Failed to send state!");
         }
 
-        System.out.println("Sent");
+        logger.info("Resetting game");
         reset();
-        start();
+//        start();
     }
 
     private void createGameOverAlert()
     {
-        System.out.println("CREATING GAME OVER ALERT!");
-
         gameOverAlert.setEventOnPlayAgain(e ->
         {
+            logger.info("Preparing another game");
             gameOverAlert.hide();
             playAgainServer();
         });
@@ -369,7 +378,9 @@ public class MultiplayerGame extends Game
                 }
             }
 
+            logger.debug("ui2");
             uiPlayer2Turn();
+
             turn();
         });
     }
