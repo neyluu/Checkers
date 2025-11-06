@@ -156,6 +156,8 @@ public class GameSaver
             fileWriter.write("\n");
             fileWriter.write("Winner:       " + player + "\n");
             fileWriter.write("Reason:       " + reason);
+
+            fileWriter.close();
         }
         catch(IOException e)
         {

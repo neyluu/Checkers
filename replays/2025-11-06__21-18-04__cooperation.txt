@@ -1,0 +1,111 @@
+Time:         2025-11-06 21:18:04
+Type:         cooperation
+Player 1:     Player 1
+Player 2:     Player 2
+Game time:    unlimited
+
+GAME START
+
+[White]:
+    Move: E3 to D4
+[Black]:
+    Move: F6 to E5
+[White]:
+    Move: D4 to F6
+    Beat: E5
+[Black]:
+    Move: E7 to G5
+    Beat: F6
+[White]:
+    Move: G3 to F4
+[Black]:
+    Move: G5 to E3
+    Beat: F4
+[White]:
+    Move: D2 to F4
+    Beat: E3
+[Black]:
+    Move: D6 to E5
+[White]:
+    Move: F4 to D6
+    Beat: E5
+[Black]:
+    Move: C7 to E5
+    Beat: D6
+[White]:
+    Move: C3 to D4
+[Black]:
+    Move: E5 to C3
+    Beat: D4
+[White]:
+    Move: B2 to D4
+    Beat: C3
+[Black]:
+    Move: B6 to C5
+[White]:
+    Move: D4 to B6
+    Beat: C5
+[Black]:
+    Move: A7 to C5
+    Beat: B6
+[White]:
+    Move: C1 to D2
+[Black]:
+    Move: C5 to B4
+[White]:
+    Move: A3 to C5
+    Beat: B4
+[Black]:
+    Move: D8 to C7
+[White]:
+    Move: D2 to E3
+[Black]:
+    Move: C7 to D6
+[White]:
+    Move: C5 to E7
+    Beat: D6
+[Black]:
+    Move: F8 to D6
+    Beat: E7
+[White]:
+    Move: E3 to F4
+[Black]:
+    Move: D6 to E5
+[White]:
+    Move: F4 to D6
+    Beat: E5
+[Black]:
+    Move: B8 to C7
+[White]:
+    Move: D6 to B8
+    Prom: B8
+    Beat: C7
+[Black]:
+    Move: G7 to F6
+[White]:
+    Move: B8 to G3
+[Black]:
+    Move: F6 to E5
+[White]:
+    Move: G3 to D6
+    Beat: E5
+[Black]:
+    Move: H6 to G5
+[White]:
+    Move: D6 to G3
+[Black]:
+    Move: G5 to F4
+[White]:
+    Move: G3 to E5
+    Beat: F4
+[Black]:
+    Move: H8 to G7
+[White]:
+    Move: E5 to H8
+    Prom: H8
+    Beat: G7
+
+GAME END
+
+Winner:       Player 2
+Reason:       All black pieces are beaten

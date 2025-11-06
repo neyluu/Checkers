@@ -79,6 +79,12 @@ public class PositionCodeTest
     }
 
     @Test
+    public void toCodeInts_3()
+    {
+        assertEquals("E3", PositionCode.toCode(4, 5));
+    }
+
+    @Test
     public void toCodePosition_1()
     {
         assertEquals("C2", PositionCode.toCode(new Position(2,6)));
