@@ -19,13 +19,14 @@ public class Settings
         public final boolean game  = true;
     }
 
+    public static boolean logCodeInfo = false; // function call, line number, etc...
+
     public static final int screenWidth = 1280;
     public static final int screenHeight = 720;
 
     public static String iconPath = "/assets/icon.png";
     public static String replaysPath = "replays";
 
-    public static boolean logCodeInfo = true;
 
     public static LoggingConsoleFlags loggingConsole = new LoggingConsoleFlags();
     public static LoggingFileFlags loggingFile = new LoggingFileFlags();
