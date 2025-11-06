@@ -1,40 +1,55 @@
+/*
+
+    Behaviour of parts is defined inside ReplayBar class
+    because it cannot be done in pure css
+
+*/
+
 .replay-bar
 {
-    /*-fx-background-color: red;*/
-    /*-fx-padding: 10;*/
     -fx-font-size: 20;
-    -fx-min-height: 50;
     -fx-min-width: 600;
-
-    -fx-alignment: center;
+    -fx-min-height: 50;
+    -fx-border-width: 4;
+    -fx-border-color: #454545;
+    -fx-border-radius: 8;
+    -fx-background-color: #535353;
+    -fx-background-radius: 8;
+    -fx-fill: white;
 }
 
 .left
 {
-    -fx-background-color: #9999fa;
-    -fx-min-width: 250;
     -fx-alignment: center;
-
 }
 
 .middle
 {
-    -fx-background-color: green;
-    -fx-min-width: 150;
     -fx-alignment: center;
-
 }
 
 .right
 {
-    -fx-background-color: yellow;
-    -fx-min-width: 200;
     -fx-alignment: center;
+}
 
+.left,
+.middle,
+.right
+{
+    -fx-padding: 5px 15px 5px 15px;
+}
+
+.left Text,
+.middle Text,
+.right Text
+{
+    -fx-fill: white;
+    -fx-font-size: 18px;
 }
 
 .selected
 {
-    -fx-border-color: red;
     -fx-border-width: 2;
+    -fx-border-color: red;
 }

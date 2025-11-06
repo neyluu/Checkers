@@ -3,6 +3,7 @@ package checkers.gui.outputs.replays;
 import checkers.exceptions.ReplayFileCorrupted;
 import checkers.game.replays.GameLoader;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -41,6 +42,10 @@ public class ReplayBar extends HBox
         left.getChildren().add(date);
         middle.getChildren().add(mode);
         right.getChildren().add(players);
+
+        HBox.setHgrow(left, Priority.NEVER);
+        HBox.setHgrow(middle, Priority.NEVER);
+        HBox.setHgrow(right, Priority.ALWAYS);
 
         this.getChildren().addAll(left, middle, right);
 

@@ -1,12 +1,37 @@
 .replays-chooser
 {
-    -fx-max-width: 700;
+    -fx-max-width: 900;
     -fx-max-height: 400;
+    -fx-padding: 15;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
     -fx-alignment: center;
 }
 .replays-chooser .viewport
 {
     -fx-background-color: rgb(38, 38, 38);  /* TODO tmp color */
+}
+.replays-chooser .scroll-bar:vertical
+{
+    -fx-pref-width: 12;
+}
+.replays-chooser .scroll-bar .track
+{
+    -fx-background-color: rgb(25,25,25);
+}
+
+.replays-chooser .scroll-bar .thumb
+{
+    -fx-background-color: #535353;
+    -fx-background-radius: 4;
+    -fx-pref-width: 12;
+}
+.replays-chooser .scroll-bar .increment-button,
+.replays-chooser .scroll-bar .decrement-button
+{
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
 }
 
 .container
@@ -18,6 +43,6 @@
 .empty-list-text
 {
     -fx-font-size: 48;
-    -fx-fill: white;
     -fx-font-weight: bold;
+    -fx-fill: white;
 }
