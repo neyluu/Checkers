@@ -1,0 +1,145 @@
+Time:         2025-07-29 18:56:35
+Type:         singleplayer
+Player 1:     Bot
+Player 2:     dwadsadwa
+Game time:    unlimited
+
+GAME START
+
+[White]:
+    Move: E3 to D4
+[Black]:
+    Move: D6 to C5
+[White]:
+    Move: D4 to E5
+[Black]:
+    Move: F6 to D4
+    Beat: E5
+[White]:
+    Move: C3 to E5
+    Beat: D4
+[Black]:
+    Move: G7 to F6
+[White]:
+    Move: E5 to G7
+    Beat: F6
+[Black]:
+    Move: H8 to F6
+    Beat: G7
+[White]:
+    Move: G3 to F4
+[Black]:
+    Move: C5 to D4
+[White]:
+    Move: F4 to E5
+[Black]:
+    Move: C7 to D6
+[White]:
+    Move: E5 to C7
+    Beat: D6
+    Move: C7 to A5
+    Beat: B6
+[Black]:
+    Move: F6 to G5
+[White]:
+    Move: A5 to B6
+[Black]:
+    Move: A7 to C5
+    Beat: B6
+[White]:
+    Move: D2 to E3
+[Black]:
+    Move: C5 to B4
+[White]:
+    Move: E3 to C5
+    Beat: D4
+[Black]:
+    Move: B4 to D6
+    Beat: C5
+[White]:
+    Move: B2 to C3
+[Black]:
+    Move: D8 to C7
+[White]:
+    Move: C3 to B4
+[Black]:
+    Move: G5 to H4
+[White]:
+    Move: B4 to A5
+[Black]:
+    Move: H6 to G5
+[White]:
+    Move: F2 to E3
+[Black]:
+    Move: G5 to F4
+[White]:
+    Move: E3 to G5
+    Beat: F4
+[Black]:
+    Move: H4 to F6
+    Beat: G5
+[White]:
+    Move: H2 to G3
+[Black]:
+    Move: C7 to B6
+[White]:
+    Move: A5 to C7
+    Beat: B6
+    Move: C7 to E5
+    Beat: D6
+    Move: E5 to G7
+    Beat: F6
+[Black]:
+    Move: F8 to H6
+    Beat: G7
+[White]:
+    Move: G3 to F4
+[Black]:
+    Move: B8 to A7
+[White]:
+    Move: F4 to G5
+[Black]:
+    Move: H6 to F4
+    Beat: G5
+[White]:
+    Move: E1 to D2
+[Black]:
+    Move: E7 to D6
+[White]:
+    Move: D2 to E3
+[Black]:
+    Move: F4 to D2
+    Beat: E3
+[White]:
+    Move: C1 to E3
+    Beat: D2
+[Black]:
+    Move: D6 to E5
+[White]:
+    Move: E3 to D4
+[Black]:
+    Move: E5 to C3
+    Beat: D4
+[White]:
+    Move: A1 to B2
+[Black]:
+    Move: C3 to A1
+    Prom: A1
+    Beat: B2
+[White]:
+    Move: A3 to B4
+[Black]:
+    Move: A7 to B6
+[White]:
+    Move: B4 to C5
+[Black]:
+    Move: B6 to D4
+    Beat: C5
+[White]:
+    Move: G1 to F2
+[Black]:
+    Move: A1 to B2
+[White]:
+    Move: F2 to E3
+[Black]:
+    Move: D4 to 

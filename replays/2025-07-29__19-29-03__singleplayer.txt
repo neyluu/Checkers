@@ -1,0 +1,70 @@
+Time:         2025-07-29 19:29:03
+Type:         singleplayer
+Player 1:     Bot
+Player 2:     ghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+Game time:    unlimited
+
+GAME START
+
+[White]:
+    Move: E3 to D4
+[Black]:
+    Move: H6 to G5
+[White]:
+    Move: D4 to E5
+[Black]:
+    Move: D6 to F4
+    Beat: E5
+[White]:
+    Move: G3 to E5
+    Beat: F4
+[Black]:
+    Move: F6 to D4
+    Beat: E5
+[White]:
+    Move: C3 to E5
+    Beat: D4
+[Black]:
+    Move: G7 to H6
+[White]:
+    Move: F2 to E3
+[Black]:
+    Move: H8 to G7
+[White]:
+    Move: E3 to F4
+[Black]:
+    Move: G5 to E3
+    Beat: F4
+[White]:
+    Move: D2 to F4
+    Beat: E3
+[Black]:
+    Move: G7 to F6
+[White]:
+    Move: E5 to G7
+    Beat: F6
+[Black]:
+    Move: B6 to A5
+[White]:
+    Move: F4 to E5
+[Black]:
+    Move: C7 to B6
+[White]:
+    Move: E5 to D6
+[Black]:
+    Move: E7 to C5
+    Beat: D6
+[White]:
+    Move: B2 to C3
+[Black]:
+    Move: D8 to E7
+[White]:
+    Move: C3 to D4
+[Black]:
+    Move: C5 to E3
+    Beat: D4
+[White]:
+    Move: G1 to F2
+[Black]:
+    Move: E3 to G1
+    Prom:

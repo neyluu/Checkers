@@ -1,0 +1,119 @@
+Time:         2025-11-06 12:56:57
+Type:         singleplayer
+Player 1:     Bot
+Player 2:     Player
+Game time:    unlimited
+
+GAME START
+
+[White]:
+    Move: E3 to D4
+[Black]:
+    Move: D6 to E5
+[White]:
+    Move: D4 to C5
+[Black]:
+    Move: B6 to D4
+    Beat: C5
+[White]:
+    Move: G3 to F4
+[Black]:
+    Move: E5 to G3
+    Beat: F4
+[White]:
+    Move: H2 to F4
+    Beat: G3
+[Black]:
+    Move: H6 to G5
+[White]:
+    Move: F4 to H6
+    Beat: G5
+[Black]:
+    Move: F6 to G5
+[White]:
+    Move: H6 to F4
+    Beat: G5
+[Black]:
+    Move: A7 to B6
+[White]:
+    Move: C3 to E5
+    Beat: D4
+[Black]:
+    Move: B6 to A5
+[White]:
+    Move: D2 to E3
+[Black]:
+    Move: A5 to B4
+[White]:
+    Move: A3 to C5
+    Beat: B4
+[Black]:
+    Move: E7 to F6
+[White]:
+    Move: F4 to G5
+[Black]:
+    Move: F6 to D4
+    Beat: E5
+    Move: D4 to B6
+    Beat: C5
+[White]:
+    Move: G5 to F6
+[Black]:
+    Move: G7 to E5
+    Beat: F6
+[White]:
+    Move: E3 to F4
+[Black]:
+    Move: E5 to G3
+    Beat: F4
+[White]:
+    Move: F2 to H4
+    Beat: G3
+[Black]:
+    Move: B6 to A5
+[White]:
+    Move: H4 to G5
+[Black]:
+    Move: H8 to G7
+[White]:
+    Move: E1 to F2
+[Black]:
+    Move: C7 to D6
+[White]:
+    Move: B2 to C3
+[Black]:
+    Move: G7 to F6
+[White]:
+    Move: G5 to E7
+    Beat: F6
+    Move: E7 to C5
+    Beat: D6
+[Black]:
+    Move: B8 to C7
+[White]:
+    Move: C3 to D4
+[Black]:
+    Move: F8 to G7
+[White]:
+    Move: D4 to E5
+[Black]:
+    Move: G7 to H6
+[White]:
+    Move: E5 to F6
+[Black]:
+    Move: C7 to B6
+[White]:
+    Move: C5 to A7
+    Beat: B6
+[Black]:
+    Move: H6 to G5
+[White]:
+    Move: F6 to H4
+    Beat: G5
+[Black]:
+    Move: D8 to E7
+[White]:
+    Move: A7 to B8
+    Prom: B8
+[Black]:
+    Move
